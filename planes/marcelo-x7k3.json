@@ -1,0 +1,1866 @@
+{
+ "version": 1,
+ "codigo": "marcelo-x7k3",
+ "atleta": "Marcelo",
+ "coach": "Marcelo Balcazar",
+ "actualizado": "2026-10-15",
+ "bloque": "Bloque 1 · noviembre 2026",
+ "resumenSemanal": true,
+ "dias": [
+  {
+   "bloque": 1,
+   "dia": "Lunes 2 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-02",
+   "objetivo": "Medir fuerza estricta de tracción y empuje, y agarre en false grip.",
+   "registro": [
+    "WOD (rondas + reps)"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Remo suave",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "World's greatest stretch",
+       "presc": "2 rondas · 5 por lado"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Hollow hold / Arch hold",
+       "presc": "2 rondas · 20 s c/u"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Test dominadas estrictas",
+       "obj": "máx",
+       "presc": "1 serie al máximo · descanso 4 min",
+       "series": 1
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Test ring dips estrictos",
+       "obj": "máx",
+       "presc": "1 serie al máximo · descanso 4 min",
+       "series": 1
+      },
+      {
+       "campos": [
+        "seg"
+       ],
+       "nombre": "Test false grip hang (anillas)",
+       "obj": "",
+       "presc": "1 intento al máximo de tiempo",
+       "series": 1
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Split squat búlgaro (mancuernas)",
+       "obj": "8",
+       "presc": "3 × 8 por pierna @ RPE 7",
+       "series": 3
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Strict press",
+       "obj": "6",
+       "presc": "4 × 6 @ RPE 7 (~52-55 kg)",
+       "series": 4
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Ring rows (pausa 1 s arriba)",
+       "obj": "10",
+       "presc": "3 × 10 · superserie con press",
+       "series": 3
+      }
+     ],
+     "nota": "Detén cada test cuando la técnica se rompa: barbilla sin pasar la barra, brazos sin extender o bloqueo incompleto.",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Hip thrust",
+       "presc": "10 @ RPE 6"
+      },
+      {
+       "nombre": "Suitcase carry",
+       "presc": "20 m por lado"
+      },
+      {
+       "nombre": "Side plank",
+       "presc": "30 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Accesorios · 3 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Bike",
+       "presc": "10 cal"
+      },
+      {
+       "nombre": "Wall balls (9 kg a 3 m)",
+       "presc": "12"
+      },
+      {
+       "nombre": "Toes-to-bar",
+       "presc": "8"
+      }
+     ],
+     "nota": "Estímulo: sostenido, RPE 7, 2:00-2:30 por ronda. Wall balls rotos máximo 2 veces por ronda. Escalas: T2B → knee raises o series de 4 · wall ball 6 kg.",
+     "titulo": "WOD · AMRAP 12 MIN"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Couch stretch",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "90/90 de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Open book torácico",
+       "presc": "8 por lado"
+      },
+      {
+       "nombre": "Estiramiento de dorsal en rig",
+       "presc": "45 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 10 min"
+    }
+   ],
+   "semana": 1,
+   "tipo": "sesion",
+   "titulo": "Fuerza gimnástica"
+  },
+  {
+   "bloque": 1,
+   "dia": "Martes 3 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-03",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 1,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Miércoles 4 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-04",
+   "objetivo": "Medir capacidad en bar muscle-up y chest-to-bar, y potencia aeróbica en remo.",
+   "registro": [
+    "2k remo: tiempo total",
+    "Parciales cada 500 m",
+    "Damper usado"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Bike suave",
+       "presc": "5 min"
+      },
+      {
+       "nombre": "Band pull-aparts",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kipping pull-ups suaves / C2B",
+       "presc": "2 rondas · 5 / 3"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Test bar muscle-up",
+       "obj": "máx",
+       "presc": "1 serie al máximo sin soltar · descanso 5 min",
+       "series": 1
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Test chest-to-bar",
+       "obj": "máx",
+       "presc": "1 serie al máximo sin soltar · descanso 5 min",
+       "series": 1
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Butterfly pull-ups lentas (técnica)",
+       "obj": "3",
+       "presc": "5 × 3 · descanso 60 s",
+       "series": 5
+      }
+     ],
+     "nota": "Anota si las C2B fueron butterfly o kipping: el retest debe hacerse con el mismo estilo.",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Remo",
+       "presc": "2.000 m por tiempo"
+      },
+      {
+       "nombre": "Damper",
+       "presc": "4-6 · anótalo y repítelo en retests"
+      },
+      {
+       "nombre": "Salida",
+       "presc": "Primeros 500 m sostenibles, sin sprint"
+      },
+      {
+       "nombre": "Cierre",
+       "presc": "Aprieta los últimos 500 m"
+      }
+     ],
+     "nota": "Esfuerzo máximo (RPE 9-10). Se repite cada 8 semanas. Si el remo carga la zona lumbar, detente y avísame.",
+     "titulo": "ACONDICIONAMIENTO · TEST 2.000 M REMO"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Bird dog",
+       "presc": "3 × 8 por lado"
+      },
+      {
+       "nombre": "Dead bug",
+       "presc": "3 × 10"
+      },
+      {
+       "nombre": "Estiramiento de dorsal y pecho",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Círculos de muñeca + postura de niño",
+       "presc": "2 min"
+      }
+     ],
+     "nota": "",
+     "titulo": "Core y movilidad · 16 min"
+    }
+   ],
+   "semana": 1,
+   "tipo": "sesion",
+   "titulo": "Gimnasia y motor"
+  },
+  {
+   "bloque": 1,
+   "dia": "Jueves 5 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-05",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 1,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Viernes 6 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-06",
+   "objetivo": "Fijar la línea base híbrida (carrera, remo y wall balls) para el retest en la semana 8.",
+   "registro": [
+    "Tiempo total",
+    "Parcial ronda 1 / 2 / 3 / 4",
+    "FC media / máxima",
+    "Sábado: km, ritmo y FC media"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Trote",
+       "presc": "800 m"
+      },
+      {
+       "nombre": "Remo suave",
+       "presc": "250 m"
+      },
+      {
+       "nombre": "Movilidad dinámica cadera y tobillo",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Progresivos",
+       "presc": "2 × 60 m"
+      },
+      {
+       "nombre": "Wall balls",
+       "presc": "10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 15 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Carrera (mismo recorrido siempre)",
+       "presc": "800 m"
+      },
+      {
+       "nombre": "Remo",
+       "presc": "20 cal"
+      },
+      {
+       "nombre": "Wall balls (9 kg a 3 m)",
+       "presc": "20"
+      }
+     ],
+     "nota": "TIME CAP 35 min. Estímulo: prueba controlada, RPE 8, carrera 5:30-5:50 min/km. Última ronda igual o más rápida que la primera. Escala: si la ronda 2 supera 9 min, sigue con 600 m y anótalo.",
+     "titulo": "BENCHMARK «MOTOR HÍBRIDO 1» · FOR TIME · 4 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Pull-ups estrictas",
+       "presc": "5"
+      },
+      {
+       "nombre": "Hang en barra",
+       "presc": "30 s"
+      }
+     ],
+     "nota": "",
+     "titulo": "Gimnasia ligera · 3 RONDAS (tras 10 min de descanso)"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Pantorrillas en pared",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Flexores de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Isquios en el suelo",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Glúteo en figura 4",
+       "presc": "1 min por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 12 min"
+    }
+   ],
+   "semana": 1,
+   "tipo": "sesion",
+   "titulo": "Motor híbrido"
+  },
+  {
+   "bloque": 1,
+   "dia": "Sábado 7 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-07",
+   "objetivo": "8-10 km a ritmo de conversación (~6:15-6:45 min/km). La FC media será tu techo provisional de Z2.",
+   "registro": [
+    "Distancia (km)",
+    "Ritmo medio (min/km)",
+    "FC media (lpm)"
+   ],
+   "semana": 1,
+   "tipo": "carrera",
+   "titulo": "Carrera Z2"
+  },
+  {
+   "bloque": 1,
+   "dia": "Domingo 8 de noviembre",
+   "fase": "Línea base",
+   "fecha": "2026-11-08",
+   "objetivo": "Descanso. Paseo o movilidad suave opcional. Envía el resumen semanal.",
+   "semana": 1,
+   "tipo": "descanso",
+   "titulo": "Descanso"
+  },
+  {
+   "bloque": 1,
+   "dia": "Lunes 9 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-09",
+   "objetivo": "Acumular volumen de calidad en tracción y empuje estricto, e iniciar la etapa 1 del ring muscle-up.",
+   "registro": [
+    "Etapa ring MU y criterio cumplido",
+    "¿EMOM completo?"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Remo suave",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "World's greatest stretch",
+       "presc": "2 rondas · 5 por lado"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Hollow hold / Arch hold",
+       "presc": "2 rondas · 20 s c/u"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Dominadas estrictas",
+       "obj": "",
+       "presc": "Cada 2 min × 5 series · 50-60 % máx",
+       "series": 5
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Ring dips",
+       "obj": "",
+       "presc": "4 series · 50-60 % máx · descanso 90 s",
+       "series": 4
+      },
+      {
+       "campos": [
+        "seg"
+       ],
+       "nombre": "False grip hang",
+       "obj": "20",
+       "presc": "3 × 20 s",
+       "series": 3
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Transición en anillas bajas",
+       "obj": "5",
+       "presc": "3 × 5",
+       "series": 3
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Split squat búlgaro",
+       "obj": "8",
+       "presc": "4 × 8 por pierna @ RPE 7",
+       "series": 4
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Strict press + ring rows",
+       "obj": "5",
+       "presc": "5 × 5 @ RPE 7 + 3 × 12",
+       "series": 5
+      }
+     ],
+     "nota": "«% máx» = porcentaje de tu serie máxima del test de la semana 1, redondeado hacia abajo (mínimo 1).",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Hip thrust",
+       "presc": "10 @ RPE 7"
+      },
+      {
+       "nombre": "Suitcase carry",
+       "presc": "25 m por lado"
+      },
+      {
+       "nombre": "Copenhagen plank",
+       "presc": "20 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Accesorios · 3 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Minuto 1 · Bike",
+       "presc": "12 cal"
+      },
+      {
+       "nombre": "Minuto 2 · Power clean 50 kg",
+       "presc": "6"
+      },
+      {
+       "nombre": "Minuto 3 · Toes-to-bar",
+       "presc": "50 % máx"
+      },
+      {
+       "nombre": "Minuto 4 · Descanso activo / farmer hold",
+       "presc": "—"
+      }
+     ],
+     "nota": "Estímulo: 35-45 s de trabajo por minuto, RPE 7. Escalas: cleans 40 kg o hang power clean. Versión B: cleans → 10 cal ski.",
+     "titulo": "WOD · EMOM 16 MIN (4 VUELTAS)"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Couch stretch",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "90/90 de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Open book torácico",
+       "presc": "8 por lado"
+      },
+      {
+       "nombre": "Estiramiento de dorsal en rig",
+       "presc": "45 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 10 min"
+    }
+   ],
+   "semana": 2,
+   "tipo": "sesion",
+   "titulo": "Fuerza gimnástica"
+  },
+  {
+   "bloque": 1,
+   "dia": "Martes 10 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-10",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 2,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Miércoles 11 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-11",
+   "objetivo": "Repetir butterfly y BMU con calidad bajo fatiga, y desarrollar el umbral en remo.",
+   "registro": [
+    "Reps logradas por minuto",
+    "Minutos con técnica rota",
+    "Parciales 1.000 m (1 / 2 / 3 / 4)"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Bike suave",
+       "presc": "5 min"
+      },
+      {
+       "nombre": "Band pull-aparts",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kipping pull-ups suaves / C2B",
+       "presc": "2 rondas · 5 / 3"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Kip swings pausados",
+       "obj": "8",
+       "presc": "3 × 8",
+       "series": 3
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Kipping pull-ups con golpe de cadera",
+       "obj": "5",
+       "presc": "3 × 5",
+       "series": 3
+      },
+      {
+       "nombre": "EMOM 10 · min impares: C2B butterfly",
+       "presc": "50 % máx"
+      },
+      {
+       "nombre": "EMOM 10 · min pares: butterfly pull-ups",
+       "presc": "50 % máx"
+      },
+      {
+       "nombre": "Bar muscle-up · EMOM 8",
+       "presc": "2 reps (o 50 % máx si fue < 4)"
+      }
+     ],
+     "nota": "Si tu BMU máximo fue 0-1: 1 intento + 2 negativas controladas por minuto.",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Remo",
+       "presc": "4 × 1.000 m"
+      },
+      {
+       "nombre": "Ritmo",
+       "presc": "Ritmo 2k + 5 s por 500 m"
+      },
+      {
+       "nombre": "Descanso",
+       "presc": "2 min entre series"
+      }
+     ],
+     "nota": "Estímulo: umbral, RPE 7-8. Diferencia entre la serie más rápida y la más lenta ≤ 4 s. Escala: 4 × 4 min de bike si el remo carga la lumbar.",
+     "titulo": "ACONDICIONAMIENTO · 4 × 1.000 M REMO"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Bird dog",
+       "presc": "3 × 8 por lado"
+      },
+      {
+       "nombre": "Dead bug",
+       "presc": "3 × 10"
+      },
+      {
+       "nombre": "Estiramiento de dorsal y pecho",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Círculos de muñeca + postura de niño",
+       "presc": "2 min"
+      }
+     ],
+     "nota": "",
+     "titulo": "Core y movilidad · 16 min"
+    }
+   ],
+   "semana": 2,
+   "tipo": "sesion",
+   "titulo": "Gimnasia y motor"
+  },
+  {
+   "bloque": 1,
+   "dia": "Jueves 12 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-12",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 2,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Viernes 13 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-13",
+   "objetivo": "Sostener un ritmo estable en esfuerzos mixtos sin carga lumbar alta.",
+   "registro": [
+    "Rondas + reps bloque 1 / 2 / 3",
+    "FC media",
+    "Sábado: km, ritmo y FC media"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Trote",
+       "presc": "800 m"
+      },
+      {
+       "nombre": "Remo suave",
+       "presc": "250 m"
+      },
+      {
+       "nombre": "Movilidad dinámica cadera y tobillo",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Progresivos",
+       "presc": "2 × 60 m"
+      },
+      {
+       "nombre": "Wall balls",
+       "presc": "10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 15 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Bloque 1 · Carrera + wall balls",
+       "presc": "400 m + 15"
+      },
+      {
+       "nombre": "Bloque 2 · Ski + step-overs (2 × 22,5 kg)",
+       "presc": "15 cal + 10"
+      },
+      {
+       "nombre": "Bloque 3 · Carrera + burpee broad jump",
+       "presc": "200 m + 10"
+      }
+     ],
+     "nota": "Estímulo: aeróbico alto pero sostenible, RPE 7. Ningún bloque es para «vaciarse». Escalas: step-overs 2 × 15 kg o sin peso · burpee normal.",
+     "titulo": "WOD · 3 BLOQUES DE 8 MIN (AMRAP) · 3 MIN DESCANSO"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Chest-to-bar",
+       "presc": "30 reps totales en series de 40 % máx"
+      }
+     ],
+     "nota": "",
+     "titulo": "Gimnasia de volumen ligero · 10 min"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Pantorrillas en pared",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Flexores de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Isquios en el suelo",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Glúteo en figura 4",
+       "presc": "1 min por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 12 min"
+    }
+   ],
+   "semana": 2,
+   "tipo": "sesion",
+   "titulo": "Motor híbrido"
+  },
+  {
+   "bloque": 1,
+   "dia": "Sábado 14 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-14",
+   "objetivo": "10 km sin superar tu techo de FC.",
+   "registro": [
+    "Distancia (km)",
+    "Ritmo medio (min/km)",
+    "FC media (lpm)"
+   ],
+   "semana": 2,
+   "tipo": "carrera",
+   "titulo": "Carrera Z2"
+  },
+  {
+   "bloque": 1,
+   "dia": "Domingo 15 de noviembre",
+   "fase": "Acumulación",
+   "fecha": "2026-11-15",
+   "objetivo": "Descanso. Paseo o movilidad suave opcional. Envía el resumen semanal.",
+   "semana": 2,
+   "tipo": "descanso",
+   "titulo": "Descanso"
+  },
+  {
+   "bloque": 1,
+   "dia": "Lunes 16 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-16",
+   "objetivo": "Cerrar la fase de acumulación antes del viaje.",
+   "registro": [
+    "Etapa ring MU",
+    "¿EMOM completo?"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Remo suave",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "World's greatest stretch",
+       "presc": "2 rondas · 5 por lado"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Hollow hold / Arch hold",
+       "presc": "2 rondas · 20 s c/u"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Dominadas estrictas",
+       "obj": "",
+       "presc": "Cada 2 min × 5 series · 60 % máx",
+       "series": 5
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Ring dips",
+       "obj": "",
+       "presc": "4 series · 60 % máx · descanso 90 s",
+       "series": 4
+      },
+      {
+       "nombre": "Ring muscle-up",
+       "presc": "Etapa actual · avanza solo con criterio cumplido"
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Split squat búlgaro",
+       "obj": "8",
+       "presc": "4 × 8 por pierna @ RPE 7",
+       "series": 4
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Strict press + ring rows",
+       "obj": "5",
+       "presc": "5 × 5 @ RPE 7 + 3 × 12",
+       "series": 5
+      }
+     ],
+     "nota": "",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Hip thrust",
+       "presc": "10 @ RPE 7"
+      },
+      {
+       "nombre": "Suitcase carry",
+       "presc": "25 m por lado"
+      },
+      {
+       "nombre": "Copenhagen plank",
+       "presc": "20 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Accesorios · 3 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Minuto 1 · Bike",
+       "presc": "12 cal"
+      },
+      {
+       "nombre": "Minuto 2 · Power clean 50 kg",
+       "presc": "6"
+      },
+      {
+       "nombre": "Minuto 3 · Toes-to-bar",
+       "presc": "50 % máx + 1"
+      },
+      {
+       "nombre": "Minuto 4 · Descanso activo / farmer hold",
+       "presc": "—"
+      }
+     ],
+     "nota": "Mismo estímulo y escalas que el lunes 09 (RPE 7). Compara las reps de T2B.",
+     "titulo": "WOD · EMOM 16 MIN (4 VUELTAS)"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Couch stretch",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "90/90 de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Open book torácico",
+       "presc": "8 por lado"
+      },
+      {
+       "nombre": "Estiramiento de dorsal en rig",
+       "presc": "45 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "sesion",
+   "titulo": "Fuerza gimnástica"
+  },
+  {
+   "bloque": 1,
+   "dia": "Martes 17 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-17",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 3,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Miércoles 18 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-18",
+   "objetivo": "Recuperar: dormir bien y moverte. Martes 17 clase normal; jueves 19 sin clase.",
+   "registro": [
+    "Qué hiciste",
+    "Horas de sueño"
+   ],
+   "secciones": [
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Opción A · Trote en Z2",
+       "presc": "20-30 min"
+      },
+      {
+       "nombre": "Opción B · 3 rondas:",
+       "presc": "—"
+      },
+      {
+       "nombre": "Push-ups",
+       "presc": "10"
+      },
+      {
+       "nombre": "Air squats",
+       "presc": "15"
+      },
+      {
+       "nombre": "Zancadas",
+       "presc": "10 por pierna"
+      },
+      {
+       "nombre": "Hollow hold",
+       "presc": "30 s"
+      },
+      {
+       "nombre": "Bird dog",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "Intensidad RPE 5. Duración total 25-30 min.",
+     "titulo": "Sesión opcional sin equipamiento · máx. 2 veces"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Cadera (90/90 + flexores)",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "Dorsal y hombros",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Tobillo y pantorrilla",
+       "presc": "3 min"
+      }
+     ],
+     "nota": "Especialmente útil después de los vuelos.",
+     "titulo": "Movilidad diaria · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "viaje",
+   "titulo": "Viaje · descarga"
+  },
+  {
+   "bloque": 1,
+   "dia": "Jueves 19 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-19",
+   "objetivo": "Recuperar: dormir bien y moverte. Martes 17 clase normal; jueves 19 sin clase.",
+   "registro": [
+    "Qué hiciste",
+    "Horas de sueño"
+   ],
+   "secciones": [
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Opción A · Trote en Z2",
+       "presc": "20-30 min"
+      },
+      {
+       "nombre": "Opción B · 3 rondas:",
+       "presc": "—"
+      },
+      {
+       "nombre": "Push-ups",
+       "presc": "10"
+      },
+      {
+       "nombre": "Air squats",
+       "presc": "15"
+      },
+      {
+       "nombre": "Zancadas",
+       "presc": "10 por pierna"
+      },
+      {
+       "nombre": "Hollow hold",
+       "presc": "30 s"
+      },
+      {
+       "nombre": "Bird dog",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "Intensidad RPE 5. Duración total 25-30 min.",
+     "titulo": "Sesión opcional sin equipamiento · máx. 2 veces"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Cadera (90/90 + flexores)",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "Dorsal y hombros",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Tobillo y pantorrilla",
+       "presc": "3 min"
+      }
+     ],
+     "nota": "Especialmente útil después de los vuelos.",
+     "titulo": "Movilidad diaria · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "viaje",
+   "titulo": "Viaje · descarga"
+  },
+  {
+   "bloque": 1,
+   "dia": "Viernes 20 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-20",
+   "objetivo": "Recuperar: dormir bien y moverte. Martes 17 clase normal; jueves 19 sin clase.",
+   "registro": [
+    "Qué hiciste",
+    "Horas de sueño"
+   ],
+   "secciones": [
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Opción A · Trote en Z2",
+       "presc": "20-30 min"
+      },
+      {
+       "nombre": "Opción B · 3 rondas:",
+       "presc": "—"
+      },
+      {
+       "nombre": "Push-ups",
+       "presc": "10"
+      },
+      {
+       "nombre": "Air squats",
+       "presc": "15"
+      },
+      {
+       "nombre": "Zancadas",
+       "presc": "10 por pierna"
+      },
+      {
+       "nombre": "Hollow hold",
+       "presc": "30 s"
+      },
+      {
+       "nombre": "Bird dog",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "Intensidad RPE 5. Duración total 25-30 min.",
+     "titulo": "Sesión opcional sin equipamiento · máx. 2 veces"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Cadera (90/90 + flexores)",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "Dorsal y hombros",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Tobillo y pantorrilla",
+       "presc": "3 min"
+      }
+     ],
+     "nota": "Especialmente útil después de los vuelos.",
+     "titulo": "Movilidad diaria · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "viaje",
+   "titulo": "Viaje · descarga"
+  },
+  {
+   "bloque": 1,
+   "dia": "Sábado 21 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-21",
+   "objetivo": "Recuperar: dormir bien y moverte. Martes 17 clase normal; jueves 19 sin clase.",
+   "registro": [
+    "Qué hiciste",
+    "Horas de sueño"
+   ],
+   "secciones": [
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Opción A · Trote en Z2",
+       "presc": "20-30 min"
+      },
+      {
+       "nombre": "Opción B · 3 rondas:",
+       "presc": "—"
+      },
+      {
+       "nombre": "Push-ups",
+       "presc": "10"
+      },
+      {
+       "nombre": "Air squats",
+       "presc": "15"
+      },
+      {
+       "nombre": "Zancadas",
+       "presc": "10 por pierna"
+      },
+      {
+       "nombre": "Hollow hold",
+       "presc": "30 s"
+      },
+      {
+       "nombre": "Bird dog",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "Intensidad RPE 5. Duración total 25-30 min.",
+     "titulo": "Sesión opcional sin equipamiento · máx. 2 veces"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Cadera (90/90 + flexores)",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "Dorsal y hombros",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Tobillo y pantorrilla",
+       "presc": "3 min"
+      }
+     ],
+     "nota": "Especialmente útil después de los vuelos.",
+     "titulo": "Movilidad diaria · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "viaje",
+   "titulo": "Viaje · descarga"
+  },
+  {
+   "bloque": 1,
+   "dia": "Domingo 22 de noviembre",
+   "fase": "Viaje y descarga",
+   "fecha": "2026-11-22",
+   "objetivo": "Recuperar: dormir bien y moverte. Martes 17 clase normal; jueves 19 sin clase.",
+   "registro": [
+    "Qué hiciste",
+    "Horas de sueño"
+   ],
+   "secciones": [
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Opción A · Trote en Z2",
+       "presc": "20-30 min"
+      },
+      {
+       "nombre": "Opción B · 3 rondas:",
+       "presc": "—"
+      },
+      {
+       "nombre": "Push-ups",
+       "presc": "10"
+      },
+      {
+       "nombre": "Air squats",
+       "presc": "15"
+      },
+      {
+       "nombre": "Zancadas",
+       "presc": "10 por pierna"
+      },
+      {
+       "nombre": "Hollow hold",
+       "presc": "30 s"
+      },
+      {
+       "nombre": "Bird dog",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "Intensidad RPE 5. Duración total 25-30 min.",
+     "titulo": "Sesión opcional sin equipamiento · máx. 2 veces"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Cadera (90/90 + flexores)",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "Dorsal y hombros",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Tobillo y pantorrilla",
+       "presc": "3 min"
+      }
+     ],
+     "nota": "Especialmente útil después de los vuelos.",
+     "titulo": "Movilidad diaria · 10 min"
+    }
+   ],
+   "semana": 3,
+   "tipo": "viaje",
+   "titulo": "Viaje · descarga"
+  },
+  {
+   "bloque": 1,
+   "dia": "Lunes 23 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-23",
+   "objetivo": "Convertir el volumen de las semanas anteriores en más fuerza por repetición.",
+   "registro": [
+    "Tiempo WOD"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Remo suave",
+       "presc": "4 min"
+      },
+      {
+       "nombre": "World's greatest stretch",
+       "presc": "2 rondas · 5 por lado"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Hollow hold / Arch hold",
+       "presc": "2 rondas · 20 s c/u"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Dominadas (máx ≥ 10)",
+       "obj": "3",
+       "presc": "5 × 3 lastradas 5-10 kg @ RPE 8",
+       "series": 5
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Dominadas (máx < 10)",
+       "obj": "",
+       "presc": "Cada 2 min × 5 series · 60-70 % máx",
+       "series": 5
+      },
+      {
+       "campos": [
+        "reps"
+       ],
+       "nombre": "Ring dips",
+       "obj": "",
+       "presc": "4 series · 60-70 % máx (+5 kg si máx ≥ 12)",
+       "series": 4
+      },
+      {
+       "nombre": "Ring muscle-up",
+       "presc": "Etapa actual"
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Split squat búlgaro",
+       "obj": "6",
+       "presc": "4 × 6 por pierna @ RPE 8",
+       "series": 4
+      },
+      {
+       "campos": [
+        "kg",
+        "reps"
+       ],
+       "nombre": "Strict press + false grip ring rows",
+       "obj": "4",
+       "presc": "5 × 4 @ RPE 8 + 3 × 8",
+       "series": 5
+      }
+     ],
+     "nota": "",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Hip thrust",
+       "presc": "8 @ RPE 7-8"
+      },
+      {
+       "nombre": "Suitcase carry",
+       "presc": "30 m por lado"
+      },
+      {
+       "nombre": "Side plank con remo de mancuerna",
+       "presc": "8 por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Accesorios · 3 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Bike",
+       "presc": "15 cal"
+      },
+      {
+       "nombre": "Toes-to-bar",
+       "presc": "12"
+      },
+      {
+       "nombre": "Power clean 55 kg",
+       "presc": "9"
+      }
+     ],
+     "nota": "TIME CAP 12 min (esperado 8-10 min). RPE 8, cleans en 1-2 series. Escalas: 45 kg · T2B en series de 4-6. Versión B: cleans → 12 cal remo.",
+     "titulo": "WOD · FOR TIME · 3 RONDAS"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Couch stretch",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "90/90 de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Open book torácico",
+       "presc": "8 por lado"
+      },
+      {
+       "nombre": "Estiramiento de dorsal en rig",
+       "presc": "45 s por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 10 min"
+    }
+   ],
+   "semana": 4,
+   "tipo": "sesion",
+   "titulo": "Fuerza gimnástica"
+  },
+  {
+   "bloque": 1,
+   "dia": "Martes 24 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-24",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 4,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Miércoles 25 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-25",
+   "objetivo": "Ampliar las series sostenidas en butterfly y BMU, e intervalos a ritmo de 2k.",
+   "registro": [
+    "Reps por minuto (C2B / BMU)",
+    "Serie final C2B",
+    "Parciales 500 m (1 a 6)"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Bike suave",
+       "presc": "5 min"
+      },
+      {
+       "nombre": "Band pull-aparts",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Scap pull-ups",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kip swings",
+       "presc": "2 rondas · 10"
+      },
+      {
+       "nombre": "Kipping pull-ups suaves / C2B",
+       "presc": "2 rondas · 5 / 3"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 12 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Drills de kip",
+       "presc": "5 min"
+      },
+      {
+       "nombre": "EMOM 12 · min impares: C2B butterfly",
+       "presc": "60 % máx"
+      },
+      {
+       "nombre": "EMOM 12 · min pares: bar muscle-up",
+       "presc": "2-3 reps (o 60 % máx si fue < 4)"
+      },
+      {
+       "nombre": "Serie final C2B (solo si EMOM limpio)",
+       "presc": "1 × (máx − 2)"
+      }
+     ],
+     "nota": "",
+     "titulo": "Trabajo principal"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Remo",
+       "presc": "6 × 500 m"
+      },
+      {
+       "nombre": "Ritmo",
+       "presc": "Ritmo 2k"
+      },
+      {
+       "nombre": "Descanso",
+       "presc": "1:30 entre series"
+      }
+     ],
+     "nota": "Estímulo: RPE 8, ritmo constante. Escala: 6 × 1:45 min de bike.",
+     "titulo": "ACONDICIONAMIENTO · 6 × 500 M REMO"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Hollow rocks",
+       "presc": "3 × 15"
+      },
+      {
+       "nombre": "Pallof press",
+       "presc": "3 × 10 por lado"
+      },
+      {
+       "nombre": "Estiramiento de dorsal y pecho",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Muñecas + postura de niño",
+       "presc": "2 min"
+      }
+     ],
+     "nota": "",
+     "titulo": "Core y movilidad · 16 min"
+    }
+   ],
+   "semana": 4,
+   "tipo": "sesion",
+   "titulo": "Gimnasia y motor"
+  },
+  {
+   "bloque": 1,
+   "dia": "Jueves 26 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-26",
+   "objetivo": "Registra lo que hiciste en clase: ejercicios, series con kg y reps, RPE y lumbar. Si fue pesada (RPE ≥ 8 o tirones extra), mañana aplica la versión B.",
+   "semana": 4,
+   "tipo": "clase",
+   "titulo": "Clase de levantamiento"
+  },
+  {
+   "bloque": 1,
+   "dia": "Viernes 27 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-27",
+   "objetivo": "Sostener un esfuerzo híbrido más largo, similar al de una prueba.",
+   "registro": [
+    "Tiempo total y por ronda",
+    "FC media",
+    "Sábado: opción hecha y ritmos"
+   ],
+   "secciones": [
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Trote",
+       "presc": "800 m"
+      },
+      {
+       "nombre": "Remo suave",
+       "presc": "250 m"
+      },
+      {
+       "nombre": "Movilidad dinámica cadera y tobillo",
+       "presc": "3 min"
+      },
+      {
+       "nombre": "Progresivos",
+       "presc": "2 × 60 m"
+      },
+      {
+       "nombre": "Wall balls",
+       "presc": "10"
+      }
+     ],
+     "nota": "",
+     "titulo": "Calentamiento · 15 min"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Carrera",
+       "presc": "1 km"
+      },
+      {
+       "nombre": "Wall balls (9 kg a 3 m)",
+       "presc": "30"
+      },
+      {
+       "nombre": "Remo",
+       "presc": "20 cal"
+      },
+      {
+       "nombre": "Zancadas front rack (2 × 15 kg)",
+       "presc": "20"
+      }
+     ],
+     "nota": "TIME CAP 30 min (esperado 22-27 min). RPE 8, carrera 5:35-5:55 min/km. Escalas: zancadas sin peso · 20 wall balls por ronda.",
+     "titulo": "WOD · FOR TIME · 2 RONDAS"
+    },
+    {
+     "check": false,
+     "items": [
+      {
+       "nombre": "Butterfly pull-ups",
+       "presc": "40 reps totales en series de 40 % máx"
+      }
+     ],
+     "nota": "",
+     "titulo": "Gimnasia de volumen ligero · 8 min"
+    },
+    {
+     "check": true,
+     "items": [
+      {
+       "nombre": "Pantorrillas en pared",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Flexores de cadera",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Isquios en el suelo",
+       "presc": "1 min por lado"
+      },
+      {
+       "nombre": "Glúteo en figura 4",
+       "presc": "1 min por lado"
+      }
+     ],
+     "nota": "",
+     "titulo": "Movilidad · 12 min"
+    }
+   ],
+   "semana": 4,
+   "tipo": "sesion",
+   "titulo": "Motor híbrido"
+  },
+  {
+   "bloque": 1,
+   "dia": "Sábado 28 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-28",
+   "objetivo": "Sin amarillos en la semana: 2 km suave + 4 × 1 km a 5:20-5:30 (2 min trote) + 2 km suave. Con amarillos: 8 km en Z2.",
+   "registro": [
+    "Distancia (km)",
+    "Ritmo medio (min/km)",
+    "FC media (lpm)"
+   ],
+   "semana": 4,
+   "tipo": "carrera",
+   "titulo": "Carrera: tempo o Z2"
+  },
+  {
+   "bloque": 1,
+   "dia": "Domingo 29 de noviembre",
+   "fase": "Intensificación",
+   "fecha": "2026-11-29",
+   "objetivo": "Descanso. Paseo o movilidad suave opcional. Envía el resumen semanal.",
+   "semana": 4,
+   "tipo": "descanso",
+   "titulo": "Descanso"
+  }
+ ],
+ "zonaMolestia": "Lumbar",
+ "avisoAmarillo": "Amarillo: la próxima sesión va en versión B (sin bisagra con carga ni barra en el WOD). Si dura más de 48 h, avísame.",
+ "resumenCampos": [
+  [
+   "sueno",
+   "Sueño promedio (h)"
+  ],
+  [
+   "bb",
+   "Body Battery al despertar (rango)"
+  ],
+  [
+   "fc",
+   "FC en reposo promedio (lpm)"
+  ],
+  [
+   "semaforo",
+   "Lumbar: peor valor y cuándo"
+  ],
+  [
+   "sensacion",
+   "Cómo me sentí (1-2 frases)"
+  ]
+ ],
+ "ejercicios": [
+  "Snatch",
+  "Power snatch",
+  "Hang snatch",
+  "Clean",
+  "Power clean",
+  "Hang clean",
+  "Pull clean",
+  "Snatch pull",
+  "Clean & jerk",
+  "Jerk",
+  "Push press",
+  "Front squat",
+  "Back squat",
+  "Overhead squat",
+  "Peso muerto"
+ ],
+ "focosClase": [
+  "Snatch",
+  "Clean & jerk",
+  "Ambos",
+  "Complejos",
+  "Fuerza"
+ ]
+}
