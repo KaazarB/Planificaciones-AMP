@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel del coach</title>
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f2f3f1; --surface:#fff; --ink:#15181b; --muted:#5d646b; --line:#d9ddd9; --grid:#e7eae7;
+  --bar:#16191c; --bar-ink:#f6f7f5; --accent:#1f5fbf; --accent-soft:#e3ecfa;
+  --ok:#1f7a4d; --ok-soft:#e1f2e8; --warn:#a86a00; --warn-soft:#fbefd6; --bad:#b3261e; --bad-soft:#f9e1df;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0f1113; --surface:#181b1e; --ink:#ecefed; --muted:#9aa2a8; --line:#2c3135; --grid:#24282c;
+  --bar:#2a2f34; --bar-ink:#f2f4f2; --accent:#7aa7ef; --accent-soft:#1c2a40;
+  --ok:#6fcf9b; --ok-soft:#173225; --warn:#e8b450; --warn-soft:#3a2c10; --bad:#f08b83; --bad-soft:#3d1a18; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--body)}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 60px}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.3px;margin:0}
+h1{font-size:32px;font-weight:800} h2{font-size:22px;font-weight:700} h3{font-size:17px;font-weight:700}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sub{color:var(--muted);font-size:13.5px}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.sm{padding:5px 9px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);background:var(--surface);margin-bottom:14px;cursor:pointer}
+.drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.drop b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--accent-soft)}
+.tw{overflow-x:auto}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.bad{background:var(--bad-soft);color:var(--bad)} .tag.mut{background:var(--grid);color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.kpi .v{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font:12px var(--body);fill:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--bar);color:var(--bar-ink);font-size:12.5px;padding:6px 9px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%);display:none;z-index:3}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+input[type=date],input.txt,select{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:var(--bg);color:var(--ink);font:14px var(--body)}
+.notes li{margin-bottom:8px} .notes .d{color:var(--muted);font-size:12.5px}
+.linkbox{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--bar);color:var(--bar-ink);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20}
+.back{border:0;background:none;color:var(--accent);font:600 14px var(--body);cursor:pointer;padding:0;margin-bottom:8px}
+.print-only{display:none}
+.tabs{display:flex;gap:4px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 14px var(--body);padding:7px 14px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--bar);color:var(--bar-ink);border-color:var(--bar)}
+.tablink{font-size:13px;color:var(--accent);margin-left:8px;text-decoration:none}
+@media print{
+  :root{--bg:#fff;--surface:#fff;--ink:#000;--muted:#444;--line:#bbb;--grid:#ddd;color-scheme:light}
+  .no-print,.toast,.tip{display:none!important} .print-only{display:block}
+  .card,.kpi{break-inside:avoid;border-color:#bbb}
+  body{font-size:12px} .wrap{max-width:none;padding:0}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top no-print">
+    <div><h1>Panel del coach</h1><div class="sub">Tus planes y las semanas de tus atletas quedan guardados solo en este navegador.</div>
+      <div class="tabs"><button data-tab="atletas" class="on">Métricas</button><button data-tab="planes">Planes</button><a href="./" class="tablink">Ir a la app del atleta</a></div></div>
+    <div class="row" id="tools-atletas">
+      <button class="btn" id="b-link">Link para un atleta</button>
+      <button class="btn" id="b-csv">Exportar a Excel (CSV)</button>
+      <button class="btn" id="b-export">Respaldar base</button>
+      <button class="btn" id="b-import">Restaurar base</button>
+    </div>
+  </div>
+  <div id="view"></div>
+</div>
+<input type="file" id="f-weeks" accept=".json,application/json" multiple hidden>
+<input type="file" id="f-base" accept=".json,application/json" hidden>
+<div class="tip" id="tip"></div>
+
+<script src="editor.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const parse=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fc=s=>{const d=parse(s);return `${d.getDate()} ${MES[d.getMonth()]}`};
+const fcy=s=>{const d=parse(s);return `${d.getDate()} ${MES[d.getMonth()]} ${d.getFullYear()}`};
+const num=v=>{const x=parseFloat(String(v??"").replace(",","."));return isFinite(x)?x:null};
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const f1=v=>v==null?"—":(Math.round(v*10)/10).toLocaleString("es-CL");
+const todayIso=iso(new Date());
+
+// ---------- base local (IndexedDB) ----------
+let dbp=null;
+function idb(){ if(dbp) return dbp; dbp=new Promise((res,rej)=>{const r=indexedDB.open("planilla-coach",2);r.onupgradeneeded=()=>{const db=r.result; if(!db.objectStoreNames.contains("semanas")) db.createObjectStore("semanas",{keyPath:"key"}); if(!db.objectStoreNames.contains("planes")) db.createObjectStore("planes",{keyPath:"codigo"});};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}); return dbp; }
+async function tx(mode,fn,store="semanas"){ const d=await idb(); return new Promise((res,rej)=>{const t=d.transaction(store,mode);const st=t.objectStore(store);const out=fn(st);t.oncomplete=()=>res(out&&out.result!==undefined?out.result:out);t.onerror=()=>rej(t.error);}); }
+window.CoachPlanes={
+  all:()=>tx("readonly",st=>st.getAll(),"planes"),
+  get:c=>tx("readonly",st=>st.get(c),"planes"),
+  put:p=>tx("readwrite",st=>st.put(p),"planes"),
+  del:c=>tx("readwrite",st=>st.delete(c),"planes")
+};
+const getAll=()=>tx("readonly",st=>st.getAll());
+const putMany=list=>tx("readwrite",st=>{list.forEach(w=>st.put(w));return list.length;});
+const delKey=k=>tx("readwrite",st=>st.delete(k));
+let ALL=[];
+async function reload(){ ALL=await getAll(); ALL.sort((a,b)=>a.semana.inicio<b.semana.inicio?-1:1); }
+
+// ---------- importar ----------
+function readFile(f){return new Promise(res=>{const r=new FileReader();r.onload=()=>{try{res(JSON.parse(r.result))}catch(e){res(null)}};r.onerror=()=>res(null);r.readAsText(f);});}
+async function importFiles(files){
+  let ok=0,bad=0,rep=0; const list=[]; const existing=new Set(ALL.map(w=>w.key));
+  for(const f of files){
+    const d=await readFile(f);
+    if(d&&d.formato==="planilla-semana"&&d.codigo&&d.semana&&d.semana.inicio){
+      const key=`${d.codigo}|${d.semana.inicio}`; if(existing.has(key)) rep++;
+      list.push({...d,key,recibido:new Date().toISOString()}); ok++;
+    } else if(d&&d.formato==="planilla-coach-base"&&Array.isArray(d.semanas)){
+      d.semanas.forEach(w=>{ if(w.key) list.push(w); }); ok+=d.semanas.length;
+      for(const p of (d.planes||[])) if(p&&p.codigo) await window.CoachPlanes.put(p);
+    } else bad++;
+  }
+  if(list.length) await putMany(list);
+  await reload(); route();
+  toast(`${ok} semana(s) cargada(s)${rep?` (${rep} reemplazada(s) por versión nueva)`:""}${bad?` · ${bad} archivo(s) no reconocido(s)`:""}.`);
+}
+
+// ---------- cálculos ----------
+function athletes(){
+  const m={};
+  ALL.forEach(w=>{ const a=m[w.codigo]=m[w.codigo]||{codigo:w.codigo,atleta:w.atleta,semanas:[]}; a.atleta=w.atleta||a.atleta; a.semanas.push(w); });
+  return Object.values(m).sort((a,b)=>a.atleta.localeCompare(b.atleta,"es"));
+}
+function daysOf(weeks,from,to){ const out=[]; weeks.forEach(w=>{ const lab=Object.fromEntries(w.resumenCampos||[]); (w.dias||[]).forEach(d=>{ if((!from||d.fecha>=from)&&(!to||d.fecha<=to)) out.push({...d,_semana:w.semana.inicio,_labels:lab}); }); }); return out.sort((a,b)=>a.fecha<b.fecha?-1:1); }
+function stats(weeks,from,to){
+  const ws=weeks.filter(w=>(!from||w.semana.fin>=from)&&(!to||w.semana.inicio<=to));
+  const dias=daysOf(ws,from,to);
+  const plan=dias.filter(d=>d.tipo&&d.tipo!=="descanso");
+  const reg=plan.filter(d=>d.registrado);
+  const rpes=dias.map(d=>num(d.rpe)).filter(v=>v!=null);
+  const mols=dias.map(d=>Math.max(num(d.molestiaAntes)??-1,num(d.molestiaDespues)??-1)).filter(v=>v>=0);
+  const alerta=dias.filter(d=>Math.max(num(d.molestiaAntes)??-1,num(d.molestiaDespues)??-1)>=4);
+  const porSemana=ws.map(w=>{ const dd=(w.dias||[]).filter(d=>(!from||d.fecha>=from)&&(!to||d.fecha<=to)); const p=dd.filter(d=>d.tipo&&d.tipo!=="descanso"); const r=p.filter(d=>d.registrado); const rp=dd.map(d=>num(d.rpe)).filter(v=>v!=null);
+    return {inicio:w.semana.inicio,plan:p.length,reg:r.length,pct:p.length?r.length/p.length*100:null,rpe:avg(rp)}; });
+  return {ws,dias,plan:plan.length,reg:reg.length,pct:plan.length?reg.length/plan.length*100:null,rpe:avg(rpes),molMax:mols.length?Math.max(...mols):null,alerta,porSemana};
+}
+// Mejores marcas por ejercicio: kg máximo (con reps) o reps/segundos máximos si no hay kg.
+function marcas(dias){
+  const m={};
+  const addSet=(ej,fecha,s)=>{
+    const nombre=String(ej||"").trim(); if(!nombre) return;
+    const kg=num(s.kg), reps=num(s.reps), seg=num(s.seg);
+    const k=nombre.toLowerCase(); const e=m[k]=m[k]||{nombre,hist:[]};
+    e.hist.push({fecha,kg,reps,seg});
+  };
+  dias.forEach(d=>{
+    (d.series||[]).forEach(x=>(x.sets||[]).forEach(s=>addSet(x.ejercicio,d.fecha,s)));
+    ((d.clase&&d.clase.ejercicios)||[]).forEach(x=>(x.sets||[]).forEach(s=>addSet(x.nombre,d.fecha,s)));
+  });
+  return Object.values(m).map(e=>{
+    const unidad=e.hist.some(h=>h.kg!=null)?"kg":e.hist.some(h=>h.seg!=null)?"s":"reps";
+    const val=h=>unidad==="kg"?h.kg:unidad==="s"?h.seg:h.reps;
+    const hs=e.hist.filter(h=>val(h)!=null); if(!hs.length) return null;
+    let best=hs[0]; hs.forEach(h=>{ if(val(h)>val(best)||(val(h)===val(best)&&(h.reps||0)>(best.reps||0))) best=h; });
+    const fechas=[...new Set(hs.map(h=>h.fecha))].sort();
+    const maxEn=f=>Math.max(...hs.filter(h=>h.fecha===f).map(val));
+    const primero=maxEn(fechas[0]), ultimo=maxEn(fechas[fechas.length-1]);
+    return {nombre:e.nombre,unidad,best,bestVal:val(best),primero,ultimo,primeraFecha:fechas[0],ultimaFecha:fechas[fechas.length-1],sesiones:fechas.length};
+  }).filter(Boolean).sort((a,b)=>b.sesiones-a.sesiones||a.nombre.localeCompare(b.nombre,"es"));
+}
+
+// ---------- gráficos (SVG simple, una serie, un eje) ----------
+function chart(points,{max,unit,kind,height=180,fmt}){
+  // points: [{label, value, tip}]
+  const W=480,H=height,L=34,R=8,T=12,B=26; const n=points.length;
+  if(!n) return `<div class="empty">Sin datos en el periodo.</div>`;
+  const mx=max??Math.max(1,...points.map(p=>p.value??0));
+  const y=v=>T+(H-T-B)*(1-v/mx), step=(W-L-R)/n;
+  let g="";
+  const ticks=[0,mx/2,mx];
+  ticks.forEach(t=>{ g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)" stroke-width="1"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end">${fmt?fmt(t):Math.round(t)}</text>`; });
+  const every=Math.ceil(n/8);
+  points.forEach((p,i)=>{ if(i%every===0&&(n-1-i>=every||i===n-1||every===1)) g+=`<text x="${L+step*i+step/2}" y="${H-6}" text-anchor="middle">${esc(p.label)}</text>`; });
+  if(kind==="bar"){
+    const bw=Math.max(4,Math.min(28,step-6));
+    points.forEach((p,i)=>{ if(p.value==null) return; const x=L+step*i+(step-bw)/2, yy=y(p.value), h=Math.max(0,y(0)-yy);
+      g+=`<path d="M${x},${y(0)} V${yy+Math.min(4,h)} Q${x},${yy} ${x+Math.min(4,bw/2)},${yy} H${x+bw-Math.min(4,bw/2)} Q${x+bw},${yy} ${x+bw},${yy+Math.min(4,h)} V${y(0)} Z" fill="var(--accent)"/>`;
+      g+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${H-T-B}" fill="transparent" data-tip="${esc(p.tip)}"/>`; });
+  } else {
+    let d=""; points.forEach((p,i)=>{ if(p.value==null) return; const x=L+step*i+step/2; d+=(d?"L":"M")+x+","+y(p.value); });
+    g+=`<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    points.forEach((p,i)=>{ if(p.value==null) return; const x=L+step*i+step/2; g+=`<circle cx="${x}" cy="${y(p.value)}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><rect x="${L+step*i}" y="${T}" width="${step}" height="${H-T-B}" fill="transparent" data-tip="${esc(p.tip)}"/>`; });
+  }
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg></div>`;
+}
+document.addEventListener("mousemove",e=>{
+  const t=e.target.closest&&e.target.closest("[data-tip]"); const tip=$("#tip");
+  if(!t){tip.style.display="none";return;}
+  tip.textContent=t.getAttribute("data-tip"); tip.style.display="block";
+  tip.style.left=e.pageX+"px"; tip.style.top=(e.pageY-8)+"px";
+});
+
+// ---------- vistas ----------
+function semaforo(a){
+  const last=a.semanas[a.semanas.length-1]; const dias=Math.round((parse(todayIso)-parse(last.semana.fin))/864e5);
+  if(dias<=8) return `<span class="tag ok">✓ Al día</span>`;
+  if(dias<=15) return `<span class="tag warn">! ${dias} días sin enviar</span>`;
+  return `<span class="tag bad">✕ ${dias} días sin enviar</span>`;
+}
+function viewHome(){
+  const as=athletes();
+  let h=`<div class="drop no-print" id="drop"><b>Arrastra aquí los archivos de semana</b> que te enviaron tus atletas (semana_….json)<br>o haz clic para elegirlos. Puedes cargar varios a la vez; si un atleta reenvía una semana, se reemplaza.</div>`;
+  if(!as.length){ h+=`<div class="card empty">Todavía no hay semanas cargadas.</div>`; $("#view").innerHTML=h; bindDrop(); return; }
+  const from=iso(new Date(Date.now()-28*864e5));
+  h+=`<div class="card"><h2>Atletas</h2><div class="sub" style="margin-bottom:8px">Cumplimiento, RPE y molestia de las últimas 4 semanas.</div><div class="tw"><table><thead><tr><th>Atleta</th><th>Código</th><th>Última semana</th><th>Estado</th><th class="n">Cumplimiento</th><th class="n">RPE prom.</th><th class="n">Molestia máx.</th><th class="n">Semanas</th></tr></thead><tbody>`;
+  as.forEach(a=>{ const s=stats(a.semanas,from,null); const last=a.semanas[a.semanas.length-1];
+    const mol=s.molMax==null?"—":s.molMax>=6?`<span class="tag bad">${s.molMax}</span>`:s.molMax>=4?`<span class="tag warn">${s.molMax}</span>`:s.molMax;
+    h+=`<tr class="click" data-atleta="${esc(a.codigo)}"><td><b>${esc(a.atleta)}</b></td><td class="sub">${esc(a.codigo)}</td><td>${fc(last.semana.inicio)}</td><td>${semaforo(a)}</td><td class="n">${s.pct==null?"—":Math.round(s.pct)+" %"}</td><td class="n">${f1(s.rpe)}</td><td class="n">${mol}</td><td class="n">${a.semanas.length}</td></tr>`; });
+  h+=`</tbody></table></div></div>`;
+  $("#view").innerHTML=h; bindDrop();
+}
+let periodo={tipo:"3m",desde:null,hasta:null};
+function rango(){
+  if(periodo.tipo==="custom") return [periodo.desde,periodo.hasta];
+  const m=periodo.tipo==="6m"?6:periodo.tipo==="12m"?12:3; const d=new Date(); d.setMonth(d.getMonth()-m);
+  return periodo.tipo==="todo"?[null,null]:[iso(d),todayIso];
+}
+function viewAtleta(codigo){
+  const a=athletes().find(x=>x.codigo===codigo); if(!a){ location.hash=""; return; }
+  const [from,to]=rango(); const s=stats(a.semanas,from,to); const mk=marcas(s.dias);
+  const pr=s.ws.length?`${fcy(from||s.ws[0].semana.inicio)} al ${fcy(to||s.ws[s.ws.length-1].semana.fin)}`:"";
+  let h=`<button class="back no-print" data-home>‹ Todos los atletas</button>
+  <div class="top"><div><div class="print-only sub">Reporte de entrenamiento</div><h1>${esc(a.atleta)}</h1><div class="sub">${pr}${s.ws.length?` · ${s.ws.length} semana(s) enviadas`:""}</div></div>
+    <div class="row no-print">
+      <select id="per"><option value="3m">Últimos 3 meses</option><option value="6m">Últimos 6 meses</option><option value="12m">Último año</option><option value="todo">Todo</option><option value="custom">Personalizado…</option></select>
+      <span id="custom" style="display:${periodo.tipo==="custom"?"inline-flex":"none"};gap:6px"><input type="date" id="d1" value="${periodo.desde||""}"><input type="date" id="d2" value="${periodo.hasta||""}"></span>
+      <button class="btn primary" id="print">Reporte en PDF</button>
+    </div></div>`;
+  if(!s.ws.length){ $("#view").innerHTML=h+`<div class="card empty">No hay semanas en este periodo.</div>`; bindPeriod(); return; }
+  h+=`<div class="kpis">
+    <div class="kpi"><div class="l">Cumplimiento</div><div class="v">${s.pct==null?"—":Math.round(s.pct)+" %"}</div><div class="s">${s.reg} de ${s.plan} entrenamientos registrados</div></div>
+    <div class="kpi"><div class="l">RPE promedio</div><div class="v">${f1(s.rpe)}</div><div class="s">escala 1-10</div></div>
+    <div class="kpi"><div class="l">Molestia máxima</div><div class="v">${s.molMax??"—"}</div><div class="s">${s.alerta.length} día(s) en 4 o más</div></div>
+    <div class="kpi"><div class="l">Ejercicios con registro</div><div class="v">${mk.length}</div><div class="s">con cargas, reps o tiempos</div></div>
+  </div>`;
+  const pts=s.porSemana.map(w=>({label:fc(w.inicio),value:w.pct,tip:`Semana del ${fc(w.inicio)}: ${w.reg}/${w.plan} (${w.pct==null?"—":Math.round(w.pct)+" %"})`}));
+  const rp=s.porSemana.map(w=>({label:fc(w.inicio),value:w.rpe,tip:`Semana del ${fc(w.inicio)}: RPE ${f1(w.rpe)}`}));
+  h+=`<div class="grid2"><div class="card"><h3>Cumplimiento semanal (%)</h3>${chart(pts,{max:100,kind:"bar",fmt:v=>Math.round(v)+"%"})}</div>
+      <div class="card"><h3>RPE promedio por semana</h3>${chart(rp,{max:10,kind:"line"})}</div></div>`;
+  h+=`<div class="card"><h3>Marcas y progresión</h3><div class="sub" style="margin:4px 0 8px">Mejor valor del periodo y comparación entre la primera y la última sesión registrada de cada ejercicio.</div><div class="tw"><table><thead><tr><th>Ejercicio</th><th class="n">Mejor</th><th>Fecha</th><th class="n">Primera sesión</th><th class="n">Última sesión</th><th class="n">Cambio</th><th class="n">Sesiones</th></tr></thead><tbody>`;
+  mk.forEach(e=>{ const u=e.unidad; const d=e.sesiones>1?e.ultimo-e.primero:null;
+    const best=u==="kg"?`${f1(e.best.kg)} kg${e.best.reps?` × ${f1(e.best.reps)}`:""}`:`${f1(e.bestVal)} ${u}`;
+    h+=`<tr><td>${esc(e.nombre)}</td><td class="n"><b>${best}</b></td><td>${fc(e.best.fecha)}</td><td class="n">${f1(e.primero)} ${u}</td><td class="n">${f1(e.ultimo)} ${u}</td><td class="n">${d==null?"—":(d>0?"+":"")+f1(d)+" "+u}</td><td class="n">${e.sesiones}</td></tr>`; });
+  if(!mk.length) h+=`<tr><td colspan="7" class="empty">Sin cargas registradas en el periodo.</td></tr>`;
+  h+=`</tbody></table></div></div>`;
+  h+=`<div class="card"><h3>Molestias (4 o más)</h3>`;
+  if(!s.alerta.length) h+=`<div class="sub" style="margin-top:6px">Sin molestias relevantes en el periodo.</div>`;
+  else { h+=`<div class="tw"><table><thead><tr><th>Fecha</th><th>Sesión</th><th>Zona</th><th class="n">Antes</th><th class="n">Después</th><th>Notas</th></tr></thead><tbody>`;
+    s.alerta.forEach(d=>{ h+=`<tr><td>${fc(d.fecha)}</td><td>${esc(d.titulo)}</td><td>${esc(d.zona||"—")}</td><td class="n">${d.molestiaAntes??"—"}</td><td class="n">${d.molestiaDespues??"—"}</td><td>${esc(d.notas||"")}</td></tr>`; });
+    h+=`</tbody></table></div>`; }
+  h+=`</div>`;
+  const notas=s.dias.filter(d=>d.notas&&d.notas.trim()).slice(-12).reverse();
+  const res=s.dias.filter(d=>d.resumen&&Object.values(d.resumen).some(v=>String(v).trim())).slice(-6).reverse();
+  h+=`<div class="grid2"><div class="card"><h3>Notas del atleta</h3>${notas.length?`<ul class="notes">${notas.map(d=>`<li><div class="d">${fc(d.fecha)} · ${esc(d.titulo)}</div>${esc(d.notas)}</li>`).join("")}</ul>`:`<div class="sub" style="margin-top:6px">Sin notas.</div>`}</div>
+    <div class="card"><h3>Resúmenes semanales</h3>${res.length?`<ul class="notes">${res.map(d=>`<li><div class="d">${fc(d.fecha)}</div>${Object.entries(d.resumen).filter(([,v])=>String(v).trim()).map(([k,v])=>`<b>${esc((d._labels&&d._labels[k])||k)}:</b> ${esc(v)}`).join(" · ")}</li>`).join("")}</ul>`:`<div class="sub" style="margin-top:6px">Sin resúmenes.</div>`}</div></div>`;
+  h+=`<div class="card no-print"><h3>Semanas recibidas</h3><div class="tw"><table><thead><tr><th>Semana</th><th class="n">Registrados</th><th>Recibida</th><th></th></tr></thead><tbody>`;
+  a.semanas.slice().reverse().forEach(w=>{ h+=`<tr><td>${fcy(w.semana.inicio)}</td><td class="n">${w.cumplimiento?`${w.cumplimiento.registrados}/${w.cumplimiento.planificados}`:"—"}</td><td class="sub">${w.recibido?fcy(iso(new Date(w.recibido))):"—"}</td><td class="n"><button class="btn sm" data-del="${esc(w.key)}">Quitar</button></td></tr>`; });
+  h+=`</tbody></table></div></div>`;
+  $("#view").innerHTML=h; bindPeriod();
+}
+function bindPeriod(){
+  const per=$("#per"); if(!per) return; per.value=periodo.tipo;
+  per.onchange=()=>{ periodo.tipo=per.value; if(per.value==="custom"){ $("#custom").style.display="inline-flex"; if(!periodo.desde){const d=new Date();d.setMonth(d.getMonth()-3);periodo.desde=iso(d);periodo.hasta=todayIso;} } route(); };
+  const d1=$("#d1"),d2=$("#d2"); if(d1){ d1.onchange=()=>{periodo.desde=d1.value||null;route()}; d2.onchange=()=>{periodo.hasta=d2.value||null;route()}; }
+  const p=$("#print"); if(p) p.onclick=()=>window.print();
+}
+function bindDrop(){
+  const d=$("#drop"); if(!d) return;
+  d.onclick=()=>$("#f-weeks").click();
+  d.ondragover=e=>{e.preventDefault();d.classList.add("over")};
+  d.ondragleave=()=>d.classList.remove("over");
+  d.ondrop=e=>{e.preventDefault();d.classList.remove("over");importFiles([...e.dataTransfer.files]);};
+}
+function route(){
+  const h=location.hash; document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("on",(b.dataset.tab==="planes")===/^#(planes|plan=)/.test(h)));
+  let m;
+  if(h==="#planes") return window.PlanEditor.list($("#view"));
+  if((m=h.match(/^#plan=(.+)$/))) return window.PlanEditor.edit($("#view"),decodeURIComponent(m[1]));
+  if((m=h.match(/^#a=(.+)$/))) return viewAtleta(decodeURIComponent(m[1]));
+  viewHome();
+}
+window.CoachToast=m=>toast(m);
+
+// ---------- acciones ----------
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-atleta],[data-home],[data-del],button"); if(!t) return;
+  if(t.dataset.atleta){ location.hash="a="+encodeURIComponent(t.dataset.atleta); return; }
+  if(t.hasAttribute("data-home")){ location.hash=""; return; }
+  if(t.dataset.del){ if(confirm("¿Quitar esta semana de la base?")){ await delKey(t.dataset.del); await reload(); route(); } return; }
+  if(t.id==="b-export"){ const data={formato:"planilla-coach-base",version:2,generado:new Date().toISOString(),semanas:ALL,planes:await window.CoachPlanes.all()}; save(new Blob([JSON.stringify(data)],{type:"application/json"}),`base_coach_${todayIso}.json`); toast("Base descargada. Guárdala en tu Drive o correo."); return; }
+  if(t.id==="b-import"){ $("#f-base").click(); return; }
+  if(t.id==="b-csv"){ exportCsv(); return; }
+  if(t.id==="b-link"){ linkDialog(); return; }
+  if(t.dataset.tab){ location.hash=t.dataset.tab==="planes"?"planes":""; return; }
+});
+$("#f-weeks").onchange=e=>{ importFiles([...e.target.files]); e.target.value=""; };
+$("#f-base").onchange=e=>{ importFiles([...e.target.files]); e.target.value=""; };
+window.addEventListener("hashchange",route);
+function save(blob,name){ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500); }
+function exportCsv(){
+  const q=v=>{const s=String(v??"");return /[";\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s};
+  const rows=[["Atleta","Código","Fecha","Sesión","Tipo","RPE","Molestia antes","Molestia después","Zona","Ejercicio","Serie","kg","reps","seg","Notas"]];
+  ALL.forEach(w=>(w.dias||[]).forEach(d=>{
+    const base=[w.atleta,w.codigo,d.fecha,d.titulo,d.tipo,d.rpe??"",d.molestiaAntes??"",d.molestiaDespues??"",d.zona||""];
+    const sets=[]; (d.series||[]).forEach(x=>(x.sets||[]).forEach((s,i)=>sets.push([x.ejercicio,i+1,s.kg??"",s.reps??"",s.seg??""])));
+    ((d.clase&&d.clase.ejercicios)||[]).forEach(x=>(x.sets||[]).forEach((s,i)=>sets.push([x.nombre,i+1,s.kg??"",s.reps??"",""])));
+    if(!sets.length){ if(d.registrado) rows.push([...base,"","","","","",d.notas||""]); }
+    else sets.forEach((s,i)=>rows.push([...base,...s,i===0?(d.notas||""):""]));
+  }));
+  // punto y coma: así Excel en español lo abre en columnas
+  save(new Blob(["﻿"+rows.map(r=>r.map(q).join(";")).join("\r\n")],{type:"text/csv"}),`registros_${todayIso}.csv`);
+}
+function linkDialog(){
+  const c=prompt("Código del atleta (el mismo nombre del archivo en la carpeta planes, sin .json):");
+  if(!c) return; const code=c.trim().toLowerCase().replace(/[^a-z0-9_-]/g,"");
+  const url=new URL("./",location.href); url.searchParams.set("a",code);
+  const txt=`Hola! Esta es tu planilla de entrenamiento: ${url.href}\n\n1) Ábrela en Safari (iPhone) o Chrome (Android).\n2) Agrégala a tu pantalla de inicio (iPhone: Compartir › Agregar a inicio · Android: ⋮ › Instalar app).\n3) Ábrela siempre desde el ícono. Si te pide código, escribe: ${code}\n4) Registra cada sesión y el domingo toca «Enviar mi semana» y mándame el archivo por aquí.`;
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>toast("Mensaje con el link copiado. Pégalo en WhatsApp."),()=>prompt("Copia este mensaje:",txt));
+  else prompt("Copia este mensaje:",txt);
+}
+let tt=null; function toast(m){ let t=$(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=m; clearTimeout(tt); tt=setTimeout(()=>t.remove(),4200); }
+
+if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+reload().then(route).catch(()=>{ $("#view").innerHTML=`<div class="card empty">Este navegador no permite guardar datos (¿modo incógnito?). Ábrelo en una ventana normal.</div>`; });
+})();
+</script>
+</body>
+</html>

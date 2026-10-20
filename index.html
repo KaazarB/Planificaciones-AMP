@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Planilla</title>
+<meta name="theme-color" content="#16191c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Planilla">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f2f3f1; --surface:#ffffff; --ink:#15181b; --muted:#5d646b; --line:#d9ddd9;
+  --bar:#16191c; --bar-ink:#f6f7f5; --accent:#1f5fbf; --accent-soft:#e3ecfa;
+  --ok:#1f7a4d; --ok-soft:#e1f2e8; --warn:#a86a00; --warn-soft:#fbefd6; --bad:#b3261e; --bad-soft:#f9e1df;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0f1113; --surface:#181b1e; --ink:#ecefed; --muted:#9aa2a8; --line:#2c3135;
+  --bar:#2a2f34; --bar-ink:#f2f4f2; --accent:#7aa7ef; --accent-soft:#1c2a40;
+  --ok:#6fcf9b; --ok-soft:#173225; --warn:#e8b450; --warn-soft:#3a2c10; --bad:#f08b83; --bad-soft:#3d1a18; color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(12px + env(safe-area-inset-top,0px)) 0 10px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.4px;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-family:var(--body);font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);margin-top:3px}
+.topr{display:flex;align-items:center;gap:8px}
+.wk{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.menu-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;width:38px;height:34px;font-size:18px;cursor:pointer;line-height:1}
+.strip{display:grid;grid-template-columns:28px repeat(7,1fr) 28px;gap:4px;margin-top:10px;align-items:stretch}
+.nav{border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer;border-radius:8px;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.day{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:6px 0 7px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font:inherit;min-width:0}
+.day .d{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.day .n{font-family:var(--display);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.day .dot{width:6px;height:6px;border-radius:50%;background:transparent}
+.day.sesion .dot{background:var(--accent)} .day.clase .dot{background:var(--ink)} .day.carrera .dot{background:var(--ok)} .day.viaje .dot{background:var(--warn)}
+.day.done .dot{background:var(--ok);box-shadow:0 0 0 2px var(--ok-soft)}
+.day.sel{background:var(--bar);color:var(--bar-ink);border-color:var(--bar)} .day.sel .d{color:var(--bar-ink);opacity:.75}
+.day.today .n{text-decoration:underline;text-underline-offset:3px}
+.day.off{opacity:.45}
+main{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.notice{background:var(--accent-soft);border-radius:10px;padding:12px 14px;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.notice.warn{background:var(--warn-soft);color:var(--warn)}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:9px 13px;border-radius:9px;cursor:pointer;text-align:center;text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.ghost{background:transparent;border-style:dashed;color:var(--muted)}
+.btn.block{width:100%}
+.hero h1{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;text-transform:uppercase;margin:0;text-wrap:balance}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--muted)}
+.pill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.pill.clase{background:var(--line);color:var(--ink)} .pill.carrera{background:var(--ok-soft);color:var(--ok)} .pill.viaje{background:var(--warn-soft);color:var(--warn)} .pill.descanso{background:var(--line);color:var(--muted)}
+.obj{margin-top:8px;font-size:15px}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.sec h2{margin:0;background:var(--bar);color:var(--bar-ink);font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.3px;padding:9px 12px;text-transform:uppercase}
+.it{padding:10px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.it:first-child{border-top:0}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.nm{font-weight:600;min-width:0}
+.pr{color:var(--muted);font-size:13.5px;text-align:right;min-width:0}
+.it.chk{flex-direction:row;align-items:center;gap:10px;cursor:pointer}
+.it.chk .row{flex:1}
+.box{width:22px;height:22px;border:2px solid var(--line);border-radius:6px;flex:none;display:grid;place-items:center;font-size:14px;color:transparent}
+.it.chk.on .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.it.chk.on .nm{color:var(--muted);text-decoration:line-through}
+.sets{display:grid;gap:6px}
+.set{display:grid;grid-template-columns:30px 1fr 1fr;gap:6px;align-items:center}
+.set.one{grid-template-columns:30px 1fr}
+.set .k{font-family:var(--display);font-weight:700;color:var(--muted);font-size:15px;font-variant-numeric:tabular-nums}
+.field{position:relative;min-width:0}
+.field input{width:100%;padding:9px 40px 9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px var(--body);font-variant-numeric:tabular-nums}
+.field span{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+.note{padding:9px 12px 11px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+.form{padding:12px;display:flex;flex-direction:column;gap:12px}
+label.lb{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
+.txt,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:400 16px var(--body)}
+textarea{min-height:70px;resize:vertical}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.scale.rpe{grid-template-columns:repeat(10,1fr)}
+.scale button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:7px 0;font:700 14px var(--display);font-variant-numeric:tabular-nums;cursor:pointer;min-width:0}
+.scale button.on{background:var(--bar);color:var(--bar-ink);border-color:var(--bar)}
+.scale.mol button.on.g{background:var(--ok);border-color:var(--ok);color:#fff}
+.scale.mol button.on.y{background:var(--warn);border-color:var(--warn);color:#fff}
+.scale.mol button.on.r{background:var(--bad);border-color:var(--bad);color:#fff}
+.hint{font-size:12.5px;padding:8px 10px;border-radius:8px}
+.hint.y{background:var(--warn-soft);color:var(--warn)} .hint.r{background:var(--bad-soft);color:var(--bad)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 11px;font:600 13px var(--body);cursor:pointer}
+.chips button.on{background:var(--bar);color:var(--bar-ink);border-color:var(--bar)}
+.ex{border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.ex .exh{display:flex;gap:6px;align-items:center}
+.ex .exh .txt{background:var(--surface);font-weight:600}
+.x{border:0;background:transparent;color:var(--muted);font-size:20px;cursor:pointer;padding:2px 6px;border-radius:6px}
+.ex .field input{background:var(--surface)}
+.saverow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted)}
+.saved{color:var(--ok)} .err{color:var(--bad)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.weekcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.weekcard .t{font-family:var(--display);font-weight:700;font-size:19px;text-transform:uppercase;letter-spacing:.3px}
+.weekcard .s{font-size:13.5px;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+/* inicio */
+.welcome{min-height:80vh;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:40px 0}
+.welcome h1{font-family:var(--display);font-weight:800;font-size:44px;line-height:.95;text-transform:uppercase;margin:0}
+.welcome p{margin:0;color:var(--muted)}
+.welcome .txt{font-size:18px;text-transform:lowercase}
+/* hoja de menú */
+dialog{border:0;padding:0;border-radius:16px 16px 0 0;width:100%;max-width:640px;margin:auto auto 0;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.sheet{padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}
+.sheet h3{margin:0 0 4px;font-family:var(--display);font-size:22px;text-transform:uppercase}
+.sheet .sub{font-size:13px;color:var(--muted);margin:-2px 0 6px}
+.sheet .btn{text-align:left;padding:12px 14px;font-size:15px}
+.sheet .btn small{display:block;font-weight:400;color:var(--muted);font-size:12.5px;margin-top:2px}
+.sheet .btn.primary small,.sheet .btn.ok small{color:rgba(255,255,255,.85)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--bar);color:var(--bar-ink);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.foot{margin-top:22px;font-size:12px;color:var(--muted);line-height:1.5}
+@media (prefers-reduced-motion:no-preference){.it.chk .box{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="empty">Cargando…</div></div>
+<dialog id="menu"></dialog>
+<input type="file" id="restore" accept="application/json,.json" hidden>
+<input type="file" id="planfile" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+"use strict";
+const DIAS=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const TIPO={sesion:"Sesión",clase:"Clase",carrera:"Carrera",viaje:"Viaje",descanso:"Descanso"};
+const EJ_DEF=["Snatch","Clean","Clean & jerk","Jerk","Push press","Front squat","Back squat","Overhead squat","Peso muerto","Dominadas","Thruster"];
+const FOCO_DEF=["Halterofilia","Fuerza","Gimnasia","Metcon","Mixto"];
+const RES_DEF=[["sueno","Sueño promedio (h)"],["peor","Peor molestia de la semana y cuándo"],["sensacion","Cómo me sentí (1-2 frases)"]];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const parse=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const monday=d=>add(d,-((d.getDay()+6)%7));
+const hhmm=d=>String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+const fechaCorta=d=>`${d.getDate()} de ${MESES[d.getMonth()]}`;
+const cleanCode=s=>String(s||"").trim().toLowerCase().replace(/[^a-z0-9_-]/g,"");
+
+// ---------- almacenamiento en el teléfono ----------
+const store={
+  get(k,def){try{const v=localStorage.getItem(k);return v==null?def:JSON.parse(v)}catch(e){return def}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+let codigo=null, P=null, plan={}, logs={}, enviados={}, sel=null, weekStart=null, lastSave=null, saveErr=false, timer=null, offline=false;
+const K=()=>({logs:`pl:${codigo}:logs`,plan:`pl:${codigo}:plan`,env:`pl:${codigo}:enviados`});
+const todayIso=iso(new Date());
+
+function log(f){ if(!logs[f]) logs[f]={fecha:f}; return logs[f]; }
+function filled(v){ if(v==null||v===false) return false; if(typeof v==="string") return v.trim()!==""; if(typeof v==="number"||v===true) return true; if(Array.isArray(v)) return v.some(filled); if(typeof v==="object") return Object.values(v).some(filled); return false; }
+function hasData(l){ if(!l) return false; const {fecha,updatedAt,...r}=l; return filled(r); }
+
+function persistLogs(){
+  const ok=store.set(K().logs,logs);
+  saveErr=!ok; if(ok) lastSave=hhmm(new Date());
+  paintStatus(); renderStrip(); renderWeekCard();
+}
+function schedule(){ log(sel).updatedAt=new Date().toISOString(); clearTimeout(timer); timer=setTimeout(()=>{timer=null;persistLogs()},400); paintStatus(); }
+
+// ---------- plan ----------
+async function loadPlan(code){
+  let fresh=null, notFound=false;
+  try{
+    const r=await fetch(`planes/${encodeURIComponent(code)}.json?t=${Date.now()}`,{cache:"no-store"});
+    if(r.ok) fresh=await r.json(); else if(r.status===404) notFound=true;
+  }catch(e){}
+  const cached=store.get(`pl:${code}:plan`,null);
+  const local=store.get(`pl:${code}:planArchivo`,null);
+  const newer=(a,b)=>!b||String(a.actualizado||"")>=String(b.actualizado||"");
+  if(fresh&&Array.isArray(fresh.dias)){ store.set(`pl:${code}:plan`,fresh); offline=false;
+    if(local&&!newer(fresh,local)) return {plan:local,from:"archivo"};
+    return {plan:fresh,from:"red"}; }
+  if(local&&(!cached||newer(local,cached))) { offline=false; return {plan:local,from:"archivo"}; }
+  if(cached){ offline=!notFound; return {plan:cached,from:"cache"}; }
+  return {plan:null,notFound};
+}
+function applyPlan(pp){
+  P=pp; plan={}; (pp.dias||[]).forEach(d=>{ if(d&&d.fecha) plan[d.fecha]=d; });
+}
+function pickInitial(){
+  const ds=Object.keys(plan).sort();
+  if(!ds.length) return todayIso;
+  if(plan[todayIso]) return todayIso;
+  return ds.find(d=>d>=todayIso)||ds[ds.length-1];
+}
+
+// ---------- pantallas ----------
+function renderWelcome(msg){
+  $("#app").innerHTML=`<div class="welcome">
+    <h1>Planilla</h1>
+    <p>Tu plan de entrenamiento personalizado. Lo que anotas queda guardado solo en este teléfono, y cada semana se lo envías a tu coach.</p>
+    ${msg?`<div class="notice warn">${esc(msg)}</div>`:""}
+    <label class="lb">Código de atleta (te lo da tu coach)
+      <input class="txt" id="code" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="text" placeholder="ej. ana-4f2k"></label>
+    <button class="btn primary block" id="entrar">Entrar</button>
+    <button class="btn block" id="w-planfile">Tengo un archivo de plan</button>
+    <p class="foot">Para usarla como app: en iPhone, Safari › Compartir › «Agregar a inicio». En Android, Chrome › menú ⋮ › «Instalar app». Después ábrela siempre desde el ícono.</p>
+    <p class="foot" style="margin-top:0">¿Eres coach? <a href="coach.html" style="color:var(--accent);font-weight:600">Entrar al panel del coach</a></p>
+  </div>`;
+  const i=$("#code"); i.addEventListener("keydown",e=>{if(e.key==="Enter")$("#entrar").click()});
+}
+
+function shell(){
+  $("#app").innerHTML=`<header>
+      <div class="top"><div class="brand">Planilla<small id="who"></small></div>
+        <div class="topr"><div class="wk" id="wk"></div><button class="menu-btn" id="openmenu" aria-label="Más opciones">⋯</button></div></div>
+      <div class="strip" id="strip" aria-label="Días de la semana"></div>
+    </header>
+    <main id="main"></main>
+    <div class="foot">Tus registros se guardan solo en este teléfono. Envía tu semana a tu coach desde el botón de abajo o desde ⋯, y descarga un respaldo de vez en cuando.</div>`;
+  $("#who").textContent=P.atleta?`${P.atleta}${P.bloque?" · "+P.bloque:""}`:"";
+}
+
+function renderStrip(){
+  const s=$("#strip"); if(!s) return;
+  let h=`<button class="nav" id="prev" aria-label="Semana anterior">‹</button>`;
+  for(let i=0;i<7;i++){
+    const d=add(weekStart,i), f=iso(d), p=plan[f];
+    const cls=["day",p?p.tipo:"off",f===sel?"sel":"",f===todayIso?"today":"",hasData(logs[f])?"done":""].join(" ");
+    h+=`<button class="${cls}" data-f="${f}" aria-label="${DIAS[i]} ${d.getDate()}${p?" · "+esc(p.titulo):""}"><span class="d">${DIAS[i]}</span><span class="n">${d.getDate()}</span><span class="dot"></span></button>`;
+  }
+  s.innerHTML=h+`<button class="nav" id="next" aria-label="Semana siguiente">›</button>`;
+  const ws=iso(weekStart), we=iso(add(weekStart,7));
+  const p=Object.values(plan).find(x=>x.fecha>=ws&&x.fecha<we);
+  $("#wk").textContent=p&&p.semana?`Semana ${p.semana}`:`Sem. ${weekStart.getDate()} ${MESES[weekStart.getMonth()].slice(0,3)}`;
+}
+
+function scale(name,val,n0,n1,extra){
+  let h=`<div class="scale ${extra||""}" role="group">`;
+  for(let i=n0;i<=n1;i++){
+    const c=extra==="mol"?(i<=3?"g":i<=5?"y":"r"):"";
+    h+=`<button type="button" class="${val===i?"on":""} ${c}" data-scale="${name}" data-v="${i}" aria-pressed="${val===i}">${i}</button>`;
+  }
+  return h+"</div>";
+}
+function molHint(l){
+  const m=Math.max(l.molestiaAntes??-1,l.molestiaDespues??-1);
+  if(m>=6) return `<div class="hint r">Si hay dolor punzante, que se irradia, hormigueo o debilidad: detén la sesión y consulta a un kinesiólogo o médico. Avísale a tu coach.</div>`;
+  if(m>=4) return `<div class="hint y">${esc(P.avisoAmarillo||"Amarillo: baja la carga en la próxima sesión y coméntalo en las notas. Si dura más de 48 h, avísale a tu coach.")}</div>`;
+  return "";
+}
+function setField(key,i,campo,val,ph){
+  const unit={kg:"kg",reps:"reps",seg:"s"}[campo]||"";
+  return `<div class="field"><input id="${esc(key)}-${i}-${campo}" inputmode="decimal" type="text" autocomplete="off" data-set="${esc(key)}" data-i="${i}" data-c="${campo}" value="${esc(val??"")}" placeholder="${esc(ph||"")}"><span>${unit}</span></div>`;
+}
+function renderSecciones(p,l){
+  let h="";
+  (p.secciones||[]).forEach((s,si)=>{
+    h+=`<section class="sec"><h2>${esc(s.titulo)}</h2><div>`;
+    (s.items||[]).forEach((it,ii)=>{
+      const key=`s${si}i${ii}`;
+      if(it.series){
+        const sets=(l.sets&&l.sets[key])||[]; const campos=it.campos&&it.campos.length?it.campos:["kg","reps"];
+        h+=`<div class="it"><div class="row"><div class="nm">${esc(it.nombre)}</div><div class="pr">${esc(it.presc)}</div></div><div class="sets">`;
+        for(let k=0;k<it.series;k++){
+          const v=sets[k]||{};
+          h+=`<div class="set ${campos.length===1?"one":""}"><span class="k">S${k+1}</span>${campos.map(c=>setField(key,k,c,v[c],c==="reps"||c==="seg"?it.obj:"")).join("")}</div>`;
+        }
+        h+=`</div></div>`;
+      } else if(s.check){
+        const on=l.checks&&l.checks[key];
+        h+=`<div class="it chk ${on?"on":""}" role="checkbox" tabindex="0" aria-checked="${!!on}" data-chk="${key}"><span class="box">✓</span><div class="row"><div class="nm">${esc(it.nombre)}</div><div class="pr">${esc(it.presc)}</div></div></div>`;
+      } else {
+        h+=`<div class="it"><div class="row"><div class="nm">${esc(it.nombre)}</div><div class="pr">${esc(it.presc)}</div></div></div>`;
+      }
+    });
+    h+=`</div>${s.nota?`<div class="note">${esc(s.nota)}</div>`:""}</section>`;
+  });
+  return h;
+}
+function renderClase(p,l){
+  const c=l.clase||{}; const foco=P.focosClase||FOCO_DEF; const ej=P.ejercicios||EJ_DEF;
+  let h=`<section class="sec"><h2>Lo que hice en clase</h2><div class="form">`;
+  h+=`<label class="lb">Foco</label><div class="chips">${foco.map(f=>`<button type="button" class="${c.foco===f?"on":""}" data-foco="${esc(f)}" aria-pressed="${c.foco===f}">${esc(f)}</button>`).join("")}</div>`;
+  (c.ejercicios||[]).forEach((e,ei)=>{
+    h+=`<div class="ex"><div class="exh"><input class="txt" list="ejs" id="ex-${ei}" data-exn="${ei}" value="${esc(e.nombre||"")}" placeholder="Ejercicio"><button type="button" class="x" data-exdel="${ei}" aria-label="Quitar ejercicio">×</button></div><div class="sets">`;
+    (e.sets||[]).forEach((s,si)=>{
+      h+=`<div class="set"><span class="k">S${si+1}</span>
+        <div class="field"><input id="ex-${ei}-${si}-kg" inputmode="decimal" data-exs="${ei}" data-i="${si}" data-c="kg" value="${esc(s.kg??"")}"><span>kg</span></div>
+        <div class="field"><input id="ex-${ei}-${si}-reps" inputmode="decimal" data-exs="${ei}" data-i="${si}" data-c="reps" value="${esc(s.reps??"")}"><span>reps</span></div></div>`;
+    });
+    h+=`</div><button type="button" class="btn ghost" data-addset="${ei}">+ Serie</button></div>`;
+  });
+  h+=`<button type="button" class="btn" id="addex">+ Agregar ejercicio</button>`;
+  h+=`<datalist id="ejs">${ej.map(x=>`<option value="${esc(x)}">`).join("")}</datalist>`;
+  h+=`<label class="lb">Carga máxima del día (kg) y reps<input class="txt" id="c-max" type="text" data-cl="max" value="${esc(c.max||"")}"></label>`;
+  h+=`<label class="lb">¿Hubo metcon? ¿Cuál?<input class="txt" id="c-met" type="text" data-cl="metcon" value="${esc(c.metcon||"")}"></label>`;
+  h+=`<label class="lb">Nota técnica del coach de la clase<input class="txt" id="c-coach" type="text" data-cl="coach" value="${esc(c.coach||"")}"></label>`;
+  return h+`</div></section>`;
+}
+function renderResumen(l){
+  const r=l.resumen||{}; const f=P.resumenCampos||RES_DEF;
+  let h=`<section class="sec"><h2>Resumen semanal</h2><div class="form">`;
+  f.forEach(([k,t])=>{h+=`<label class="lb">${esc(t)}<input class="txt" id="r-${esc(k)}" type="text" data-res="${esc(k)}" value="${esc(r[k]||"")}"></label>`});
+  return h+`</div></section>`;
+}
+function renderRegistro(p,l,titulo){
+  const z=P.zonaMolestia?P.zonaMolestia:"Molestia o dolor";
+  let h=`<section class="sec"><h2>${esc(titulo)}</h2><div class="form">`;
+  (p.registro||[]).forEach((r,i)=>{
+    const v=(l.registro&&l.registro[r])||"";
+    h+=`<label class="lb">${esc(r)}<input class="txt" id="reg-${i}" type="text" data-reg="${esc(r)}" value="${esc(v)}"></label>`;
+  });
+  if(p.tipo!=="descanso"){
+    h+=`<label class="lb">RPE de la sesión (1-10)</label>${scale("rpe",l.rpe,1,10,"rpe")}`;
+    h+=`<label class="lb">${esc(z)} antes (0-10)</label>${scale("molestiaAntes",l.molestiaAntes,0,10,"mol")}`;
+    h+=`<label class="lb">${esc(z)} después (0-10)</label>${scale("molestiaDespues",l.molestiaDespues,0,10,"mol")}`;
+    if(!P.zonaMolestia) h+=`<label class="lb">¿Dónde? (si hubo molestia)<input class="txt" id="zona" type="text" data-top="zona" value="${esc(l.zona||"")}" placeholder="ej. rodilla derecha"></label>`;
+    h+=molHint(l);
+  }
+  h+=`<label class="lb">Notas<textarea id="notas" data-top="notas" placeholder="Escalas usadas, cómo te sentiste, molestias…">${esc(l.notas||"")}</textarea></label>`;
+  h+=`<div class="saverow"><span id="status">${statusText()}</span><span>${esc(p.dia||"")}</span></div></div></section>`;
+  return h;
+}
+function weekInfo(ws){
+  const out={plan:0,hechos:0,dias:[]};
+  for(let i=0;i<7;i++){const f=iso(add(ws,i)), p=plan[f]; if(p){out.dias.push(f); if(p.tipo!=="descanso"){out.plan++; if(hasData(logs[f])) out.hechos++;}}}
+  return out;
+}
+function weekCardHtml(){
+  const w=weekInfo(weekStart); if(!w.dias.length) return "";
+  const ws=iso(weekStart), env=enviados[ws];
+  const pct=w.plan?Math.round(w.hechos/w.plan*100):0;
+  return `<div class="weekcard" id="weekcard">
+    <div class="t">Tu semana del ${fechaCorta(weekStart)}</div>
+    <div class="s">${w.hechos} de ${w.plan} entrenamientos registrados${env?` · Enviada el ${esc(env.txt)}`:""}</div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <button class="btn ${env?"":"ok"} block" data-send="${ws}">${env?"Volver a enviar mi semana":"Enviar mi semana al coach"}</button>
+  </div>`;
+}
+function renderWeekCard(){ const c=$("#weekcard"); if(c) c.outerHTML=weekCardHtml(); }
+
+function render(){
+  renderStrip();
+  const m=$("#main"), p=plan[sel], ds=Object.keys(plan).sort();
+  let h="";
+  if(offline) h+=`<div class="notice warn"><span>Sin conexión: estás viendo el último plan descargado.</span></div>`;
+  if(ds.length && todayIso<ds[0] && sel===ds[0]) h+=`<div class="notice"><span>Tu plan empieza el ${esc((plan[ds[0]].dia||fechaCorta(parse(ds[0]))).toLowerCase())}. Puedes revisar las sesiones desde ya.</span></div>`;
+  else if(sel!==todayIso && plan[todayIso]) h+=`<div class="notice"><span>Estás viendo otro día.</span><button class="btn primary" id="hoy">Ir a hoy</button></div>`;
+  if(!p){
+    const d=parse(sel);
+    h+=`<div class="hero"><h1>${DIAS[(d.getDay()+6)%7]} ${d.getDate()} de ${MESES[d.getMonth()]}</h1></div><div class="empty">No hay nada planificado para este día.${ds.length?"":" Tu coach cargará tu plan aquí."}</div>`;
+    m.innerHTML=h+weekCardHtml(); return;
+  }
+  const l=log(sel);
+  h+=`<div class="hero"><h1>${esc(p.titulo)}</h1><div class="meta"><span class="pill ${esc(p.tipo)}">${esc(TIPO[p.tipo]||p.tipo)}</span><span>${esc(p.dia||"")}</span>${p.fase?`<span>· Semana ${esc(p.semana)}: ${esc(p.fase)}</span>`:""}</div>${p.objetivo?`<div class="obj">${esc(p.objetivo)}</div>`:""}</div>`;
+  if(p.tipo==="clase") h+=renderClase(p,l);
+  h+=renderSecciones(p,l);
+  if(p.tipo==="descanso"&&P.resumenSemanal!==false) h+=renderResumen(l);
+  h+=renderRegistro(p,l,p.tipo==="clase"?"Cómo terminé":p.tipo==="descanso"?"Notas":"Registro al terminar");
+  h+=weekCardHtml();
+  m.innerHTML=h;
+}
+function statusText(){
+  if(saveErr) return `<span class="err">No se pudo guardar: el teléfono no tiene espacio o bloquea el almacenamiento.</span>`;
+  if(timer) return "Guardando…";
+  if(lastSave) return `<span class="saved">Guardado en el teléfono ${lastSave}</span>`;
+  return "Se guarda automáticamente";
+}
+function paintStatus(){const s=$("#status"); if(s) s.innerHTML=statusText();}
+
+// ---------- exportar ----------
+function resolveDay(f){
+  const p=plan[f]||{}, l=logs[f]||{};
+  const series=[];
+  (p.secciones||[]).forEach((s,si)=>(s.items||[]).forEach((it,ii)=>{
+    const k=`s${si}i${ii}`;
+    if(it.series&&l.sets&&l.sets[k]){
+      const sets=l.sets[k].filter(x=>x&&Object.values(x).some(v=>v!==""&&v!=null));
+      if(sets.length) series.push({seccion:s.titulo,ejercicio:it.nombre,presc:it.presc||"",sets});
+    }
+  }));
+  const checks=[];
+  (p.secciones||[]).forEach((s,si)=>{ if(!s.check) return; const tot=(s.items||[]).length; const done=(s.items||[]).filter((_,ii)=>l.checks&&l.checks[`s${si}i${ii}`]).length; checks.push({seccion:s.titulo,hechos:done,total:tot}); });
+  let clase=null;
+  if(l.clase){ clase=JSON.parse(JSON.stringify(l.clase)); clase.ejercicios=(clase.ejercicios||[]).map(e=>({nombre:e.nombre||"",sets:(e.sets||[]).filter(filled)})).filter(e=>e.nombre||e.sets.length); }
+  return {fecha:f,titulo:p.titulo||"",tipo:p.tipo||"",bloque:p.bloque??null,semana:p.semana??null,fase:p.fase||"",
+    registrado:hasData(l), rpe:l.rpe??null, molestiaAntes:l.molestiaAntes??null, molestiaDespues:l.molestiaDespues??null,
+    zona:P.zonaMolestia||l.zona||"", registro:l.registro||{}, series, checks, clase, resumen:l.resumen||null, notas:l.notas||""};
+}
+function download(file){
+  const a=document.createElement("a"); a.href=URL.createObjectURL(file); a.download=file.name;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);
+}
+async function shareOrDownload(file,title,text){
+  try{
+    if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title,text}); return "share"; }
+  }catch(e){ if(e&&e.name==="AbortError") return "abort"; }
+  download(file); return "download";
+}
+async function sendWeek(ws){
+  if(timer){clearTimeout(timer);timer=null;persistLogs();}
+  const start=parse(ws), dias=[];
+  for(let i=0;i<7;i++){const f=iso(add(start,i)); if(plan[f]||hasData(logs[f])) dias.push(resolveDay(f));}
+  const w=weekInfo(start);
+  const payload={formato:"planilla-semana",version:1,codigo,atleta:P.atleta||codigo,plan:P.bloque||"",
+    semana:{inicio:ws,fin:iso(add(start,6))},generado:new Date().toISOString(),
+    cumplimiento:{planificados:w.plan,registrados:w.hechos},resumenCampos:P.resumenCampos||RES_DEF,dias};
+  const file=new File([JSON.stringify(payload,null,1)],`semana_${codigo}_${ws}.json`,{type:"application/json"});
+  const r=await shareOrDownload(file,`Semana ${fechaCorta(start)} · ${P.atleta||codigo}`,`Mi semana del ${fechaCorta(start)}: ${w.hechos}/${w.plan} entrenamientos registrados.`);
+  if(r==="abort") return;
+  const d=new Date(); enviados[ws]={at:d.toISOString(),txt:`${d.getDate()}/${d.getMonth()+1} ${hhmm(d)}`}; store.set(K().env,enviados);
+  renderWeekCard(); closeMenu();
+  toast(r==="share"?"Listo. Asegúrate de enviarlo a tu coach.":"Archivo descargado. Envíaselo a tu coach por WhatsApp o correo.");
+}
+async function backup(){
+  const payload={formato:"planilla-respaldo",version:1,codigo,atleta:P&&P.atleta||codigo,generado:new Date().toISOString(),logs,enviados};
+  const file=new File([JSON.stringify(payload)],`respaldo_${codigo}_${todayIso}.json`,{type:"application/json"});
+  const r=await shareOrDownload(file,"Respaldo Planilla","Respaldo de mis registros");
+  if(r!=="abort"){ closeMenu(); toast("Respaldo listo. Guárdalo en tu correo o en la nube."); }
+}
+function importPlan(file){
+  const fr=new FileReader();
+  fr.onload=async()=>{
+    try{
+      const p=JSON.parse(fr.result);
+      if(!p||!p.codigo||!Array.isArray(p.dias)) throw new Error("formato");
+      const code=cleanCode(p.codigo);
+      if(codigo&&code!==codigo&&!confirm(`Este plan es de ${p.atleta||code}. ¿Abrirlo en este teléfono?`)) return;
+      store.set(`pl:${code}:planArchivo`,p);
+      closeMenu(); await start(code); toast(`Plan de ${p.atleta||code} cargado.`);
+    }catch(e){ toast("Ese archivo no es un plan de Planilla."); }
+  };
+  fr.readAsText(file);
+}
+function restore(file){
+  const fr=new FileReader();
+  fr.onload=()=>{
+    try{
+      const d=JSON.parse(fr.result);
+      if(d.formato!=="planilla-respaldo"||!d.logs) throw new Error("formato");
+      if(d.codigo&&d.codigo!==codigo&&!confirm(`Este respaldo es del código «${d.codigo}». ¿Cargarlo igual en «${codigo}»?`)) return;
+      // fusión: gana el registro más reciente de cada día
+      Object.entries(d.logs).forEach(([f,l])=>{ const cur=logs[f]; if(!cur||!hasData(cur)||(l.updatedAt||"")>(cur.updatedAt||"")) logs[f]=l; });
+      Object.assign(enviados,d.enviados||{}); store.set(K().env,enviados);
+      persistLogs(); render(); closeMenu(); toast("Respaldo restaurado.");
+    }catch(e){ toast("Ese archivo no es un respaldo de Planilla."); }
+  };
+  fr.readAsText(file);
+}
+
+// ---------- menú ----------
+function openMenu(){
+  const dlg=$("#menu"), ws=iso(weekStart);
+  dlg.innerHTML=`<div class="sheet">
+    <h3>Opciones</h3><div class="sub">${esc(P.atleta||"")} · código ${esc(codigo)}</div>
+    <button class="btn ok" data-send="${ws}">Enviar mi semana<small>Semana del ${fechaCorta(weekStart)} · archivo para tu coach</small></button>
+    <button class="btn" id="m-refresh">Actualizar mi plan<small>Descarga la última versión que publicó tu coach</small></button>
+    <button class="btn" id="m-planfile">Cargar plan desde archivo<small>El archivo de plan que te mandó tu coach</small></button>
+    <button class="btn" id="m-backup">Descargar respaldo<small>Todos tus registros, por si cambias de teléfono</small></button>
+    <button class="btn" id="m-restore">Restaurar respaldo<small>Carga un archivo de respaldo en este teléfono</small></button>
+    <button class="btn" id="m-logout">Cambiar de atleta<small>Tus registros se mantienen en este teléfono</small></button>
+    <button class="btn ghost" id="m-close" style="text-align:center">Cerrar</button>
+  </div>`;
+  if(dlg.showModal) dlg.showModal(); else dlg.setAttribute("open","");
+}
+function closeMenu(){ const d=$("#menu"); if(d.open){ if(d.close) d.close(); else d.removeAttribute("open"); } }
+let toastT=null;
+function toast(msg){ let t=$(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=msg; clearTimeout(toastT); toastT=setTimeout(()=>t.remove(),3800); }
+
+// ---------- eventos ----------
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button,[data-chk]"); if(!t) return;
+  if(t.id==="entrar"){ const c=cleanCode($("#code").value); if(c) start(c); return; }
+  if(t.id==="openmenu"){openMenu();return;}
+  if(t.id==="m-close"){closeMenu();return;}
+  if(t.id==="m-backup"){backup();return;}
+  if(t.id==="m-restore"){$("#restore").click();return;}
+  if(t.id==="m-planfile"||t.id==="w-planfile"){$("#planfile").click();return;}
+  if(t.id==="m-refresh"){ const r=await loadPlan(codigo); if(r.plan){applyPlan(r.plan); render(); toast(r.from==="red"?"Plan actualizado.":r.from==="archivo"?"Tienes el plan más reciente que te mandó tu coach.":"Sin conexión: se mantiene el plan guardado.");} closeMenu(); return; }
+  if(t.id==="m-logout"){ store.del("pl:codigo"); closeMenu(); codigo=null; renderWelcome(); return; }
+  if(t.dataset.send){ sendWeek(t.dataset.send); return; }
+  if(!P) return;
+  if(t.id==="prev"){weekStart=add(weekStart,-7);renderStrip();renderWeekCard();return;}
+  if(t.id==="next"){weekStart=add(weekStart,7);renderStrip();renderWeekCard();return;}
+  if(t.id==="hoy"){go(todayIso);return;}
+  if(t.dataset.f){go(t.dataset.f);return;}
+  const l=log(sel);
+  if(t.dataset.chk){l.checks=l.checks||{};l.checks[t.dataset.chk]=!l.checks[t.dataset.chk];t.classList.toggle("on");t.setAttribute("aria-checked",!!l.checks[t.dataset.chk]);schedule();return;}
+  if(t.dataset.scale){const k=t.dataset.scale,v=+t.dataset.v;l[k]=l[k]===v?null:v;schedule();rerenderKeep();return;}
+  if(t.dataset.foco){l.clase=l.clase||{};l.clase.foco=l.clase.foco===t.dataset.foco?null:t.dataset.foco;schedule();rerenderKeep();return;}
+  if(t.id==="addex"){l.clase=l.clase||{};l.clase.ejercicios=l.clase.ejercicios||[];l.clase.ejercicios.push({nombre:"",sets:[{},{},{}]});schedule();rerenderKeep(`ex-${l.clase.ejercicios.length-1}`);return;}
+  if(t.dataset.addset){const ex=l.clase.ejercicios[+t.dataset.addset];ex.sets.push({});schedule();rerenderKeep(`ex-${t.dataset.addset}-${ex.sets.length-1}-kg`);return;}
+  if(t.dataset.exdel){l.clase.ejercicios.splice(+t.dataset.exdel,1);schedule();rerenderKeep();return;}
+});
+document.addEventListener("keydown",e=>{ const t=e.target.closest&&e.target.closest("[data-chk]"); if(t&&(e.key===" "||e.key==="Enter")){e.preventDefault();t.click();} });
+document.addEventListener("input",e=>{
+  if(!P) return;
+  const t=e.target, d=t.dataset, v=t.value, l=log(sel), num=x=>x.replace(",",".");
+  if(d.set!==undefined){l.sets=l.sets||{};const a=l.sets[d.set]=l.sets[d.set]||[];a[+d.i]=a[+d.i]||{};a[+d.i][d.c]=num(v);for(let i=0;i<a.length;i++)a[i]=a[i]||{};}
+  else if(d.reg!==undefined){l.registro=l.registro||{};l.registro[d.reg]=v;}
+  else if(d.top){l[d.top]=v;}
+  else if(d.res){l.resumen=l.resumen||{};l.resumen[d.res]=v;}
+  else if(d.cl){l.clase=l.clase||{};l.clase[d.cl]=v;}
+  else if(d.exn!==undefined){l.clase.ejercicios[+d.exn].nombre=v;}
+  else if(d.exs!==undefined){const s=l.clase.ejercicios[+d.exs].sets;s[+d.i]=s[+d.i]||{};s[+d.i][d.c]=num(v);}
+  else return;
+  schedule();
+});
+$("#restore").addEventListener("change",e=>{const f=e.target.files[0]; if(f) restore(f); e.target.value="";});
+$("#planfile").addEventListener("change",e=>{const f=e.target.files[0]; if(f) importPlan(f); e.target.value="";});
+$("#menu").addEventListener("click",e=>{ if(e.target.id==="menu") closeMenu(); });
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&timer){clearTimeout(timer);timer=null;persistLogs();} });
+
+function rerenderKeep(focusId){
+  const y=window.scrollY, a=document.activeElement&&document.activeElement.id;
+  render(); window.scrollTo(0,y);
+  const el=document.getElementById(focusId||a); if(el&&el.focus) el.focus({preventScroll:!focusId});
+}
+function go(f){
+  if(timer){clearTimeout(timer);timer=null;persistLogs();}
+  sel=f; weekStart=monday(parse(f)); render(); window.scrollTo(0,0);
+  store.set(`pl:${codigo}:sel`,f);
+}
+
+// ---------- arranque ----------
+async function start(code){
+  $("#app").innerHTML=`<div class="empty">Cargando tu plan…</div>`;
+  const r=await loadPlan(code);
+  if(!r.plan){ renderWelcome(r.notFound?`No encontramos el código «${code}». Revísalo con tu coach.`:"No hay conexión y este teléfono aún no tiene tu plan. Conéctate e inténtalo de nuevo."); const i=$("#code"); if(i) i.value=code; return; }
+  codigo=code; store.set("pl:codigo",code);
+  applyPlan(r.plan);
+  logs=store.get(K().logs,{})||{}; enviados=store.get(K().env,{})||{};
+  const s=store.get(`pl:${code}:sel`,null);
+  sel=(s&&plan[s]&&s>=todayIso)?s:pickInitial(); weekStart=monday(parse(sel));
+  shell(); render();
+  if(new URLSearchParams(location.search).has("a")) history.replaceState(null,"",location.pathname);
+}
+const fromUrl=cleanCode(new URLSearchParams(location.search).get("a"));
+const saved=store.get("pl:codigo",null);
+if(fromUrl) start(fromUrl); else if(saved) start(saved); else renderWelcome();
+
+if(navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+})();
+</script>
+</body>
+</html>
