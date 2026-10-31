@@ -1,30 +1,41 @@
-// Capa de componentes: detalle de una sesión con sus bloques
+// Capa de componentes: tarjeta que muestra una sesión
 
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonText } from '@ionic/react';
+import { IonBadge, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonText } from '@ionic/react';
 import type { Sesion } from '../data/semana';
 
-function SesionDetalle({ sesion }: { sesion: Sesion }) {
+const colorPorTipo: Record<Sesion['tipo'], string> = {
+  CrossFit: 'primary',
+  Halterofilia: 'secondary',
+  Running: 'tertiary',
+  Descanso: 'medium',
+};
+
+interface Props {
+  sesion: Sesion;
+  registrada: boolean;
+  onAbrir: () => void;
+}
+
+function SesionCard({ sesion, registrada, onAbrir }: Props) {
   return (
-    <>
-      <IonText color="medium">
-        <p>
-          {sesion.dia} · {sesion.fecha} · {sesion.tipo}
-        </p>
-      </IonText>
-      {sesion.bloques.map((bloque) => (
-        <IonCard key={bloque.nombre}>
-          <IonCardHeader>
-            <IonCardSubtitle color="primary">{bloque.nombre}</IonCardSubtitle>
-          </IonCardHeader>
-          <IonCardContent>
-            {bloque.contenido.map((linea) => (
-              <p key={linea}>{linea}</p>
-            ))}
-          </IonCardContent>
-        </IonCard>
-      ))}
-    </>
+    <IonCard button onClick={onAbrir}>
+      <IonCardHeader>
+        <IonCardSubtitle>
+          {sesion.dia} · {sesion.fecha}
+        </IonCardSubtitle>
+        <IonCardTitle>{sesion.titulo}</IonCardTitle>
+      </IonCardHeader>
+      <IonCardContent>
+        <IonBadge color={colorPorTipo[sesion.tipo]}>{sesion.tipo}</IonBadge>
+        <p>{sesion.detalle}</p>
+        {registrada && (
+          <IonText color="primary">
+            <p>✓ Registrada</p>
+          </IonText>
+        )}
+      </IonCardContent>
+    </IonCard>
   );
 }
 
-export default SesionDetalle;
+export default SesionCard;

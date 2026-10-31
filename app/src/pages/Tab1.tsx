@@ -1,15 +1,37 @@
 // Capa de pantallas: Mi semana
 
 import { useState } from 'react';
-import { IonButton, IonButtons, IonContent, IonHeader, IonModal, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonModal,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  useIonToast,
+} from '@ionic/react';
 import SesionCard from '../components/SesionCard';
 import SesionDetalle from '../components/SesionDetalle';
+import RegistroForm from '../components/RegistroForm';
 import { semanaEjemplo } from '../data/semana';
 import type { Sesion } from '../data/semana';
+import type { Registro } from '../data/registro';
+import { guardarRegistro, leerRegistros } from '../services/registros';
 import './Tab1.css';
 
 function Tab1() {
   const [seleccionada, setSeleccionada] = useState<Sesion | null>(null);
+  const [registros, setRegistros] = useState<Record<string, Registro>>(() => leerRegistros());
+  const [mostrarAviso] = useIonToast();
+
+  function alGuardar(registro: Registro) {
+    guardarRegistro(registro);
+    setRegistros(leerRegistros());
+    setSeleccionada(null);
+    mostrarAviso({ message: 'Registro guardado ✓', duration: 1500, color: 'primary', position: 'top' });
+  }
 
   return (
     <IonPage>
@@ -26,7 +48,12 @@ function Tab1() {
         </IonHeader>
 
         {semanaEjemplo.map((sesion) => (
-          <SesionCard key={sesion.id} sesion={sesion} onAbrir={() => setSeleccionada(sesion)} />
+          <SesionCard
+            key={sesion.id}
+            sesion={sesion}
+            registrada={Boolean(registros[sesion.id])}
+            onAbrir={() => setSeleccionada(sesion)}
+          />
         ))}
 
         <IonModal isOpen={seleccionada !== null} onDidDismiss={() => setSeleccionada(null)}>
@@ -39,7 +66,17 @@ function Tab1() {
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
-            {seleccionada && <SesionDetalle sesion={seleccionada} />}
+            {seleccionada && (
+              <>
+                <SesionDetalle sesion={seleccionada} />
+                <RegistroForm
+                  key={seleccionada.id}
+                  sesionId={seleccionada.id}
+                  inicial={registros[seleccionada.id]}
+                  onGuardar={alGuardar}
+                />
+              </>
+            )}
           </IonContent>
         </IonModal>
       </IonContent>
