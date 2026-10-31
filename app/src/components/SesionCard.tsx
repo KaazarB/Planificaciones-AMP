@@ -10,9 +10,9 @@ const colorPorTipo: Record<Sesion['tipo'], string> = {
   Descanso: 'medium',
 };
 
-function SesionCard({ sesion }: { sesion: Sesion }) {
+function SesionCard({ sesion, onAbrir }: { sesion: Sesion; onAbrir: () => void }) {
   return (
-    <IonCard>
+    <IonCard button onClick={onAbrir}>
       <IonCardHeader>
         <IonCardSubtitle>
           {sesion.dia} · {sesion.fecha}
