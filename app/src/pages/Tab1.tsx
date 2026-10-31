@@ -1,26 +1,30 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+// Capa de pantallas: Mi semana
 
-import ExploreContainer from '../components/ExploreContainer';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import SesionCard from '../components/SesionCard';
+import { semanaEjemplo } from '../data/semana';
 import './Tab1.css';
 
-const Tab1: React.FC = () => {
+function Tab1() {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 1</IonTitle>
+          <IonTitle>Mi semana</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
+            <IonTitle size="large">Mi semana</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="Tab 1 page" />
+        {semanaEjemplo.map((sesion) => (
+          <SesionCard key={sesion.dia} sesion={sesion} />
+        ))}
       </IonContent>
     </IonPage>
   );
-};
+}
 
 export default Tab1;
