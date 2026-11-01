@@ -6,25 +6,32 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonModal,
   IonPage,
+  IonText,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from '@ionic/react';
+import { chevronBack, chevronForward } from 'ionicons/icons';
 import SesionCard from '../components/SesionCard';
 import SesionDetalle from '../components/SesionDetalle';
 import RegistroForm from '../components/RegistroForm';
-import { semanaEjemplo } from '../data/semana';
+import { planificacion } from '../data/semana';
 import type { Sesion } from '../data/semana';
 import type { Registro } from '../data/registro';
 import { guardarRegistro, leerRegistros } from '../services/registros';
+import { lunesDe, sesionesDeLaSemana, sumarDias, textoSemana } from '../domain/semanas';
 import './Tab1.css';
 
 function Tab1() {
+  const [lunes, setLunes] = useState<Date>(() => lunesDe(new Date()));
   const [seleccionada, setSeleccionada] = useState<Sesion | null>(null);
   const [registros, setRegistros] = useState<Record<string, Registro>>({});
   const [mostrarAviso] = useIonToast();
+
+  const sesiones = sesionesDeLaSemana(planificacion, lunes);
 
   useEffect(() => {
     leerRegistros()
@@ -51,15 +58,29 @@ function Tab1() {
         <IonToolbar>
           <IonTitle>Mi semana</IonTitle>
         </IonToolbar>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => setLunes(sumarDias(lunes, -7))} aria-label="Semana anterior">
+              <IonIcon slot="icon-only" icon={chevronBack} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle size="small">{textoSemana(lunes)}</IonTitle>
+          <IonButtons slot="end">
+            <IonButton onClick={() => setLunes(sumarDias(lunes, 7))} aria-label="Semana siguiente">
+              <IonIcon slot="icon-only" icon={chevronForward} />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Mi semana</IonTitle>
-          </IonToolbar>
-        </IonHeader>
 
-        {semanaEjemplo.map((sesion) => (
+      <IonContent fullscreen>
+        {sesiones.length === 0 && (
+          <IonText color="medium">
+            <p className="ion-padding">No hay sesiones planificadas para esta semana.</p>
+          </IonText>
+        )}
+
+        {sesiones.map((sesion) => (
           <SesionCard
             key={sesion.id}
             sesion={sesion}

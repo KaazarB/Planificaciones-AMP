@@ -1,4 +1,5 @@
-// Capa de datos: modelo de una sesión y semana de ejemplo
+// Capa de datos: modelo de una sesión y la planificación
+// El id de cada sesión es su fecha (AAAA-MM-DD), así cada día tiene su propio registro
 
 export type TipoSesion = 'CrossFit' | 'Halterofilia' | 'Running' | 'Descanso';
 
@@ -17,9 +18,10 @@ export interface Sesion {
   bloques: Bloque[];
 }
 
-export const semanaEjemplo: Sesion[] = [
+export const planificacion: Sesion[] = [
+  // ===== Semana 1: 9 al 15 de noviembre =====
   {
-    id: 'lun',
+    id: '2026-11-09',
     dia: 'Lunes',
     fecha: '9 nov',
     tipo: 'CrossFit',
@@ -33,7 +35,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'mar',
+    id: '2026-11-10',
     dia: 'Martes',
     fecha: '10 nov',
     tipo: 'Halterofilia',
@@ -44,7 +46,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'mie',
+    id: '2026-11-11',
     dia: 'Miércoles',
     fecha: '11 nov',
     tipo: 'CrossFit',
@@ -57,7 +59,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'jue',
+    id: '2026-11-12',
     dia: 'Jueves',
     fecha: '12 nov',
     tipo: 'Halterofilia',
@@ -68,7 +70,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'vie',
+    id: '2026-11-13',
     dia: 'Viernes',
     fecha: '13 nov',
     tipo: 'CrossFit',
@@ -81,7 +83,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'sab',
+    id: '2026-11-14',
     dia: 'Sábado',
     fecha: '14 nov',
     tipo: 'Running',
@@ -92,7 +94,7 @@ export const semanaEjemplo: Sesion[] = [
     ],
   },
   {
-    id: 'dom',
+    id: '2026-11-15',
     dia: 'Domingo',
     fecha: '15 nov',
     tipo: 'Descanso',
