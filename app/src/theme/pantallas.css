@@ -368,3 +368,8 @@
   display: flex;
   gap: 14px;
 }
+
+.boton.whatsapp {
+  margin-top: 10px;
+  background: #1f8a4c;
+}

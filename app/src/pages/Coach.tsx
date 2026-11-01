@@ -30,6 +30,23 @@ function leerTexto(archivo: File): Promise<string> {
   });
 }
 
+// Deja el número listo para wa.me: solo dígitos y con código de Chile si falta
+function numeroWhatsapp(valor: unknown): string {
+  if (typeof valor !== 'string') return '';
+  let n = valor.replace(/\D/g, '');
+  if (n.length === 9 && n.startsWith('9')) n = `56${n}`;
+  if (n.length === 8) n = `569${n}`;
+  return n.length >= 10 ? n : '';
+}
+
+const fechaCorta = (iso: string) => {
+  const [a, m, d] = iso.split('-').map(Number);
+  const f = new Date(a, m - 1, d);
+  const dia = f.toLocaleDateString('es-CL', { weekday: 'long' });
+  const mes = f.toLocaleDateString('es-CL', { month: 'long' });
+  return `${dia} ${d} de ${mes}`;
+};
+
 const ordenEstado: Estado[] = ['evaluacion', 'activo', 'ficha', 'pausa'];
 
 function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
@@ -40,6 +57,7 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
   const [trabajando, setTrabajando] = useState('');
   const [pendiente, setPendiente] = useState<{ plan: Plan; resumen: string } | null>(null);
   const [porQuitar, setPorQuitar] = useState<FilaPlan | null>(null);
+  const [planCargado, setPlanCargado] = useState('');
   const [error, setError] = useState('');
 
   const recargarPlanes = useCallback(() => planesDe(atleta.id).then(setPlanes), [atleta.id]);
@@ -85,6 +103,7 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
       if (estado !== 'activo') await cambiarEstado('activo');
       await recargarPlanes();
       setMensaje(`Plan cargado: ${pendiente.resumen}. ${atleta.nombre.split(' ')[0]} ya lo ve en su app.`);
+      setPlanCargado(`bloque ${pendiente.plan.bloque.numero}, desde el ${fechaCorta(pendiente.plan.bloque.inicio)}`);
       setPendiente(null);
     } catch (e) {
       setError(mensajeError(e));
@@ -104,7 +123,14 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
     }
   }
 
-  const whatsapp = typeof ficha?.whatsapp === 'string' ? ficha.whatsapp.replace(/\D/g, '') : '';
+  const whatsapp = numeroWhatsapp(ficha?.whatsapp);
+  const primerNombre = atleta.apodo || atleta.nombre.split(' ')[0];
+  const enlaceApp = `${window.location.origin}${window.location.pathname}`;
+  const avisoPlan = encodeURIComponent(
+    `¡Hola ${primerNombre}! 💪 Ya está cargada tu planificación en la app (${planCargado}).\n\n` +
+      `Ábrela desde el ícono o en este link: ${enlaceApp}\n\n` +
+      'Revisa tu primera sesión y cualquier duda me escribes. ¡Vamos con todo!',
+  );
 
   return (
     <>
@@ -190,6 +216,19 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
           </label>
         )}
         {mensaje && <p className="aviso">{mensaje}</p>}
+        {planCargado &&
+          (whatsapp ? (
+            <a
+              className="boton ancho whatsapp"
+              href={`https://wa.me/${whatsapp}?text=${avisoPlan}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Avisar a {primerNombre} por WhatsApp
+            </a>
+          ) : (
+            <p className="tenue">No tiene WhatsApp en su ficha para avisarle.</p>
+          ))}
         {error && <p className="aviso-error">{error}</p>}
       </div>
 
