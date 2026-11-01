@@ -14,6 +14,8 @@ import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
 import { guardarApodo } from '../services/cuenta';
 import { cargarPlan } from '../services/plan';
 import { guardarLocal, leerLocales, sincronizar, subirRegistro } from '../services/registros';
+import type { Videos } from '../services/videos';
+import { leerVideos } from '../services/videos';
 import './Tab1.css';
 
 const etiquetaTipo: Record<TipoDia, string> = {
@@ -52,6 +54,7 @@ function Tab1(): React.JSX.Element {
 
   const [plan, setPlan] = useState<Plan | null>(null);
   const [sinPlan, setSinPlan] = useState(false);
+  const [videos, setVideos] = useState<Videos>(new Map());
   const [error, setError] = useState('');
   const [fecha, setFecha] = useState(hoy);
   const [registros, setRegistros] = useState<Record<string, RegistroDia>>(() => leerLocales(atleta));
@@ -73,6 +76,9 @@ function Tab1(): React.JSX.Element {
       })
       .catch((e: Error) => setError(e.message || 'No se pudo cargar tu plan.'));
     sincronizar(atleta).then(({ registros: r }) => setRegistros(r));
+    leerVideos()
+      .then(setVideos)
+      .catch(() => undefined);
   }, [atleta, hoy]);
 
   const lunes = lunesDe(aFecha(fecha));
@@ -268,6 +274,7 @@ function Tab1(): React.JSX.Element {
                   registro={registro}
                   onAlternar={() => alternar(`s${i}`)}
                   onCambiar={cambiar}
+                  videos={videos}
                 />
               ))}
 

@@ -3,6 +3,7 @@
 import { IonContent, IonPage } from '@ionic/react';
 import { useCallback, useEffect, useState } from 'react';
 
+import BibliotecaVideos from '../components/BibliotecaVideos';
 import FichaResumen from '../components/FichaResumen';
 import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
@@ -251,6 +252,7 @@ function Coach(): React.JSX.Element {
   const { perfil } = useCuenta();
   const [atletas, setAtletas] = useState<Perfil[]>([]);
   const [elegido, setElegido] = useState<Perfil | null>(null);
+  const [verVideos, setVerVideos] = useState(false);
   const [error, setError] = useState('');
 
   const [version, setVersion] = useState(0);
@@ -283,7 +285,9 @@ function Coach(): React.JSX.Element {
     <IonPage>
       <IonContent className="plan">
         <div className="plan-envoltura">
-          {elegido ? (
+          {verVideos ? (
+            <BibliotecaVideos onVolver={() => setVerVideos(false)} />
+          ) : elegido ? (
             <DetalleAtleta
               atleta={elegido}
               esYo={elegido.id === perfil?.id}
@@ -300,6 +304,12 @@ function Coach(): React.JSX.Element {
                   Actualizar
                 </button>
               </header>
+              <button className="fila-atleta acceso-videos" onClick={() => setVerVideos(true)}>
+                <span>
+                  <strong>▶ Videos de ejercicios</strong>
+                </span>
+                <span className="tenue">Tutoriales ›</span>
+              </button>
               {error && <p className="aviso-error">{error}</p>}
               {grupos.map((g) => (
                 <section key={g.estado}>

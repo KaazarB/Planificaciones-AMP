@@ -373,3 +373,40 @@
   margin-top: 10px;
   background: #1f8a4c;
 }
+
+.acceso-videos {
+  margin-top: 12px;
+  background: #e3ecfa;
+  border-color: #c9d9f3;
+}
+.buscar {
+  margin: 12px 0 4px;
+}
+.fila-video {
+  margin-top: 10px;
+  padding: 12px 14px;
+}
+.fila-video-cabeza {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.fila-video-campo {
+  display: flex;
+  gap: 8px;
+}
+.fila-video-campo input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 16px;
+  color: var(--tinta);
+  background: #fff;
+}
+.fila-video-campo .boton {
+  min-height: 44px;
+  padding: 0 14px;
+}

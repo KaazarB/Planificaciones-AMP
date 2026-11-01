@@ -279,8 +279,57 @@
   border-bottom: 1px solid #ededeb;
   font-size: 15px;
 }
-.item:last-of-type {
+.item:last-of-type,
+.item-envoltura:last-of-type .item {
   border-bottom: 0;
+}
+.item-envoltura .item {
+  border-bottom: 1px solid #ededeb;
+}
+.item-texto {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+.item-texto .item-nombre {
+  flex: 0 1 auto;
+}
+.boton-video {
+  border: 0;
+  background: #e3ecfa;
+  color: var(--azul);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.boton-video.abierto {
+  background: var(--barra);
+  color: #fff;
+}
+.video-marco {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 4px 0 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+.video-marco iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.video-enlace {
+  display: inline-block;
+  margin: 4px 0 12px;
+  color: var(--azul);
 }
 .item-nombre {
   flex: 1;

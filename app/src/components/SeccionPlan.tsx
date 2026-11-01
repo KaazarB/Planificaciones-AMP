@@ -1,9 +1,15 @@
 // Capa de componentes: una sección del día (barra negra que se abre y se cierra)
 
-import type { Campo, Seccion } from '../data/plan';
+import { useState } from 'react';
+
+import type { Campo, Item, Seccion } from '../data/plan';
 import { claveItem } from '../data/plan';
 import type { FilaSerie, RegistroDia } from '../data/registro';
 import { progresoSeccion } from '../domain/progreso';
+import { claveEjercicio } from '../domain/videos';
+import type { Videos } from '../services/videos';
+
+import VideoEjercicio from './VideoEjercicio';
 
 const unidad: Record<Campo, string> = { kg: 'kg', reps: 'reps', seg: 'seg' };
 
@@ -14,10 +20,40 @@ interface Props {
   registro: RegistroDia;
   onAlternar: () => void;
   onCambiar: (cambio: Partial<RegistroDia>) => void;
+  videos?: Videos;
 }
 
-function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar }: Props): React.JSX.Element {
+function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar, videos }: Props): React.JSX.Element {
   const progreso = progresoSeccion(seccion, indice, registro);
+  const [videoAbierto, setVideoAbierto] = useState<string | null>(null);
+
+  const videoDe = (item: Item) => item.video || videos?.get(claveEjercicio(item.nombre));
+
+  // Botón ▶ junto al nombre; dentro de una casilla no debe marcarla
+  function botonVideo(clave: string, item: Item) {
+    if (!videoDe(item)) return null;
+    const abierto = videoAbierto === clave;
+    return (
+      <button
+        type="button"
+        className={`boton-video ${abierto ? 'abierto' : ''}`}
+        aria-expanded={abierto}
+        aria-label={`${abierto ? 'Ocultar' : 'Ver'} técnica de ${item.nombre}`}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setVideoAbierto(abierto ? null : clave);
+        }}
+      >
+        {abierto ? '✕ Cerrar' : '▶ Ver técnica'}
+      </button>
+    );
+  }
+
+  function video(clave: string, item: Item) {
+    const url = videoDe(item);
+    return videoAbierto === clave && url ? <VideoEjercicio url={url} nombre={item.nombre} /> : null;
+  }
 
   function marcar(clave: string) {
     onCambiar({ checks: { ...registro.checks, [clave]: !registro.checks[clave] } });
@@ -51,12 +87,18 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
             if (seccion.check) {
               const hecho = Boolean(registro.checks[clave]);
               return (
-                <label key={clave} className={`item item-check ${hecho ? 'hecho' : ''}`}>
-                  <input type="checkbox" checked={hecho} onChange={() => marcar(clave)} />
-                  <span className="caja" aria-hidden="true" />
-                  <span className="item-nombre">{item.nombre}</span>
-                  <span className="item-presc">{item.presc}</span>
-                </label>
+                <div key={clave} className="item-envoltura">
+                  <label className={`item item-check ${hecho ? 'hecho' : ''}`}>
+                    <input type="checkbox" checked={hecho} onChange={() => marcar(clave)} />
+                    <span className="caja" aria-hidden="true" />
+                    <span className="item-texto">
+                      <span className="item-nombre">{item.nombre}</span>
+                      {botonVideo(clave, item)}
+                    </span>
+                    <span className="item-presc">{item.presc}</span>
+                  </label>
+                  {video(clave, item)}
+                </div>
               );
             }
 
@@ -65,9 +107,13 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
               return (
                 <div key={clave} className="item item-series">
                   <div className="item-cabeza">
-                    <span className="item-nombre">{item.nombre}</span>
+                    <span className="item-texto">
+                      <span className="item-nombre">{item.nombre}</span>
+                      {botonVideo(clave, item)}
+                    </span>
                     <span className="item-presc">{item.presc}</span>
                   </div>
+                  {video(clave, item)}
                   {Array.from({ length: item.series }, (_, k) => (
                     <div key={k} className="fila-serie">
                       <span className="num-serie">{k + 1}</span>
@@ -90,9 +136,15 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
             }
 
             return (
-              <div key={clave} className="item item-info">
-                <span className="item-nombre">{item.nombre}</span>
-                <span className="item-presc">{item.presc}</span>
+              <div key={clave} className="item-envoltura">
+                <div className="item item-info">
+                  <span className="item-texto">
+                    <span className="item-nombre">{item.nombre}</span>
+                    {botonVideo(clave, item)}
+                  </span>
+                  <span className="item-presc">{item.presc}</span>
+                </div>
+                {video(clave, item)}
               </div>
             );
           })}

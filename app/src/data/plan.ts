@@ -11,6 +11,7 @@ export interface Item {
   campos?: Campo[];
   obj?: string;
   kg?: string;
+  video?: string; // link de YouTube solo para este ítem (si no, se usa la biblioteca del coach)
 }
 
 export interface Seccion {
