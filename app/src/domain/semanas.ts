@@ -28,3 +28,8 @@ export function textoSemana(lunes: Date): string {
   const formato = (d: Date) => d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
   return `${formato(lunes)} – ${formato(sumarDias(lunes, 6))}`;
 }
+
+// "noviembre 2026" (sin el "de" que agrega el formato de Chile)
+export function textoMes(fecha: Date): string {
+  return `${fecha.toLocaleDateString('es-CL', { month: 'long' })} ${fecha.getFullYear()}`;
+}

@@ -39,7 +39,7 @@
 }
 .plan h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: 36px;
   line-height: 1;
   text-transform: uppercase;
 }
@@ -438,4 +438,144 @@
 .semaforo.rojo {
   background: #fbe0de;
   color: #8a1c14;
+}
+
+/* Nombre del atleta en el título (se toca para cambiarlo) */
+.apodo {
+  font: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  border-bottom: 2px dotted #b5b5b2;
+}
+
+/* Mes, bloque y botón de calendario */
+.plan-subcabecera {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  color: var(--gris);
+  font-size: 15px;
+}
+.plan-mes {
+  color: var(--tinta);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.plan-subcabecera .plan-bloque {
+  margin-left: auto;
+}
+.boton-calendario {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--linea);
+  background: #fff;
+  color: var(--tinta);
+  padding: 0;
+}
+
+/* Calendario mensual */
+.calendario-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top) + 70px) 16px 16px;
+}
+.calendario {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 14px 10px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  color: var(--tinta);
+}
+.calendario-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.calendario-cabeza span {
+  font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  font-size: 24px;
+  text-transform: uppercase;
+}
+.calendario-cabeza button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: #f1f1ef;
+  font-size: 22px;
+  color: var(--tinta);
+}
+.calendario-grilla {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.calendario-letra {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gris);
+  padding: 4px 0;
+}
+.calendario-dia {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  font-size: 15px;
+  color: var(--tinta);
+  padding: 0;
+}
+.calendario-dia .punto {
+  margin-top: 0;
+  width: 6px;
+  height: 6px;
+}
+.calendario-dia.sin-plan {
+  color: #a9a9a6;
+}
+.calendario-dia.fuera {
+  opacity: 0.4;
+}
+.calendario-dia.hoy {
+  border-color: var(--tinta);
+}
+.calendario-dia.activo {
+  background: var(--barra);
+  color: #fff;
+}
+.calendario-dia.activo .punto.clase {
+  background: #fff;
+}
+.calendario-pie {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.calendario-pie button {
+  background: none;
+  border: 0;
+  padding: 8px 4px;
+  color: var(--azul);
+  font-size: 15px;
 }

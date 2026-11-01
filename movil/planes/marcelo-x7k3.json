@@ -2,6 +2,7 @@
   "version_esquema": 1,
   "atleta": {
     "nombre": "Marcelo Balcazar",
+    "apodo": "Kaazar",
     "edad": 27,
     "peso_kg": 81,
     "marcas_kg": {

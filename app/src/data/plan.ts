@@ -35,7 +35,7 @@ export interface Dia {
 
 export interface Plan {
   version_esquema: number;
-  atleta: { nombre: string; [clave: string]: unknown };
+  atleta: { nombre: string; apodo?: string; [clave: string]: unknown };
   bloque: { numero: number; inicio: string; fin: string; semanas: number; total_dias: number };
   reglas?: {
     version_B?: string;

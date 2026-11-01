@@ -3,12 +3,13 @@
 import { IonContent, IonPage } from '@ionic/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import Calendario from '../components/Calendario';
 import RegistroCierre from '../components/RegistroCierre';
 import SeccionPlan from '../components/SeccionPlan';
 import type { Dia, Plan, TipoDia } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 import { registroVacio } from '../data/registro';
-import { aTextoISO, lunesDe, sumarDias } from '../domain/semanas';
+import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
 import { cargarPlan, codigoAtleta } from '../services/plan';
 import { guardarLocal, leerLocales, sincronizar, subirRegistro } from '../services/registros';
 import './Tab1.css';
@@ -40,6 +41,22 @@ function tieneDatos(r?: RegistroDia) {
   );
 }
 
+const claveApodo = (atleta: string) => `amp.apodo.${atleta}`;
+function leerApodo(atleta: string): string {
+  try {
+    return localStorage.getItem(claveApodo(atleta)) ?? '';
+  } catch {
+    return '';
+  }
+}
+function guardarApodo(atleta: string, apodo: string): void {
+  try {
+    localStorage.setItem(claveApodo(atleta), apodo);
+  } catch {
+    /* sin almacenamiento */
+  }
+}
+
 type EstadoGuardado = 'listo' | 'guardando' | 'nube' | 'local';
 
 function Tab1(): React.JSX.Element {
@@ -52,12 +69,15 @@ function Tab1(): React.JSX.Element {
   const [registros, setRegistros] = useState<Record<string, RegistroDia>>(() => leerLocales(atleta));
   const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
   const [guardado, setGuardado] = useState<EstadoGuardado>('listo');
+  const [calendario, setCalendario] = useState(false);
+  const [apodo, setApodo] = useState(() => leerApodo(atleta));
   const temporizador = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     cargarPlan(atleta)
       .then((p) => {
         setPlan(p);
+        setApodo((actual) => actual || p.atleta.apodo || p.atleta.nombre.split(' ')[0]);
         const { inicio, fin } = p.bloque;
         setFecha(hoy < inicio ? inicio : hoy > fin ? fin : hoy);
       })
@@ -70,6 +90,19 @@ function Tab1(): React.JSX.Element {
   const porFecha = useMemo(() => new Map((plan?.dias ?? []).map((d) => [d.fecha, d])), [plan]);
   const dia: Dia | undefined = porFecha.get(fecha);
   const registro = registros[fecha] ?? registroVacio(fecha);
+
+  function cambiarApodo() {
+    const nuevo = window.prompt('¿Cómo quieres que aparezca tu nombre?', apodo)?.trim();
+    if (!nuevo) return;
+    const corto = nuevo.slice(0, 16);
+    setApodo(corto);
+    guardarApodo(atleta, corto);
+  }
+
+  const registrados = useMemo(
+    () => new Set(Object.keys(registros).filter((f) => tieneDatos(registros[f]))),
+    [registros],
+  );
 
   function elegirDia(f: string) {
     setFecha(f);
@@ -126,13 +159,42 @@ function Tab1(): React.JSX.Element {
       <IonContent className="plan">
         <div className="plan-envoltura">
           <header className="plan-cabecera">
-            <h1>Planificación</h1>
+            <h1>
+              Planificación{' '}
+              <button className="apodo" onClick={cambiarApodo} aria-label="Cambiar mi nombre">
+                {apodo}
+              </button>
+            </h1>
+          </header>
+
+          <div className="plan-subcabecera">
+            <span className="plan-mes">{textoMes(aFecha(fecha))}</span>
             {dia && (
               <span className="plan-bloque">
                 Bloque {dia.bloque} · Semana {dia.semana}
               </span>
             )}
-          </header>
+            <button className="boton-calendario" onClick={() => setCalendario(true)} aria-label="Abrir calendario">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <rect
+                  x="3.5"
+                  y="5"
+                  width="17"
+                  height="15.5"
+                  rx="2.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <circle cx="8.5" cy="14" r="1.1" fill="currentColor" />
+                <circle cx="12" cy="14" r="1.1" fill="currentColor" />
+                <circle cx="15.5" cy="14" r="1.1" fill="currentColor" />
+                <circle cx="8.5" cy="17.3" r="1.1" fill="currentColor" />
+                <circle cx="12" cy="17.3" r="1.1" fill="currentColor" />
+              </svg>
+            </button>
+          </div>
 
           <nav className="tira-dias" aria-label="Días de la semana">
             <button className="flecha" onClick={() => moverSemana(-1)} aria-label="Semana anterior">
@@ -140,7 +202,7 @@ function Tab1(): React.JSX.Element {
             </button>
             {semana.map((f, k) => {
               const d = porFecha.get(f);
-              const registrado = tieneDatos(registros[f]);
+              const registrado = registrados.has(f);
               return (
                 <button
                   key={f}
@@ -223,6 +285,19 @@ function Tab1(): React.JSX.Element {
             </article>
           )}
         </div>
+        {calendario && (
+          <Calendario
+            fecha={fecha}
+            hoy={hoy}
+            porFecha={porFecha}
+            registrados={registrados}
+            onElegir={(f) => {
+              elegirDia(f);
+              setCalendario(false);
+            }}
+            onCerrar={() => setCalendario(false)}
+          />
+        )}
       </IonContent>
     </IonPage>
   );
