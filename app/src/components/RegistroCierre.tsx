@@ -100,27 +100,31 @@ function RegistroCierre({ dia, reglas, abierta, registro, onAlternar, onCambiar 
                   etiqueta="RPE"
                 />
               </div>
-              <div className="campo-texto">
-                <span>Lumbar antes (0-10)</span>
-                <Escala
-                  desde={0}
-                  hasta={10}
-                  valor={registro.lumbarAntes}
-                  onElegir={(v) => onCambiar({ lumbarAntes: v })}
-                  etiqueta="Lumbar antes"
-                />
-              </div>
-              <div className="campo-texto">
-                <span>Lumbar después (0-10)</span>
-                <Escala
-                  desde={0}
-                  hasta={10}
-                  valor={registro.lumbarDespues}
-                  onElegir={(v) => onCambiar({ lumbarDespues: v })}
-                  etiqueta="Lumbar después"
-                />
-              </div>
-              {luz && <p className={`semaforo ${luz.color}`}>{luz.texto}</p>}
+              {reglas?.lumbar_semaforo && (
+                <>
+                  <div className="campo-texto">
+                    <span>Lumbar antes (0-10)</span>
+                    <Escala
+                      desde={0}
+                      hasta={10}
+                      valor={registro.lumbarAntes}
+                      onElegir={(v) => onCambiar({ lumbarAntes: v })}
+                      etiqueta="Lumbar antes"
+                    />
+                  </div>
+                  <div className="campo-texto">
+                    <span>Lumbar después (0-10)</span>
+                    <Escala
+                      desde={0}
+                      hasta={10}
+                      valor={registro.lumbarDespues}
+                      onElegir={(v) => onCambiar({ lumbarDespues: v })}
+                      etiqueta="Lumbar después"
+                    />
+                  </div>
+                  {luz && <p className={`semaforo ${luz.color}`}>{luz.texto}</p>}
+                </>
+              )}
             </>
           )}
 
