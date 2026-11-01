@@ -1,6 +1,6 @@
 // Capa de pantallas: Mi semana
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IonButton,
   IonButtons,
@@ -23,14 +23,26 @@ import './Tab1.css';
 
 function Tab1() {
   const [seleccionada, setSeleccionada] = useState<Sesion | null>(null);
-  const [registros, setRegistros] = useState<Record<string, Registro>>(() => leerRegistros());
+  const [registros, setRegistros] = useState<Record<string, Registro>>({});
   const [mostrarAviso] = useIonToast();
 
-  function alGuardar(registro: Registro) {
-    guardarRegistro(registro);
-    setRegistros(leerRegistros());
-    setSeleccionada(null);
-    mostrarAviso({ message: 'Registro guardado ✓', duration: 1500, color: 'primary', position: 'top' });
+  useEffect(() => {
+    leerRegistros()
+      .then(setRegistros)
+      .catch(() =>
+        mostrarAviso({ message: 'No se pudieron cargar los registros', duration: 2500, color: 'danger', position: 'top' })
+      );
+  }, []);
+
+  async function alGuardar(registro: Registro) {
+    try {
+      await guardarRegistro(registro);
+      setRegistros(await leerRegistros());
+      setSeleccionada(null);
+      mostrarAviso({ message: 'Registro guardado ✓', duration: 1500, color: 'primary', position: 'top' });
+    } catch {
+      mostrarAviso({ message: 'Error al guardar. Revisa tu conexión.', duration: 2500, color: 'danger', position: 'top' });
+    }
   }
 
   return (
