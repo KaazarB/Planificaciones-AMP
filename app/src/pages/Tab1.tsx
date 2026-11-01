@@ -6,11 +6,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Calendario from '../components/Calendario';
 import RegistroCierre from '../components/RegistroCierre';
 import SeccionPlan from '../components/SeccionPlan';
+import { useCuenta } from '../context/Cuenta';
 import type { Dia, Plan, TipoDia } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 import { registroVacio } from '../data/registro';
 import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
-import { cargarPlan, codigoAtleta } from '../services/plan';
+import { guardarApodo } from '../services/cuenta';
+import { cargarPlan } from '../services/plan';
 import { guardarLocal, leerLocales, sincronizar, subirRegistro } from '../services/registros';
 import './Tab1.css';
 
@@ -41,47 +43,35 @@ function tieneDatos(r?: RegistroDia) {
   );
 }
 
-const claveApodo = (atleta: string) => `amp.apodo.${atleta}`;
-function leerApodo(atleta: string): string {
-  try {
-    return localStorage.getItem(claveApodo(atleta)) ?? '';
-  } catch {
-    return '';
-  }
-}
-function guardarApodo(atleta: string, apodo: string): void {
-  try {
-    localStorage.setItem(claveApodo(atleta), apodo);
-  } catch {
-    /* sin almacenamiento */
-  }
-}
-
 type EstadoGuardado = 'listo' | 'guardando' | 'nube' | 'local';
 
 function Tab1(): React.JSX.Element {
-  const atleta = useMemo(() => codigoAtleta(), []);
+  const { perfil, cambiarPerfil } = useCuenta();
+  const atleta = perfil?.id ?? '';
   const hoy = aTextoISO(new Date());
 
   const [plan, setPlan] = useState<Plan | null>(null);
+  const [sinPlan, setSinPlan] = useState(false);
   const [error, setError] = useState('');
   const [fecha, setFecha] = useState(hoy);
   const [registros, setRegistros] = useState<Record<string, RegistroDia>>(() => leerLocales(atleta));
   const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
   const [guardado, setGuardado] = useState<EstadoGuardado>('listo');
   const [calendario, setCalendario] = useState(false);
-  const [apodo, setApodo] = useState(() => leerApodo(atleta));
   const temporizador = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     cargarPlan(atleta)
       .then((p) => {
+        if (!p) {
+          setSinPlan(true);
+          return;
+        }
         setPlan(p);
-        setApodo((actual) => actual || p.atleta.apodo || p.atleta.nombre.split(' ')[0]);
         const { inicio, fin } = p.bloque;
         setFecha(hoy < inicio ? inicio : hoy > fin ? fin : hoy);
       })
-      .catch((e: Error) => setError(e.message));
+      .catch((e: Error) => setError(e.message || 'No se pudo cargar tu plan.'));
     sincronizar(atleta).then(({ registros: r }) => setRegistros(r));
   }, [atleta, hoy]);
 
@@ -91,12 +81,14 @@ function Tab1(): React.JSX.Element {
   const dia: Dia | undefined = porFecha.get(fecha);
   const registro = registros[fecha] ?? registroVacio(fecha);
 
+  const apodo = perfil?.apodo || perfil?.nombre.split(' ')[0] || '';
+
   function cambiarApodo() {
     const nuevo = window.prompt('¿Cómo quieres que aparezca tu nombre?', apodo)?.trim();
     if (!nuevo) return;
     const corto = nuevo.slice(0, 16);
-    setApodo(corto);
-    guardarApodo(atleta, corto);
+    cambiarPerfil({ apodo: corto });
+    guardarApodo(atleta, corto).catch(() => undefined);
   }
 
   const registrados = useMemo(
@@ -113,8 +105,10 @@ function Tab1(): React.JSX.Element {
     if (!plan) return;
     const destino = aTextoISO(sumarDias(lunes, delta * 7));
     const finSemana = aTextoISO(sumarDias(aFecha(destino), 6));
-    if (finSemana < plan.bloque.inicio || destino > plan.bloque.fin) return;
-    elegirDia(destino < plan.bloque.inicio ? plan.bloque.inicio : destino);
+    const primero = plan.dias[0].fecha;
+    const ultimo = plan.dias[plan.dias.length - 1].fecha;
+    if (finSemana < primero || destino > ultimo) return;
+    elegirDia(destino < primero ? primero : destino);
   }
 
   function cambiar(cambio: Partial<RegistroDia>) {
@@ -226,17 +220,20 @@ function Tab1(): React.JSX.Element {
 
           {antesDelBloque && plan && (
             <p className="aviso">
-              El bloque {plan.bloque.numero} empieza el {minuscula(plan.dias[0].dia)}. Puedes revisar las sesiones desde
+              El bloque {plan.bloque.numero} empieza el{' '}
+              {minuscula(porFecha.get(plan.bloque.inicio)?.dia ?? plan.dias[0].dia)}. Puedes revisar las sesiones desde
               ya.
             </p>
           )}
           {despuesDelBloque && plan && (
             <p className="aviso">
-              El bloque {plan.bloque.numero} terminó el {minuscula(plan.dias[plan.dias.length - 1].dia)}.
+              El bloque {plan.bloque.numero} terminó el{' '}
+              {minuscula(porFecha.get(plan.bloque.fin)?.dia ?? plan.dias[plan.dias.length - 1].dia)}.
             </p>
           )}
 
-          {!plan && <p className="cargando">Cargando planificación…</p>}
+          {!plan && !sinPlan && <p className="cargando">Cargando planificación…</p>}
+          {sinPlan && <p className="aviso">Tu coach todavía no carga tu plan. Cuando lo haga, aparecerá aquí.</p>}
 
           {plan && !dia && <p className="cargando">No hay nada planificado para este día.</p>}
 

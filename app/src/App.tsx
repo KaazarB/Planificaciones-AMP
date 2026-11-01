@@ -1,6 +1,8 @@
 import {
   IonApp,
+  IonContent,
   IonIcon,
+  IonPage,
   IonLabel,
   IonRouterOutlet,
   IonTabBar,
@@ -9,12 +11,17 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
-import { calendarOutline, ellipse, square } from 'ionicons/icons';
+import { calendarOutline, peopleOutline, personCircleOutline } from 'ionicons/icons';
 import { Navigate, Route } from 'react-router-dom';
 
+import { CuentaProvider, useCuenta } from './context/Cuenta';
+import Coach from './pages/Coach';
+import Espera from './pages/Espera';
+import Ingreso from './pages/Ingreso';
+import Inscripcion from './pages/Inscripcion';
+import Perfil from './pages/Perfil';
 import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import { salir } from './services/cuenta';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -44,35 +51,76 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './pages/Tab1.css';
+import './theme/pantallas.css';
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
+function Mensaje({ texto, conSalir }: { texto: string; conSalir?: boolean }) {
+  return (
+    <IonPage>
+      <IonContent className="plan">
+        <div className="plan-envoltura">
+          <p className="cargando">{texto}</p>
+          {conSalir && (
+            <button className="boton secundario" onClick={salir}>
+              Cerrar sesión
+            </button>
+          )}
+        </div>
+      </IonContent>
+    </IonPage>
+  );
+}
+
+function Pestanas({ coach }: { coach: boolean }) {
+  return (
     <IonReactHashRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route path="/tab1" element={<Tab1 />} />
-          <Route path="/tab2" element={<Tab2 />} />
-          <Route path="/tab3" element={<Tab3 />} />
-          <Route path="/" element={<Navigate to="/tab1" replace />} />
+          <Route path="/plan" element={<Tab1 />} />
+          <Route path="/perfil" element={<Perfil />} />
+          {coach && <Route path="/coach" element={<Coach />} />}
+          <Route path="*" element={<Navigate to={coach ? '/coach' : '/plan'} replace />} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
+          <IonTabButton tab="plan" href="/plan">
             <IonIcon aria-hidden="true" icon={calendarOutline} />
             <IonLabel>Plan</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+          {coach && (
+            <IonTabButton tab="coach" href="/coach">
+              <IonIcon aria-hidden="true" icon={peopleOutline} />
+              <IonLabel>Coach</IonLabel>
+            </IonTabButton>
+          )}
+          <IonTabButton tab="perfil" href="/perfil">
+            <IonIcon aria-hidden="true" icon={personCircleOutline} />
+            <IonLabel>Perfil</IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
     </IonReactHashRouter>
+  );
+}
+
+// Decide qué ve cada persona según su cuenta y su estado
+function Contenido() {
+  const { cargando, sesion, perfil, error } = useCuenta();
+  if (cargando) return <Mensaje texto="Cargando…" />;
+  if (!sesion) return <Ingreso />;
+  if (!perfil) return <Mensaje texto={error || 'No encontramos tu perfil. Escríbele a tu coach.'} conSalir />;
+  const coach = perfil.rol === 'coach';
+  if (!coach && perfil.estado === 'ficha') return <Inscripcion />;
+  if (!coach && perfil.estado === 'evaluacion') return <Espera />;
+  return <Pestanas coach={coach} />;
+}
+
+const App: React.FC = () => (
+  <IonApp>
+    <CuentaProvider>
+      <Contenido />
+    </CuentaProvider>
   </IonApp>
 );
 

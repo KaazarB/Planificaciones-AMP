@@ -1,0 +1,216 @@
+// Capa de pantallas: panel del coach (atletas, fichas y carga de planes)
+
+import { IonContent, IonPage } from '@ionic/react';
+import { useCallback, useEffect, useState } from 'react';
+
+import FichaResumen from '../components/FichaResumen';
+import { useCuenta } from '../context/Cuenta';
+import type { DatosFicha } from '../data/ficha';
+import type { Estado, Perfil } from '../services/cuenta';
+import { leerFicha, mensajeError } from '../services/cuenta';
+import type { FilaPlan } from '../services/plan';
+import { borrarPlan, planesDe, subirPlan, validarPlan } from '../services/plan';
+import { supabase } from '../services/supabase';
+
+const textoEstado: Record<Estado, string> = {
+  ficha: 'Ficha pendiente',
+  evaluacion: 'En evaluación',
+  activo: 'Activo',
+  pausa: 'En pausa',
+};
+const ordenEstado: Estado[] = ['evaluacion', 'activo', 'ficha', 'pausa'];
+
+function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
+  const [ficha, setFicha] = useState<DatosFicha | null>(null);
+  const [planes, setPlanes] = useState<FilaPlan[]>([]);
+  const [estado, setEstado] = useState<Estado>(atleta.estado);
+  const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState('');
+
+  const recargarPlanes = useCallback(() => planesDe(atleta.id).then(setPlanes), [atleta.id]);
+
+  useEffect(() => {
+    leerFicha(atleta.id).then(setFicha);
+    recargarPlanes();
+  }, [atleta.id, recargarPlanes]);
+
+  async function cambiarEstado(nuevo: Estado) {
+    setError('');
+    const { error: e } = await supabase.rpc('coach_cambiar_estado', { p_atleta: atleta.id, p_estado: nuevo });
+    if (e) return setError(mensajeError(e));
+    setEstado(nuevo);
+  }
+
+  async function cargarArchivo(archivo: File) {
+    setError('');
+    setMensaje('');
+    try {
+      const plan = validarPlan(JSON.parse(await archivo.text()));
+      const resumen = `Bloque ${plan.bloque.numero} · ${plan.bloque.inicio} a ${plan.bloque.fin} · ${plan.dias.length} días`;
+      if (!window.confirm(`¿Cargar este plan a ${atleta.nombre}?\n\n${resumen}`)) return;
+      await subirPlan(atleta.id, plan);
+      if (estado !== 'activo') await cambiarEstado('activo');
+      await recargarPlanes();
+      setMensaje(`Plan cargado: ${resumen}. ${atleta.nombre.split(' ')[0]} ya lo ve en su app.`);
+    } catch (e) {
+      setError(e instanceof SyntaxError ? 'El archivo no es un JSON válido.' : mensajeError(e));
+    }
+  }
+
+  async function quitarPlan(p: FilaPlan) {
+    if (!window.confirm(`¿Quitar el bloque ${p.bloque} (${p.inicio} a ${p.fin})?`)) return;
+    try {
+      await borrarPlan(p.id);
+      await recargarPlanes();
+    } catch (e) {
+      setError(mensajeError(e));
+    }
+  }
+
+  const whatsapp = typeof ficha?.whatsapp === 'string' ? ficha.whatsapp.replace(/\D/g, '') : '';
+
+  return (
+    <>
+      <button className="enlace volver" onClick={onVolver}>
+        ‹ Atletas
+      </button>
+      <h2 className="dia-titulo">{atleta.nombre || 'Sin nombre'}</h2>
+      <div className="dia-meta">
+        <span className={`etiqueta estado-${estado}`}>{textoEstado[estado]}</span>
+        {esYo && <span>Tu cuenta</span>}
+        <span>Desde {new Date(atleta.creado).toLocaleDateString('es-CL')}</span>
+      </div>
+
+      <div className="fila-botones">
+        {whatsapp && (
+          <a className="boton secundario" href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer">
+            WhatsApp
+          </a>
+        )}
+        {estado !== 'activo' && (
+          <button className="boton secundario" onClick={() => cambiarEstado('activo')}>
+            Marcar activo
+          </button>
+        )}
+        {estado === 'activo' && (
+          <button className="boton secundario" onClick={() => cambiarEstado('pausa')}>
+            Pausar
+          </button>
+        )}
+      </div>
+
+      <h3 className="subtitulo">Planes</h3>
+      <div className="tarjeta">
+        {planes.length === 0 && <p className="tenue">Aún no tiene planes cargados.</p>}
+        {planes.map((p) => (
+          <div key={p.id} className="fila-plan">
+            <span>
+              <strong>Bloque {p.bloque}</strong> · {p.inicio} → {p.fin}
+            </span>
+            <button className="enlace peligro" onClick={() => quitarPlan(p)}>
+              Quitar
+            </button>
+          </div>
+        ))}
+        <label className="boton ancho subir">
+          Cargar plan (.json)
+          <input
+            type="file"
+            accept=".json,application/json"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = '';
+              if (f) cargarArchivo(f);
+            }}
+          />
+        </label>
+        {mensaje && <p className="aviso">{mensaje}</p>}
+        {error && <p className="aviso-error">{error}</p>}
+      </div>
+
+      <h3 className="subtitulo">Ficha</h3>
+      {ficha ? <FichaResumen datos={ficha} /> : <p className="tenue">Todavía no envía su ficha.</p>}
+    </>
+  );
+}
+
+function Coach(): React.JSX.Element {
+  const { perfil } = useCuenta();
+  const [atletas, setAtletas] = useState<Perfil[]>([]);
+  const [elegido, setElegido] = useState<Perfil | null>(null);
+  const [error, setError] = useState('');
+
+  const [version, setVersion] = useState(0);
+  const cargar = () => setVersion((v) => v + 1);
+
+  useEffect(() => {
+    let vigente = true;
+    supabase
+      .from('perfiles')
+      .select('*')
+      .order('creado', { ascending: false })
+      .then(({ data, error: e }) => {
+        if (!vigente) return;
+        if (e) setError(mensajeError(e));
+        else {
+          setError('');
+          setAtletas((data ?? []) as Perfil[]);
+        }
+      });
+    return () => {
+      vigente = false;
+    };
+  }, [version]);
+
+  const grupos = ordenEstado
+    .map((estado) => ({ estado, lista: atletas.filter((a) => a.estado === estado) }))
+    .filter((g) => g.lista.length);
+
+  return (
+    <IonPage>
+      <IonContent className="plan">
+        <div className="plan-envoltura">
+          {elegido ? (
+            <DetalleAtleta
+              atleta={elegido}
+              esYo={elegido.id === perfil?.id}
+              onVolver={() => {
+                setElegido(null);
+                cargar();
+              }}
+            />
+          ) : (
+            <>
+              <header className="plan-cabecera">
+                <h1>Coach</h1>
+                <button className="enlace" onClick={cargar}>
+                  Actualizar
+                </button>
+              </header>
+              {error && <p className="aviso-error">{error}</p>}
+              {grupos.map((g) => (
+                <section key={g.estado}>
+                  <h3 className="subtitulo">
+                    {textoEstado[g.estado]} · {g.lista.length}
+                  </h3>
+                  {g.lista.map((a) => (
+                    <button key={a.id} className="fila-atleta" onClick={() => setElegido(a)}>
+                      <span>
+                        <strong>{a.nombre || 'Sin nombre'}</strong>
+                        {a.id === perfil?.id && <span className="tenue"> · tú</span>}
+                      </span>
+                      <span className="tenue">{new Date(a.creado).toLocaleDateString('es-CL')} ›</span>
+                    </button>
+                  ))}
+                </section>
+              ))}
+              {!error && atletas.length === 0 && <p className="tenue">Aún no hay atletas inscritos.</p>}
+            </>
+          )}
+        </div>
+      </IonContent>
+    </IonPage>
+  );
+}
+
+export default Coach;

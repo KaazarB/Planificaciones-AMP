@@ -1,0 +1,353 @@
+/* Pantallas de cuenta, ficha, perfil y coach (mismo diseño que la planilla) */
+
+.plan .enlace {
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  color: var(--azul);
+  font-size: 15px;
+}
+.plan .enlace.peligro {
+  color: #b42318;
+}
+.plan .volver {
+  margin-bottom: 4px;
+}
+.tenue {
+  color: var(--gris);
+}
+
+/* Botones */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--barra);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.boton:disabled {
+  opacity: 0.55;
+}
+.boton.secundario {
+  background: #fff;
+  color: var(--tinta);
+  border: 1px solid var(--linea);
+  font-weight: 500;
+}
+.boton.ancho {
+  width: 100%;
+}
+.fila-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+/* Tarjetas y avisos */
+.tarjeta {
+  background: #fff;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+.aviso-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fbe0de;
+  color: #8a1c14;
+  font-size: 14px;
+}
+.subtitulo {
+  margin: 24px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+/* Ingreso */
+.ingreso .marca {
+  margin: 24px 0 0;
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  color: var(--verde);
+}
+.ingreso h1 {
+  font-size: 52px;
+}
+.ingreso-bajada {
+  margin: 6px 0 20px;
+  color: var(--gris);
+  font-size: 16px;
+}
+.selector {
+  display: flex;
+  padding: 4px;
+  background: #e4e4e2;
+  border-radius: 12px;
+}
+.selector button {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-size: 15px;
+  color: var(--gris);
+}
+.selector button[aria-selected='true'] {
+  background: #fff;
+  color: var(--tinta);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.ingreso form .boton {
+  margin-top: 8px;
+}
+.ingreso-nota {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--gris);
+  text-align: center;
+}
+
+/* Campos de formulario */
+.campo-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.campo-etiqueta {
+  font-size: 15px;
+  font-weight: 600;
+}
+.requerido {
+  color: #b42318;
+}
+.campo-ayuda {
+  margin-top: -2px;
+  font-size: 13px;
+  color: var(--gris);
+}
+.campo-ficha input,
+.campo-ficha textarea {
+  width: 100%;
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--tinta);
+  background: #fff;
+}
+.campo-ficha input:focus,
+.campo-ficha textarea:focus {
+  outline: none;
+  border-color: var(--tinta);
+}
+.con-unidad {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.con-unidad span {
+  color: var(--gris);
+  font-size: 14px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tinta);
+  font-size: 15px;
+}
+.chip.elegido {
+  background: var(--barra);
+  border-color: var(--barra);
+  color: #fff;
+}
+.campo-check {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 8px 0 18px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.campo-check input {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  accent-color: var(--verde);
+}
+
+/* Ficha por pasos */
+.ficha {
+  margin-top: 20px;
+}
+.ficha-progreso {
+  display: flex;
+  gap: 4px;
+}
+.ficha-progreso span {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: #d9d9d6;
+}
+.ficha-progreso span.hecho {
+  background: var(--verde);
+}
+.ficha-paso {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--gris);
+}
+.ficha-titulo {
+  margin: 2px 0 6px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-weight: 400;
+  font-size: 34px;
+  text-transform: uppercase;
+}
+.ficha-descripcion {
+  margin: 0 0 16px;
+  color: var(--gris);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.ficha .campo-ficha:first-of-type {
+  margin-top: 12px;
+}
+.ficha-botones {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.ficha-botones .boton {
+  flex: 1;
+}
+
+/* Resumen de ficha */
+.ficha-resumen section {
+  background: #fff;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+.ficha-resumen h3 {
+  margin: 0 0 6px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.ficha-resumen dl {
+  margin: 0;
+}
+.ficha-resumen dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid #ededeb;
+  font-size: 14px;
+}
+.ficha-resumen dt {
+  color: var(--gris);
+}
+.ficha-resumen dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Espera y perfil */
+.estado-tarjeta {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--linea);
+}
+.estado-tarjeta p {
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+.perfil-datos p {
+  margin: 0 0 6px;
+  color: var(--gris);
+}
+.perfil-datos .perfil-nombre {
+  color: var(--tinta);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Coach */
+.etiqueta.estado-evaluacion {
+  background: #fbf0cc;
+  color: #6b5100;
+}
+.etiqueta.estado-activo {
+  background: #dff1e6;
+  color: var(--verde);
+}
+.etiqueta.estado-ficha,
+.etiqueta.estado-pausa {
+  background: #ececea;
+  color: var(--gris);
+}
+.fila-atleta {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: #fff;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  color: var(--tinta);
+  font-size: 15px;
+  text-align: left;
+}
+.fila-plan {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ededeb;
+  font-size: 14px;
+}
+.subir {
+  position: relative;
+  margin-top: 12px;
+}
+.subir input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
