@@ -30,13 +30,22 @@ function leerTexto(archivo: File): Promise<string> {
   });
 }
 
-// Deja el número listo para wa.me: solo dígitos y con código de Chile si falta
+// Deja el número listo para WhatsApp: solo dígitos y con código de Chile si falta
 function numeroWhatsapp(valor: unknown): string {
   if (typeof valor !== 'string') return '';
   let n = valor.replace(/\D/g, '');
   if (n.length === 9 && n.startsWith('9')) n = `56${n}`;
   if (n.length === 8) n = `569${n}`;
   return n.length >= 10 ? n : '';
+}
+
+// En el teléfono abre la app de WhatsApp directo; en el computador, WhatsApp Web
+const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const destinoWhatsapp = esMovil ? undefined : '_blank';
+
+function enlaceWhatsapp(numero: string, texto = ''): string {
+  const t = texto ? `&text=${texto}` : '';
+  return esMovil ? `whatsapp://send?phone=${numero}${t}` : `https://web.whatsapp.com/send?phone=${numero}${t}`;
 }
 
 const fechaCorta = (iso: string) => {
@@ -146,7 +155,7 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
 
       <div className="fila-botones">
         {whatsapp && (
-          <a className="boton secundario" href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer">
+          <a className="boton secundario" href={enlaceWhatsapp(whatsapp)} target={destinoWhatsapp} rel="noreferrer">
             WhatsApp
           </a>
         )}
@@ -220,8 +229,8 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
           (whatsapp ? (
             <a
               className="boton ancho whatsapp"
-              href={`https://wa.me/${whatsapp}?text=${avisoPlan}`}
-              target="_blank"
+              href={enlaceWhatsapp(whatsapp, avisoPlan)}
+              target={destinoWhatsapp}
               rel="noreferrer"
             >
               Avisar a {primerNombre} por WhatsApp
