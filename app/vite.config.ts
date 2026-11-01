@@ -5,6 +5,8 @@ import { defineConfig } from 'vitest/config';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), legacy()],
+    base: './',
+  build: { outDir: '../movil', emptyOutDir: true },
   test: {
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',

@@ -8,7 +8,7 @@ import {
   IonTabs,
   setupIonicReact,
 } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
+import { IonReactHashRouter } from '@ionic/react-router';
 import { ellipse, square, triangle } from 'ionicons/icons';
 import { Navigate, Route } from 'react-router-dom';
 
@@ -50,7 +50,7 @@ setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
+    <IonReactHashRouter>
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/tab1" element={<Tab1 />} />
@@ -73,7 +73,7 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
-    </IonReactRouter>
+    </IonReactHashRouter>
   </IonApp>
 );
 
