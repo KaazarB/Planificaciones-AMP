@@ -27,18 +27,19 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-tertiary-shade: #cacaca;
   --ion-color-tertiary-tint: #e8e8e8;
 
-  --ion-background-color: #000000;
-  --ion-background-color-rgb: 0, 0, 0;
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
+  /* Tema claro como la planilla original: fondo gris, barras negras */
+  --ion-background-color: #f1f1ef;
+  --ion-background-color-rgb: 241, 241, 239;
+  --ion-text-color: #111111;
+  --ion-text-color-rgb: 17, 17, 17;
 
-  --ion-toolbar-background: #0a0a0a;
-  --ion-toolbar-color: #ffffff;
-  --ion-tab-bar-background: #0a0a0a;
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: #111111;
+  --ion-tab-bar-background: #ffffff;
   --ion-tab-bar-color: #8a8a8a;
-  --ion-tab-bar-color-selected: #22c55e;
-  --ion-card-background: #121212;
-  --ion-item-background: #121212;
-  --ion-border-color: #1f1f1f;
+  --ion-tab-bar-color-selected: #111111;
+  --ion-card-background: #ffffff;
+  --ion-item-background: #ffffff;
+  --ion-border-color: #d9d9d6;
 }
 

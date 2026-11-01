@@ -1,43 +1,64 @@
-// Capa de servicios: guarda y lee los registros en Supabase
+// Capa de servicios: guarda los registros en el teléfono y, si existe la tabla,
+// los sincroniza con Supabase (tabla registros_dia, ver supabase/registros_dia.sql).
 
-import type { Registro, Sensacion } from '../data/registro';
+import type { RegistroDia } from '../data/registro';
+
 import { supabase } from './supabase';
 
-interface FilaRegistro {
-  sesion_id: string;
-  resultado: string;
-  rpe: number;
-  sensacion: string;
-  comentario: string;
-  fecha: string;
-}
+type Mapa = Record<string, RegistroDia>;
 
-export async function leerRegistros(): Promise<Record<string, Registro>> {
-  const { data, error } = await supabase.from('registros').select('*');
-  if (error) throw error;
+const claveLocal = (atleta: string) => `amp.registros.${atleta}`;
 
-  const registros: Record<string, Registro> = {};
-  for (const fila of (data ?? []) as FilaRegistro[]) {
-    registros[fila.sesion_id] = {
-      sesionId: fila.sesion_id,
-      resultado: fila.resultado,
-      rpe: fila.rpe,
-      sensacion: fila.sensacion as Sensacion,
-      comentario: fila.comentario,
-      fecha: fila.fecha,
-    };
+function leerLocal(atleta: string): Mapa {
+  try {
+    return JSON.parse(localStorage.getItem(claveLocal(atleta)) || '{}') as Mapa;
+  } catch {
+    return {};
   }
-  return registros;
 }
 
-export async function guardarRegistro(registro: Registro): Promise<void> {
-  const { error } = await supabase.from('registros').upsert({
-    sesion_id: registro.sesionId,
-    resultado: registro.resultado,
-    rpe: registro.rpe,
-    sensacion: registro.sensacion,
-    comentario: registro.comentario,
-    fecha: registro.fecha,
-  });
-  if (error) throw error;
+function escribirLocal(atleta: string, mapa: Mapa) {
+  try {
+    localStorage.setItem(claveLocal(atleta), JSON.stringify(mapa));
+  } catch {
+    /* sin almacenamiento: queda solo en memoria */
+  }
+}
+
+export function leerLocales(atleta: string): Mapa {
+  return leerLocal(atleta);
+}
+
+// Mezcla lo que haya en Supabase con lo local (gana el más reciente)
+export async function sincronizar(atleta: string): Promise<{ registros: Mapa; nube: boolean }> {
+  const mapa = leerLocal(atleta);
+  try {
+    const { data, error } = await supabase.from('registros_dia').select('fecha, datos').eq('atleta', atleta);
+    if (error) throw error;
+    for (const fila of (data ?? []) as { fecha: string; datos: RegistroDia }[]) {
+      const local = mapa[fila.fecha];
+      if (!local || local.actualizado < fila.datos.actualizado) mapa[fila.fecha] = fila.datos;
+    }
+    escribirLocal(atleta, mapa);
+    return { registros: mapa, nube: true };
+  } catch {
+    return { registros: mapa, nube: false };
+  }
+}
+
+export function guardarLocal(atleta: string, registro: RegistroDia): void {
+  const mapa = leerLocal(atleta);
+  mapa[registro.fecha] = registro;
+  escribirLocal(atleta, mapa);
+}
+
+export async function subirRegistro(atleta: string, registro: RegistroDia): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('registros_dia')
+      .upsert({ atleta, fecha: registro.fecha, datos: registro, actualizado: registro.actualizado });
+    return !error;
+  } catch {
+    return false;
+  }
 }

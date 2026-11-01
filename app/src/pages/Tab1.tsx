@@ -1,117 +1,228 @@
-// Capa de pantallas: Mi semana
+// Capa de pantallas: Planificación (replica la planilla original)
 
-import { useEffect, useState } from 'react';
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonModal,
-  IonPage,
-  IonText,
-  IonTitle,
-  IonToolbar,
-  useIonToast,
-} from '@ionic/react';
-import { chevronBack, chevronForward } from 'ionicons/icons';
-import SesionCard from '../components/SesionCard';
-import SesionDetalle from '../components/SesionDetalle';
-import RegistroForm from '../components/RegistroForm';
-import { planificacion } from '../data/semana';
-import type { Sesion } from '../data/semana';
-import type { Registro } from '../data/registro';
-import { guardarRegistro, leerRegistros } from '../services/registros';
-import { lunesDe, sesionesDeLaSemana, sumarDias, textoSemana } from '../domain/semanas';
+import { IonContent, IonPage } from '@ionic/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import RegistroCierre from '../components/RegistroCierre';
+import SeccionPlan from '../components/SeccionPlan';
+import type { Dia, Plan, TipoDia } from '../data/plan';
+import type { RegistroDia } from '../data/registro';
+import { registroVacio } from '../data/registro';
+import { aTextoISO, lunesDe, sumarDias } from '../domain/semanas';
+import { cargarPlan, codigoAtleta } from '../services/plan';
+import { guardarLocal, leerLocales, sincronizar, subirRegistro } from '../services/registros';
 import './Tab1.css';
 
-function Tab1() {
-  const [lunes, setLunes] = useState<Date>(() => lunesDe(new Date()));
-  const [seleccionada, setSeleccionada] = useState<Sesion | null>(null);
-  const [registros, setRegistros] = useState<Record<string, Registro>>({});
-  const [mostrarAviso] = useIonToast();
+const etiquetaTipo: Record<TipoDia, string> = {
+  sesion: 'Sesión',
+  clase: 'Clase',
+  carrera: 'Carrera',
+  viaje: 'Viaje',
+  descanso: 'Descanso',
+};
+const letrasDia = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
 
-  const sesiones = sesionesDeLaSemana(planificacion, lunes);
+const aFecha = (iso: string) => {
+  const [a, m, d] = iso.split('-').map(Number);
+  return new Date(a, m - 1, d);
+};
+const minuscula = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
+
+function tieneDatos(r?: RegistroDia) {
+  if (!r) return false;
+  return Boolean(
+    r.rpe !== undefined ||
+    r.notas ||
+    r.clase ||
+    Object.values(r.checks).some(Boolean) ||
+    Object.values(r.campos).some(Boolean) ||
+    Object.values(r.series).some((filas) => filas.some((f) => f && (f.kg || f.reps || f.seg))),
+  );
+}
+
+type EstadoGuardado = 'listo' | 'guardando' | 'nube' | 'local';
+
+function Tab1(): React.JSX.Element {
+  const atleta = useMemo(() => codigoAtleta(), []);
+  const hoy = aTextoISO(new Date());
+
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [error, setError] = useState('');
+  const [fecha, setFecha] = useState(hoy);
+  const [registros, setRegistros] = useState<Record<string, RegistroDia>>(() => leerLocales(atleta));
+  const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
+  const [guardado, setGuardado] = useState<EstadoGuardado>('listo');
+  const temporizador = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    leerRegistros()
-      .then(setRegistros)
-      .catch(() =>
-        mostrarAviso({ message: 'No se pudieron cargar los registros', duration: 2500, color: 'danger', position: 'top' })
-      );
-  }, []);
+    cargarPlan(atleta)
+      .then((p) => {
+        setPlan(p);
+        const { inicio, fin } = p.bloque;
+        setFecha(hoy < inicio ? inicio : hoy > fin ? fin : hoy);
+      })
+      .catch((e: Error) => setError(e.message));
+    sincronizar(atleta).then(({ registros: r }) => setRegistros(r));
+  }, [atleta, hoy]);
 
-  async function alGuardar(registro: Registro) {
-    try {
-      await guardarRegistro(registro);
-      setRegistros(await leerRegistros());
-      setSeleccionada(null);
-      mostrarAviso({ message: 'Registro guardado ✓', duration: 1500, color: 'primary', position: 'top' });
-    } catch {
-      mostrarAviso({ message: 'Error al guardar. Revisa tu conexión.', duration: 2500, color: 'danger', position: 'top' });
-    }
+  const lunes = lunesDe(aFecha(fecha));
+  const semana = Array.from({ length: 7 }, (_, k) => aTextoISO(sumarDias(lunes, k)));
+  const porFecha = useMemo(() => new Map((plan?.dias ?? []).map((d) => [d.fecha, d])), [plan]);
+  const dia: Dia | undefined = porFecha.get(fecha);
+  const registro = registros[fecha] ?? registroVacio(fecha);
+
+  function elegirDia(f: string) {
+    setFecha(f);
+    setAbiertas(new Set());
   }
+
+  function moverSemana(delta: number) {
+    if (!plan) return;
+    const destino = aTextoISO(sumarDias(lunes, delta * 7));
+    const finSemana = aTextoISO(sumarDias(aFecha(destino), 6));
+    if (finSemana < plan.bloque.inicio || destino > plan.bloque.fin) return;
+    elegirDia(destino < plan.bloque.inicio ? plan.bloque.inicio : destino);
+  }
+
+  function cambiar(cambio: Partial<RegistroDia>) {
+    const nuevo: RegistroDia = { ...registro, ...cambio, fecha, actualizado: new Date().toISOString() };
+    setRegistros((r) => ({ ...r, [fecha]: nuevo }));
+    guardarLocal(atleta, nuevo);
+    setGuardado('guardando');
+    window.clearTimeout(temporizador.current);
+    temporizador.current = window.setTimeout(async () => {
+      setGuardado((await subirRegistro(atleta, nuevo)) ? 'nube' : 'local');
+    }, 800);
+  }
+
+  function alternar(clave: string) {
+    setAbiertas((a) => {
+      const n = new Set(a);
+      if (n.has(clave)) n.delete(clave);
+      else n.add(clave);
+      return n;
+    });
+  }
+
+  const clavesDelDia = dia ? [...(dia.secciones ?? []).map((_, i) => `s${i}`), 'registro'] : [];
+
+  if (error) {
+    return (
+      <IonPage>
+        <IonContent className="plan">
+          <div className="plan-envoltura">
+            <p className="aviso">{error}</p>
+          </div>
+        </IonContent>
+      </IonPage>
+    );
+  }
+
+  const antesDelBloque = plan && hoy < plan.bloque.inicio;
+  const despuesDelBloque = plan && hoy > plan.bloque.fin;
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Mi semana</IonTitle>
-        </IonToolbar>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton onClick={() => setLunes(sumarDias(lunes, -7))} aria-label="Semana anterior">
-              <IonIcon slot="icon-only" icon={chevronBack} />
-            </IonButton>
-          </IonButtons>
-          <IonTitle size="small">{textoSemana(lunes)}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={() => setLunes(sumarDias(lunes, 7))} aria-label="Semana siguiente">
-              <IonIcon slot="icon-only" icon={chevronForward} />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent fullscreen>
-        {sesiones.length === 0 && (
-          <IonText color="medium">
-            <p className="ion-padding">No hay sesiones planificadas para esta semana.</p>
-          </IonText>
-        )}
-
-        {sesiones.map((sesion) => (
-          <SesionCard
-            key={sesion.id}
-            sesion={sesion}
-            registrada={Boolean(registros[sesion.id])}
-            onAbrir={() => setSeleccionada(sesion)}
-          />
-        ))}
-
-        <IonModal isOpen={seleccionada !== null} onDidDismiss={() => setSeleccionada(null)}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>{seleccionada?.titulo}</IonTitle>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setSeleccionada(null)}>Cerrar</IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            {seleccionada && (
-              <>
-                <SesionDetalle sesion={seleccionada} />
-                <RegistroForm
-                  key={seleccionada.id}
-                  sesionId={seleccionada.id}
-                  inicial={registros[seleccionada.id]}
-                  onGuardar={alGuardar}
-                />
-              </>
+      <IonContent className="plan">
+        <div className="plan-envoltura">
+          <header className="plan-cabecera">
+            <h1>Planificación</h1>
+            {dia && (
+              <span className="plan-bloque">
+                Bloque {dia.bloque} · Semana {dia.semana}
+              </span>
             )}
-          </IonContent>
-        </IonModal>
+          </header>
+
+          <nav className="tira-dias" aria-label="Días de la semana">
+            <button className="flecha" onClick={() => moverSemana(-1)} aria-label="Semana anterior">
+              ‹
+            </button>
+            {semana.map((f, k) => {
+              const d = porFecha.get(f);
+              const registrado = tieneDatos(registros[f]);
+              return (
+                <button
+                  key={f}
+                  className={`chip-dia ${f === fecha ? 'activo' : ''} ${f === hoy ? 'hoy' : ''} ${d ? '' : 'vacio'}`}
+                  onClick={() => elegirDia(f)}
+                  aria-pressed={f === fecha}
+                  aria-label={d ? d.dia : f}
+                >
+                  <span className="letra">{letrasDia[k]}</span>
+                  <span className="numero">{aFecha(f).getDate()}</span>
+                  {d && d.tipo !== 'descanso' && (
+                    <span className={`punto ${d.tipo} ${registrado ? 'registrado' : ''}`} aria-hidden="true" />
+                  )}
+                </button>
+              );
+            })}
+            <button className="flecha" onClick={() => moverSemana(1)} aria-label="Semana siguiente">
+              ›
+            </button>
+          </nav>
+
+          {antesDelBloque && plan && (
+            <p className="aviso">
+              El bloque {plan.bloque.numero} empieza el {minuscula(plan.dias[0].dia)}. Puedes revisar las sesiones desde
+              ya.
+            </p>
+          )}
+          {despuesDelBloque && plan && (
+            <p className="aviso">
+              El bloque {plan.bloque.numero} terminó el {minuscula(plan.dias[plan.dias.length - 1].dia)}.
+            </p>
+          )}
+
+          {!plan && <p className="cargando">Cargando planificación…</p>}
+
+          {plan && !dia && <p className="cargando">No hay nada planificado para este día.</p>}
+
+          {dia && (
+            <article>
+              <h2 className="dia-titulo">{dia.titulo}</h2>
+              <div className="dia-meta">
+                <span className={`etiqueta ${dia.tipo}`}>{etiquetaTipo[dia.tipo]}</span>
+                <span>
+                  {dia.dia} · Semana {dia.semana}: {dia.fase}
+                </span>
+              </div>
+              <p className="dia-objetivo">{dia.objetivo}</p>
+
+              <div className="controles">
+                <span className={`estado-guardado ${guardado}`}>
+                  {guardado === 'guardando' && 'Guardando…'}
+                  {guardado === 'nube' && 'Guardado ✓'}
+                  {guardado === 'local' && 'Guardado en el teléfono'}
+                </span>
+                <button onClick={() => setAbiertas(new Set(clavesDelDia))}>Abrir todo</button>
+                <span aria-hidden="true">·</span>
+                <button onClick={() => setAbiertas(new Set())}>Cerrar todo</button>
+              </div>
+
+              {(dia.secciones ?? []).map((s, i) => (
+                <SeccionPlan
+                  key={`${fecha}-${i}`}
+                  seccion={s}
+                  indice={i}
+                  abierta={abiertas.has(`s${i}`)}
+                  registro={registro}
+                  onAlternar={() => alternar(`s${i}`)}
+                  onCambiar={cambiar}
+                />
+              ))}
+
+              <RegistroCierre
+                dia={dia}
+                reglas={plan?.reglas}
+                abierta={abiertas.has('registro')}
+                registro={registro}
+                onAlternar={() => alternar('registro')}
+                onCambiar={cambiar}
+              />
+            </article>
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

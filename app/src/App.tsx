@@ -9,7 +9,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { calendarOutline, ellipse, square } from 'ionicons/icons';
 import { Navigate, Route } from 'react-router-dom';
 
 import Tab1 from './pages/Tab1';
@@ -41,7 +41,6 @@ import '@ionic/react/css/display.css';
 
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.always.css';
 
 /* Theme variables */
 import './theme/variables.css';
@@ -60,8 +59,8 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Mi semana</IonLabel>
+            <IonIcon aria-hidden="true" icon={calendarOutline} />
+            <IonLabel>Plan</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/tab2">
             <IonIcon aria-hidden="true" icon={ellipse} />
@@ -78,4 +77,3 @@ const App: React.FC = () => (
 );
 
 export default App;
-

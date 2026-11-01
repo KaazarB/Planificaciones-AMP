@@ -1,7 +1,5 @@
 // Capa de lógica de negocio: cálculos de semanas y fechas
 
-import type { Sesion } from '../data/semana';
-
 // Devuelve el lunes de la semana de una fecha
 export function lunesDe(fecha: Date): Date {
   const d = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
@@ -23,13 +21,6 @@ export function aTextoISO(fecha: Date): string {
   const mes = String(fecha.getMonth() + 1).padStart(2, '0');
   const dia = String(fecha.getDate()).padStart(2, '0');
   return `${anio}-${mes}-${dia}`;
-}
-
-// Filtra las sesiones que caen entre el lunes y el domingo de esa semana
-export function sesionesDeLaSemana(todas: Sesion[], lunes: Date): Sesion[] {
-  const desde = aTextoISO(lunes);
-  const hasta = aTextoISO(sumarDias(lunes, 6));
-  return todas.filter((s) => s.id >= desde && s.id <= hasta);
 }
 
 // Texto para mostrar, por ejemplo "9 nov – 15 nov"
