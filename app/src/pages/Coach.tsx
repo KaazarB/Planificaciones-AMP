@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import FichaResumen from '../components/FichaResumen';
 import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
+import type { Plan } from '../data/plan';
 import type { Estado, Perfil } from '../services/cuenta';
 import { leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
@@ -18,6 +19,17 @@ const textoEstado: Record<Estado, string> = {
   activo: 'Activo',
   pausa: 'En pausa',
 };
+// Lee el archivo como texto; usa FileReader si el navegador no soporta file.text()
+function leerTexto(archivo: File): Promise<string> {
+  if (typeof archivo.text === 'function') return archivo.text();
+  return new Promise((resolver, rechazar) => {
+    const lector = new FileReader();
+    lector.onload = () => resolver(String(lector.result));
+    lector.onerror = () => rechazar(lector.error ?? new Error('No se pudo leer el archivo.'));
+    lector.readAsText(archivo);
+  });
+}
+
 const ordenEstado: Estado[] = ['evaluacion', 'activo', 'ficha', 'pausa'];
 
 function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
@@ -25,6 +37,9 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
   const [planes, setPlanes] = useState<FilaPlan[]>([]);
   const [estado, setEstado] = useState<Estado>(atleta.estado);
   const [mensaje, setMensaje] = useState('');
+  const [trabajando, setTrabajando] = useState('');
+  const [pendiente, setPendiente] = useState<{ plan: Plan; resumen: string } | null>(null);
+  const [porQuitar, setPorQuitar] = useState<FilaPlan | null>(null);
   const [error, setError] = useState('');
 
   const recargarPlanes = useCallback(() => planesDe(atleta.id).then(setPlanes), [atleta.id]);
@@ -41,26 +56,48 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
     setEstado(nuevo);
   }
 
-  async function cargarArchivo(archivo: File) {
+  // Paso 1: leer y revisar el archivo (todavía no se sube)
+  async function leerArchivo(archivo: File) {
     setError('');
     setMensaje('');
+    setPendiente(null);
+    setTrabajando(`Leyendo ${archivo.name}…`);
     try {
-      const plan = validarPlan(JSON.parse(await archivo.text()));
+      const plan = validarPlan(JSON.parse(await leerTexto(archivo)));
       const resumen = `Bloque ${plan.bloque.numero} · ${plan.bloque.inicio} a ${plan.bloque.fin} · ${plan.dias.length} días`;
-      if (!window.confirm(`¿Cargar este plan a ${atleta.nombre}?\n\n${resumen}`)) return;
-      await subirPlan(atleta.id, plan);
+      setPendiente({ plan, resumen });
+    } catch (e) {
+      setError(
+        e instanceof SyntaxError ? `«${archivo.name}» no es un plan válido (JSON con errores).` : mensajeError(e),
+      );
+    } finally {
+      setTrabajando('');
+    }
+  }
+
+  // Paso 2: el coach confirma y se sube
+  async function confirmarCarga() {
+    if (!pendiente) return;
+    setError('');
+    setTrabajando('Subiendo plan…');
+    try {
+      await subirPlan(atleta.id, pendiente.plan);
       if (estado !== 'activo') await cambiarEstado('activo');
       await recargarPlanes();
-      setMensaje(`Plan cargado: ${resumen}. ${atleta.nombre.split(' ')[0]} ya lo ve en su app.`);
+      setMensaje(`Plan cargado: ${pendiente.resumen}. ${atleta.nombre.split(' ')[0]} ya lo ve en su app.`);
+      setPendiente(null);
     } catch (e) {
-      setError(e instanceof SyntaxError ? 'El archivo no es un JSON válido.' : mensajeError(e));
+      setError(mensajeError(e));
+    } finally {
+      setTrabajando('');
     }
   }
 
   async function quitarPlan(p: FilaPlan) {
-    if (!window.confirm(`¿Quitar el bloque ${p.bloque} (${p.inicio} a ${p.fin})?`)) return;
+    setError('');
     try {
       await borrarPlan(p.id);
+      setPorQuitar(null);
       await recargarPlanes();
     } catch (e) {
       setError(mensajeError(e));
@@ -107,23 +144,51 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
             <span>
               <strong>Bloque {p.bloque}</strong> · {p.inicio} → {p.fin}
             </span>
-            <button className="enlace peligro" onClick={() => quitarPlan(p)}>
-              Quitar
-            </button>
+            {porQuitar?.id === p.id ? (
+              <span className="confirmar-linea">
+                <button className="enlace peligro" onClick={() => quitarPlan(p)}>
+                  Sí, quitar
+                </button>
+                <button className="enlace" onClick={() => setPorQuitar(null)}>
+                  No
+                </button>
+              </span>
+            ) : (
+              <button className="enlace peligro" onClick={() => setPorQuitar(p)}>
+                Quitar
+              </button>
+            )}
           </div>
         ))}
-        <label className="boton ancho subir">
-          Cargar plan (.json)
-          <input
-            type="file"
-            accept=".json,application/json"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              e.target.value = '';
-              if (f) cargarArchivo(f);
-            }}
-          />
-        </label>
+        {pendiente ? (
+          <div className="confirmar-plan">
+            <p>
+              ¿Cargar este plan a <strong>{atleta.nombre}</strong>?
+            </p>
+            <p className="tenue">{pendiente.resumen}</p>
+            <div className="fila-botones">
+              <button className="boton" onClick={confirmarCarga} disabled={Boolean(trabajando)}>
+                {trabajando || 'Cargar plan'}
+              </button>
+              <button className="boton secundario" onClick={() => setPendiente(null)} disabled={Boolean(trabajando)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <label className="boton ancho subir">
+            {trabajando || 'Elegir archivo del plan (.json)'}
+            <input
+              type="file"
+              onChange={async (e) => {
+                const input = e.target;
+                const f = input.files?.[0];
+                if (f) await leerArchivo(f);
+                input.value = '';
+              }}
+            />
+          </label>
+        )}
         {mensaje && <p className="aviso">{mensaje}</p>}
         {error && <p className="aviso-error">{error}</p>}
       </div>

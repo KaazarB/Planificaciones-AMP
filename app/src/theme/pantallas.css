@@ -351,3 +351,20 @@
   inset: 0;
   opacity: 0;
 }
+
+.confirmar-plan {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f1f1ef;
+}
+.confirmar-plan p {
+  margin: 0 0 4px;
+}
+.confirmar-plan .fila-botones {
+  margin: 10px 0 0;
+}
+.confirmar-linea {
+  display: flex;
+  gap: 14px;
+}
