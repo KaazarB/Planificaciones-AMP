@@ -1,27 +1,60 @@
 // Capa de datos: preguntas de la ficha de inscripción (se dibujan solas desde esta lista)
+// La primera pregunta («enfoque») decide qué pasos y preguntas ve cada persona.
 // Para agregar o quitar una pregunta basta con editar este archivo.
 
-export type TipoCampo = 'texto' | 'numero' | 'area' | 'opciones' | 'multi' | 'check';
+export type TipoCampo = 'texto' | 'numero' | 'area' | 'opciones' | 'multi' | 'check' | 'tarjetas';
+
+export type DatosFicha = Record<string, string | string[] | boolean>;
 
 export interface CampoFicha {
   clave: string;
   etiqueta: string;
   tipo: TipoCampo;
   opciones?: string[];
+  descripciones?: Record<string, string>; // solo para «tarjetas»
   ayuda?: string;
   unidad?: string;
   requerido?: boolean;
+  mostrarSi?: (d: DatosFicha) => boolean;
 }
 
 export interface PasoFicha {
   titulo: string;
   descripcion?: string;
   campos: CampoFicha[];
+  mostrarSi?: (d: DatosFicha) => boolean;
 }
 
-export type DatosFicha = Record<string, string | string[] | boolean>;
+// Los tres caminos de la ficha
+export const DEPORTE = 'Rendimiento en mi deporte';
+export const SALUD = 'Salud y forma física';
+export const CROSSFIT = 'CrossFit';
+
+const esDeporte = (d: DatosFicha): boolean => d.enfoque === DEPORTE;
+const esCrossfit = (d: DatosFicha): boolean => d.enfoque === CROSSFIT;
+// Las fichas antiguas no tienen «enfoque»: se tratan como salud para no perder sus datos
+const esSalud = (d: DatosFicha): boolean => d.enfoque === SALUD || !d.enfoque;
 
 export const pasosFicha: PasoFicha[] = [
+  {
+    titulo: '¿Qué buscas?',
+    descripcion: 'Así adaptamos las preguntas y tu plan a lo que necesitas.',
+    campos: [
+      {
+        clave: 'enfoque',
+        etiqueta: 'Quiero entrenar para…',
+        tipo: 'tarjetas',
+        requerido: true,
+        opciones: [DEPORTE, SALUD, CROSSFIT],
+        descripciones: {
+          [DEPORTE]:
+            'Juego o practico un deporte (fútbol, running, pádel, ciclismo…) y quiero rendir más y lesionarme menos.',
+          [SALUD]: 'Quiero sentirme mejor, bajar de peso, ganar músculo o crear el hábito de entrenar.',
+          [CROSSFIT]: 'Quiero empezar en CrossFit, mejorar mi nivel o prepararme para competir.',
+        },
+      },
+    ],
+  },
   {
     titulo: 'Sobre ti',
     campos: [
@@ -29,59 +62,137 @@ export const pasosFicha: PasoFicha[] = [
       { clave: 'sexo', etiqueta: 'Sexo', tipo: 'opciones', opciones: ['Femenino', 'Masculino', 'Prefiero no decir'] },
       { clave: 'peso', etiqueta: 'Peso', tipo: 'numero', unidad: 'kg', requerido: true },
       { clave: 'estatura', etiqueta: 'Estatura', tipo: 'numero', unidad: 'cm' },
-      {
-        clave: 'whatsapp',
-        etiqueta: 'WhatsApp',
-        tipo: 'texto',
-        ayuda: 'Para coordinar la evaluación',
-        requerido: true,
-      },
-      { clave: 'ciudad', etiqueta: 'Ciudad', tipo: 'texto' },
+      { clave: 'whatsapp', etiqueta: 'WhatsApp', tipo: 'texto', ayuda: 'Para coordinar contigo', requerido: true },
+      { clave: 'ciudad', etiqueta: 'Ciudad o comuna', tipo: 'texto' },
     ],
   },
+
+  // ---------- Camino: deporte ----------
+  {
+    titulo: 'Tu deporte',
+    mostrarSi: esDeporte,
+    campos: [
+      {
+        clave: 'deporte',
+        etiqueta: '¿Qué deporte practicas?',
+        tipo: 'opciones',
+        requerido: true,
+        opciones: [
+          'Fútbol',
+          'Running',
+          'Ciclismo',
+          'Pádel / tenis',
+          'Básquetbol',
+          'Vóleibol',
+          'Natación',
+          'Artes marciales',
+          'Otro',
+        ],
+      },
+      {
+        clave: 'deporte_otro',
+        etiqueta: '¿Cuál?',
+        tipo: 'texto',
+        requerido: true,
+        mostrarSi: (d) => d.deporte === 'Otro',
+      },
+      {
+        clave: 'posicion',
+        etiqueta: 'Posición, prueba o distancia',
+        tipo: 'texto',
+        ayuda: 'Opcional. Ej. delantero, 10K, ruta, arquero',
+      },
+      {
+        clave: 'nivel_deporte',
+        etiqueta: '¿A qué nivel lo practicas?',
+        tipo: 'opciones',
+        requerido: true,
+        opciones: ['Por diversión', 'Liga o competencias amateur', 'Club o federado'],
+      },
+      {
+        clave: 'temporada',
+        etiqueta: '¿En qué momento estás?',
+        tipo: 'opciones',
+        opciones: ['Fuera de temporada', 'Preparando la temporada', 'En plena temporada'],
+      },
+      {
+        clave: 'dias_deporte',
+        etiqueta: '¿Cuántos días a la semana entrenas o juegas tu deporte?',
+        tipo: 'opciones',
+        opciones: ['1', '2', '3', '4', '5 o más'],
+      },
+      {
+        clave: 'mejorar',
+        etiqueta: '¿Qué te gustaría mejorar?',
+        tipo: 'multi',
+        requerido: true,
+        opciones: [
+          'Fuerza',
+          'Velocidad',
+          'Resistencia',
+          'Salto / potencia',
+          'Agilidad',
+          'Movilidad',
+          'Prevenir lesiones',
+          'Bajar de peso',
+        ],
+      },
+      {
+        clave: 'evento',
+        etiqueta: '¿Tienes una competencia o fecha importante?',
+        tipo: 'texto',
+        ayuda: 'Opcional. Ej. maratón en abril, inicio del campeonato en marzo',
+      },
+    ],
+  },
+
+  // ---------- Camino: salud y forma física ----------
   {
     titulo: 'Tu objetivo',
+    mostrarSi: esSalud,
     campos: [
       {
         clave: 'objetivo',
-        etiqueta: 'Objetivo principal',
+        etiqueta: '¿Qué es lo más importante para ti?',
         tipo: 'opciones',
         requerido: true,
         opciones: [
           'Salud y bienestar',
-          'Estética / ganar masa muscular',
-          'Ganar fuerza',
-          'Empezar CrossFit',
-          'Competir en CrossFit',
-          'Carrera / resistencia',
+          'Bajar de peso',
+          'Ganar masa muscular',
+          'Tonificar',
+          'Más energía y menos dolores',
+          'Crear el hábito de entrenar',
         ],
       },
-      { clave: 'objetivo_secundario', etiqueta: 'Objetivo secundario', tipo: 'texto' },
+      { clave: 'objetivo_secundario', etiqueta: '¿Algo más que quieras lograr?', tipo: 'texto' },
       {
         clave: 'evento',
-        etiqueta: '¿Tienes una fecha o evento en mente?',
+        etiqueta: '¿Tienes una fecha en mente?',
         tipo: 'texto',
-        ayuda: 'Ej. Open 2027, una carrera de 10 km en abril',
+        ayuda: 'Opcional. Ej. un viaje, un matrimonio, el verano',
       },
     ],
   },
+
+  // ---------- Camino: CrossFit ----------
   {
-    titulo: 'Tu experiencia',
+    titulo: 'Tu CrossFit',
+    mostrarSi: esCrossfit,
     campos: [
       {
-        clave: 'anos',
-        etiqueta: 'Años entrenando',
+        clave: 'objetivo_cf',
+        etiqueta: '¿Qué quieres lograr?',
         tipo: 'opciones',
         requerido: true,
-        opciones: ['Menos de 1', '1 a 2', '3 a 5', 'Más de 5'],
+        opciones: ['Empezar en CrossFit', 'Mejorar mi nivel', 'Competir'],
       },
       {
-        clave: 'tipo_entrenamiento',
-        etiqueta: '¿Qué has entrenado?',
-        tipo: 'multi',
-        opciones: ['Gimnasio', 'CrossFit', 'Halterofilia', 'Running', 'Otro deporte'],
+        clave: 'evento',
+        etiqueta: '¿Tienes una competencia en mente?',
+        tipo: 'texto',
+        ayuda: 'Opcional. Ej. Open 2027, un throwdown local',
       },
-      { clave: 'nivel', etiqueta: 'Tu nivel', tipo: 'opciones', opciones: ['Principiante', 'Intermedio', 'Avanzado'] },
       {
         clave: 'movimientos',
         etiqueta: 'Movimientos que dominas',
@@ -99,11 +210,18 @@ export const pasosFicha: PasoFicha[] = [
           'Handstand push-up',
         ],
       },
+      {
+        clave: 'debilidades',
+        etiqueta: '¿Qué te cuesta más?',
+        tipo: 'texto',
+        ayuda: 'Ej. gimnásticos, olímpicos, motor, movilidad',
+      },
     ],
   },
   {
     titulo: 'Tus marcas',
-    descripcion: 'Opcional: completa solo las que sepas. Si no, las medimos en la semana de evaluación.',
+    descripcion: 'Opcional: completa solo las que sepas. Si no, las medimos juntos.',
+    mostrarSi: esCrossfit,
     campos: [
       { clave: 'back_squat', etiqueta: 'Back squat (1RM)', tipo: 'numero', unidad: 'kg' },
       { clave: 'front_squat', etiqueta: 'Front squat (1RM)', tipo: 'numero', unidad: 'kg' },
@@ -115,30 +233,64 @@ export const pasosFicha: PasoFicha[] = [
       { clave: 'benchmark', etiqueta: 'Algún benchmark', tipo: 'texto', ayuda: 'Ej. Fran 6:40' },
     ],
   },
+
+  // ---------- Común a todos ----------
+  {
+    titulo: 'Tu experiencia',
+    campos: [
+      {
+        clave: 'anos',
+        etiqueta: '¿Hace cuánto entrenas con pesas o en gimnasio?',
+        tipo: 'opciones',
+        requerido: true,
+        opciones: ['Nunca he entrenado', 'Menos de 1 año', '1 a 2 años', '3 a 5 años', 'Más de 5 años'],
+      },
+      {
+        clave: 'nivel',
+        etiqueta: '¿Cómo te sientes entrenando?',
+        tipo: 'opciones',
+        opciones: ['Estoy empezando', 'Me defiendo bien', 'Tengo mucha experiencia'],
+      },
+      {
+        clave: 'tipo_entrenamiento',
+        etiqueta: '¿Qué has hecho antes?',
+        tipo: 'multi',
+        mostrarSi: (d) => !esCrossfit(d),
+        opciones: ['Gimnasio', 'Clases (funcional, spinning…)', 'Running', 'Otro deporte', 'Nada todavía'],
+      },
+      {
+        clave: 'peso_cargas',
+        etiqueta: 'Si entrenas con pesas, ¿con cuánto haces sentadilla o prensa?',
+        tipo: 'texto',
+        ayuda: 'Opcional y aproximado. Ej. sentadilla 60 kg × 8',
+        mostrarSi: (d) => !esCrossfit(d),
+      },
+    ],
+  },
   {
     titulo: 'Tu tiempo',
     campos: [
       {
         clave: 'dias',
-        etiqueta: 'Días por semana para entrenar',
+        etiqueta: '¿Cuántos días a la semana puedes entrenar con el plan?',
         tipo: 'opciones',
         requerido: true,
         opciones: ['2', '3', '4', '5', '6'],
       },
       {
         clave: 'duracion',
-        etiqueta: 'Duración de cada sesión',
+        etiqueta: '¿Cuánto tiempo por sesión?',
         tipo: 'opciones',
         requerido: true,
-        opciones: ['45 min', '60 min', '75 min', '90 min o más'],
+        opciones: ['30 min', '45 min', '60 min', '75 min', '90 min o más'],
       },
       {
         clave: 'ocupados',
-        etiqueta: 'Días u horarios ya ocupados',
+        etiqueta: '¿Qué días u horarios ya tienes ocupados?',
         tipo: 'texto',
-        ayuda: 'Ej. clases el martes y jueves, fútbol el sábado',
+        ayuda: 'Ej. partido el sábado, clases martes y jueves',
       },
-      { clave: 'viajes', etiqueta: 'Viajes próximos', tipo: 'texto' },
+      { clave: 'viajes', etiqueta: '¿Viajes próximos?', tipo: 'texto' },
     ],
   },
   {
@@ -149,25 +301,25 @@ export const pasosFicha: PasoFicha[] = [
         etiqueta: 'Lugar',
         tipo: 'opciones',
         requerido: true,
-        opciones: ['Box de CrossFit', 'Gimnasio comercial', 'Gimnasio del edificio', 'Casa'],
+        opciones: ['Gimnasio', 'Box de CrossFit', 'Gimnasio del edificio', 'Casa', 'Plaza o al aire libre'],
       },
       {
         clave: 'equipamiento',
-        etiqueta: 'Equipamiento disponible',
+        etiqueta: '¿Qué tienes disponible?',
         tipo: 'multi',
+        ayuda: 'Marca lo que tengas. Si no tienes nada, no marques nada.',
         opciones: [
           'Barra y discos',
           'Rack',
           'Mancuernas',
           'Kettlebells',
-          'Poleas / máquinas',
+          'Máquinas / poleas',
           'Barra de dominadas',
+          'Bandas elásticas',
           'Anillas',
-          'Remo',
-          'Bike',
-          'Ski',
+          'Remo / bike',
           'Cuerda',
-          'Cajón',
+          'Cajón o escalón',
           'Balón medicinal',
         ],
       },
@@ -177,8 +329,8 @@ export const pasosFicha: PasoFicha[] = [
     titulo: 'Salud y día a día',
     descripcion: 'Esta información solo la vemos tú y tu coach.',
     campos: [
-      { clave: 'lesiones', etiqueta: 'Lesiones actuales o pasadas, molestias', tipo: 'area' },
-      { clave: 'condiciones', etiqueta: 'Condiciones médicas relevantes', tipo: 'area' },
+      { clave: 'lesiones', etiqueta: '¿Lesiones o molestias, actuales o pasadas?', tipo: 'area' },
+      { clave: 'condiciones', etiqueta: '¿Alguna condición médica? (asma, presión, etc.)', tipo: 'area' },
       {
         clave: 'autorizacion',
         etiqueta: '¿Tienes autorización médica para entrenar?',
@@ -187,19 +339,24 @@ export const pasosFicha: PasoFicha[] = [
       },
       {
         clave: 'sueno',
-        etiqueta: 'Horas de sueño',
+        etiqueta: '¿Cuántas horas duermes?',
         tipo: 'opciones',
         opciones: ['Menos de 6', '6 a 7', '7 a 8', 'Más de 8'],
       },
-      { clave: 'estres', etiqueta: 'Nivel de estrés', tipo: 'opciones', opciones: ['Bajo', 'Medio', 'Alto'] },
-      { clave: 'trabajo', etiqueta: 'Tu trabajo es', tipo: 'opciones', opciones: ['Sentado', 'De pie', 'Físico'] },
+      { clave: 'estres', etiqueta: 'Tu nivel de estrés', tipo: 'opciones', opciones: ['Bajo', 'Medio', 'Alto'] },
+      {
+        clave: 'trabajo',
+        etiqueta: 'En tu trabajo o estudio pasas…',
+        tipo: 'opciones',
+        opciones: ['Sentado', 'De pie', 'Haciendo esfuerzo físico'],
+      },
     ],
   },
   {
     titulo: 'Último paso',
     campos: [
-      { clave: 'gusta', etiqueta: 'Ejercicios que te gustan', tipo: 'texto' },
-      { clave: 'no_gusta', etiqueta: 'Ejercicios que prefieres evitar', tipo: 'texto' },
+      { clave: 'gusta', etiqueta: 'Ejercicios o actividades que te gustan', tipo: 'texto', ayuda: 'Opcional' },
+      { clave: 'no_gusta', etiqueta: 'Ejercicios que prefieres evitar', tipo: 'texto', ayuda: 'Opcional' },
       { clave: 'comentarios', etiqueta: '¿Algo más que tu coach deba saber?', tipo: 'area' },
       {
         clave: 'consentimiento',
@@ -210,6 +367,22 @@ export const pasosFicha: PasoFicha[] = [
     ],
   },
 ];
+
+const visible = (x: { mostrarSi?: (d: DatosFicha) => boolean }, d: DatosFicha) => !x.mostrarSi || x.mostrarSi(d);
+
+// Pasos y preguntas que le tocan a esta persona según sus respuestas
+export function pasosVisibles(d: DatosFicha): PasoFicha[] {
+  return pasosFicha
+    .filter((p) => visible(p, d))
+    .map((p) => ({ ...p, campos: p.campos.filter((c) => visible(c, d)) }))
+    .filter((p) => p.campos.length);
+}
+
+// Quita las respuestas de caminos que la persona ya no eligió (si cambió de enfoque)
+export function limpiarFicha(d: DatosFicha): DatosFicha {
+  const claves = new Set(pasosVisibles(d).flatMap((p) => p.campos.map((c) => c.clave)));
+  return Object.fromEntries(Object.entries(d).filter(([k]) => claves.has(k)));
+}
 
 export function faltantes(paso: PasoFicha, datos: DatosFicha): string[] {
   return paso.campos

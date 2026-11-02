@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import type { DatosFicha } from '../data/ficha';
-import { faltantes, pasosFicha } from '../data/ficha';
+import { faltantes, limpiarFicha, pasosVisibles } from '../data/ficha';
 
 import CampoFichaInput from './CampoFichaInput';
 
@@ -30,8 +30,10 @@ function FichaFormulario({ usuarioId, inicial, textoEnviar, onEnviar }: Props): 
   const [aviso, setAviso] = useState('');
   const [enviando, setEnviando] = useState(false);
 
-  const actual = pasosFicha[paso];
-  const esUltimo = paso === pasosFicha.length - 1;
+  const pasos = pasosVisibles(datos);
+  const indice = Math.min(paso, pasos.length - 1);
+  const actual = pasos[indice];
+  const esUltimo = indice === pasos.length - 1;
 
   function cambiar(clave: string, valor: string | string[] | boolean) {
     const nuevos = { ...datos, [clave]: valor };
@@ -51,13 +53,13 @@ function FichaFormulario({ usuarioId, inicial, textoEnviar, onEnviar }: Props): 
       return;
     }
     if (!esUltimo) {
-      setPaso(paso + 1);
+      setPaso(indice + 1);
       document.querySelector('.plan')?.scrollTo?.(0, 0);
       return;
     }
     setEnviando(true);
     try {
-      await onEnviar(datos);
+      await onEnviar(limpiarFicha(datos));
       try {
         localStorage.removeItem(claveBorrador(usuarioId));
       } catch {
@@ -72,13 +74,13 @@ function FichaFormulario({ usuarioId, inicial, textoEnviar, onEnviar }: Props): 
 
   return (
     <div className="ficha">
-      <div className="ficha-progreso" aria-label={`Paso ${paso + 1} de ${pasosFicha.length}`}>
-        {pasosFicha.map((p, i) => (
-          <span key={p.titulo} className={i <= paso ? 'hecho' : ''} />
+      <div className="ficha-progreso" aria-label={`Paso ${indice + 1} de ${pasos.length}`}>
+        {pasos.map((p, i) => (
+          <span key={p.titulo} className={i <= indice ? 'hecho' : ''} />
         ))}
       </div>
       <p className="ficha-paso">
-        Paso {paso + 1} de {pasosFicha.length}
+        Paso {indice + 1} de {pasos.length}
       </p>
       <h2 className="ficha-titulo">{actual.titulo}</h2>
       {actual.descripcion && <p className="ficha-descripcion">{actual.descripcion}</p>}
@@ -90,8 +92,8 @@ function FichaFormulario({ usuarioId, inicial, textoEnviar, onEnviar }: Props): 
       {aviso && <p className="aviso-error">{aviso}</p>}
 
       <div className="ficha-botones">
-        {paso > 0 && (
-          <button type="button" className="boton secundario" onClick={() => setPaso(paso - 1)}>
+        {indice > 0 && (
+          <button type="button" className="boton secundario" onClick={() => setPaso(indice - 1)}>
             Atrás
           </button>
         )}

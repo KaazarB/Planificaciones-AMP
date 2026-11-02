@@ -410,3 +410,33 @@
   min-height: 44px;
   padding: 0 14px;
 }
+
+/* Primera pregunta de la ficha: tarjetas grandes */
+.tarjeta-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--linea);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--tinta);
+  text-align: left;
+  font-size: 15px;
+}
+.tarjeta-opcion strong {
+  font-size: 17px;
+}
+.tarjeta-opcion span {
+  color: var(--gris);
+  line-height: 1.4;
+}
+.tarjeta-opcion.elegido {
+  border-color: var(--barra);
+  background: var(--barra);
+  color: #fff;
+}
+.tarjeta-opcion.elegido span {
+  color: #d4d4d4;
+}

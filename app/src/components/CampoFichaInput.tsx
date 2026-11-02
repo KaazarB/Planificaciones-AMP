@@ -26,6 +26,27 @@ function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element 
     );
   }
 
+  if (campo.tipo === 'tarjetas') {
+    return (
+      <div className="campo-ficha" role="radiogroup" aria-label={campo.etiqueta}>
+        {etiqueta}
+        {campo.opciones?.map((op) => (
+          <button
+            key={op}
+            type="button"
+            role="radio"
+            aria-checked={valor === op}
+            className={`tarjeta-opcion ${valor === op ? 'elegido' : ''}`}
+            onClick={() => onCambiar(campo.clave, op)}
+          >
+            <strong>{op}</strong>
+            {campo.descripciones?.[op] && <span>{campo.descripciones[op]}</span>}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   if (campo.tipo === 'opciones' || campo.tipo === 'multi') {
     const elegidos = campo.tipo === 'multi' ? ((valor as string[]) ?? []) : [valor as string];
     const alternar = (op: string) => {

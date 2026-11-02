@@ -14,8 +14,12 @@ function FichaResumen({ datos }: { datos: DatosFicha }): React.JSX.Element {
   return (
     <div className="ficha-resumen">
       {pasosFicha.map((paso) => {
+        // Si la persona eligió un camino, solo se muestran sus preguntas; las fichas antiguas muestran todo
+        const vale = (x: { mostrarSi?: (d: DatosFicha) => boolean }) =>
+          !datos.enfoque || !x.mostrarSi || x.mostrarSi(datos);
+        if (!vale(paso)) return null;
         const filas = paso.campos
-          .filter((c) => c.tipo !== 'check')
+          .filter((c) => c.tipo !== 'check' && vale(c))
           .map((c) => ({ c, v: texto(datos[c.clave]) }))
           .filter((f) => f.v);
         if (!filas.length) return null;
