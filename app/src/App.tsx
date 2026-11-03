@@ -73,32 +73,37 @@ function Mensaje({ texto, conSalir }: { texto: string; conSalir?: boolean }) {
   );
 }
 
+// Ionic no acepta hijos vacíos (false/null) en las pestañas: se arma la lista solo con lo que corresponde
 function Pestanas({ coach }: { coach: boolean }) {
+  const rutas = [
+    <Route key="plan" path="/plan" element={<Tab1 />} />,
+    <Route key="perfil" path="/perfil" element={<Perfil />} />,
+    ...(coach ? [<Route key="coach" path="/coach" element={<Coach />} />] : []),
+    <Route key="resto" path="*" element={<Navigate to={coach ? '/coach' : '/plan'} replace />} />,
+  ];
+  const botones = [
+    <IonTabButton key="plan" tab="plan" href="/plan">
+      <IonIcon aria-hidden="true" icon={calendarOutline} />
+      <IonLabel>Plan</IonLabel>
+    </IonTabButton>,
+    ...(coach
+      ? [
+          <IonTabButton key="coach" tab="coach" href="/coach">
+            <IonIcon aria-hidden="true" icon={peopleOutline} />
+            <IonLabel>Coach</IonLabel>
+          </IonTabButton>,
+        ]
+      : []),
+    <IonTabButton key="perfil" tab="perfil" href="/perfil">
+      <IonIcon aria-hidden="true" icon={personCircleOutline} />
+      <IonLabel>Perfil</IonLabel>
+    </IonTabButton>,
+  ];
   return (
     <IonReactHashRouter>
       <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/plan" element={<Tab1 />} />
-          <Route path="/perfil" element={<Perfil />} />
-          {coach && <Route path="/coach" element={<Coach />} />}
-          <Route path="*" element={<Navigate to={coach ? '/coach' : '/plan'} replace />} />
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="plan" href="/plan">
-            <IonIcon aria-hidden="true" icon={calendarOutline} />
-            <IonLabel>Plan</IonLabel>
-          </IonTabButton>
-          {coach && (
-            <IonTabButton tab="coach" href="/coach">
-              <IonIcon aria-hidden="true" icon={peopleOutline} />
-              <IonLabel>Coach</IonLabel>
-            </IonTabButton>
-          )}
-          <IonTabButton tab="perfil" href="/perfil">
-            <IonIcon aria-hidden="true" icon={personCircleOutline} />
-            <IonLabel>Perfil</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
+        <IonRouterOutlet>{rutas}</IonRouterOutlet>
+        <IonTabBar slot="bottom">{botones}</IonTabBar>
       </IonTabs>
     </IonReactHashRouter>
   );
