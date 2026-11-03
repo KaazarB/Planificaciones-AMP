@@ -147,12 +147,6 @@ export const pasosFicha: PasoFicha[] = [
           'Bajar de peso',
         ],
       },
-      {
-        clave: 'evento',
-        etiqueta: '¿Tienes una competencia o fecha importante?',
-        tipo: 'texto',
-        ayuda: 'Opcional. Ej. maratón en abril, inicio del campeonato en marzo',
-      },
     ],
   },
 
@@ -178,7 +172,7 @@ export const pasosFicha: PasoFicha[] = [
       },
       { clave: 'objetivo_secundario', etiqueta: '¿Algo más que quieras lograr?', tipo: 'texto' },
       {
-        clave: 'evento',
+        clave: 'fecha_meta',
         etiqueta: '¿Tienes una fecha en mente?',
         tipo: 'texto',
         ayuda: 'Opcional. Ej. un viaje, un matrimonio, el verano',
@@ -204,12 +198,6 @@ export const pasosFicha: PasoFicha[] = [
         tipo: 'opciones',
         requerido: true,
         opciones: ['Aprender bien la técnica', 'Mejorar mi nivel', 'Competir'],
-      },
-      {
-        clave: 'evento',
-        etiqueta: '¿Tienes una competencia en mente?',
-        tipo: 'texto',
-        ayuda: 'Opcional. Ej. Open 2027, un throwdown local',
       },
       {
         clave: 'movimientos',
@@ -253,6 +241,49 @@ export const pasosFicha: PasoFicha[] = [
   },
 
   // ---------- Común a todos ----------
+  {
+    titulo: 'Tu evento',
+    descripcion: 'Si tienes una carrera, competencia o evento, armamos tu plan para llegar en tu mejor momento.',
+    campos: [
+      {
+        clave: 'tiene_evento',
+        etiqueta: '¿Tienes algún evento deportivo en el que quieras participar o competir?',
+        tipo: 'opciones',
+        requerido: true,
+        opciones: ['Sí', 'No'],
+      },
+      {
+        clave: 'evento',
+        etiqueta: '¿Cuál es el evento?',
+        tipo: 'texto',
+        requerido: true,
+        ayuda: 'Ej. Maratón de Santiago, Open 2027, triatlón, campeonato de fútbol, una corrida de 10K',
+        mostrarSi: (d) => d.tiene_evento === 'Sí',
+      },
+      {
+        clave: 'fecha_evento',
+        etiqueta: '¿Cuándo es?',
+        tipo: 'fecha',
+        requerido: true,
+        mostrarSi: (d) => d.tiene_evento === 'Sí',
+      },
+      {
+        clave: 'meta_evento',
+        etiqueta: '¿Qué quieres lograr ahí?',
+        tipo: 'opciones',
+        requerido: true,
+        opciones: ['Participar y terminarlo', 'Mejorar mi marca', 'Competir por un buen resultado'],
+        mostrarSi: (d) => d.tiene_evento === 'Sí',
+      },
+      {
+        clave: 'marca_evento',
+        etiqueta: '¿Tienes una marca o meta concreta?',
+        tipo: 'texto',
+        ayuda: 'Opcional. Ej. bajar de 50 min en 10K, quedar entre los 20 primeros',
+        mostrarSi: (d) => d.tiene_evento === 'Sí' && d.meta_evento !== 'Participar y terminarlo',
+      },
+    ],
+  },
   {
     titulo: 'Tu experiencia',
     campos: [

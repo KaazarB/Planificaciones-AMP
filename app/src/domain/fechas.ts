@@ -18,12 +18,18 @@ export function lunesDeISO(iso: string): string {
   return aISO(f);
 }
 
-// «lunes 16 de noviembre»
+// «lunes 16 de noviembre» (con el año si no es el actual)
 export function fechaLarga(iso: string): string {
   const f = aFecha(iso);
   const dia = f.toLocaleDateString('es-CL', { weekday: 'long' });
   const mes = f.toLocaleDateString('es-CL', { month: 'long' });
-  return `${dia} ${f.getDate()} de ${mes}`;
+  const anio = f.getFullYear() !== new Date().getFullYear() ? ` de ${f.getFullYear()}` : '';
+  return `${dia} ${f.getDate()} de ${mes}${anio}`;
+}
+
+// Semanas completas entre dos fechas AAAA-MM-DD
+export function semanasEntre(desde: string, hasta: string): number {
+  return Math.floor((aFecha(hasta).getTime() - aFecha(desde).getTime()) / (7 * 24 * 3600 * 1000));
 }
 
 export const esFechaISO = (v: unknown): v is string => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);

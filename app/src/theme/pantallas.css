@@ -449,3 +449,9 @@
 .inicio-atleta {
   margin-top: 14px;
 }
+
+.evento-atleta {
+  margin-top: 8px;
+  background: #f4ead9;
+  color: #5c3c0c;
+}
