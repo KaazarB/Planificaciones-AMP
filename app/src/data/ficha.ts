@@ -1,5 +1,5 @@
 // Capa de datos: preguntas de la ficha de inscripción (se dibujan solas desde esta lista)
-// La primera pregunta («enfoque») decide qué pasos y preguntas ve cada persona.
+// La primera pregunta («deporte») decide qué pasos y preguntas ve cada persona.
 // Para agregar o quitar una pregunta basta con editar este archivo.
 
 export type TipoCampo = 'texto' | 'numero' | 'area' | 'opciones' | 'multi' | 'check' | 'tarjetas';
@@ -25,42 +25,53 @@ export interface PasoFicha {
   mostrarSi?: (d: DatosFicha) => boolean;
 }
 
-// Los tres caminos de la ficha
-export const DEPORTE = 'Fuerza para mi deporte';
-export const SALUD = 'Fuerza y forma física';
+// La primera pregunta es el deporte; de ahí salen tres caminos
 export const CROSSFIT = 'CrossFit';
-// Nombres de la versión anterior (fichas ya enviadas)
-const DEPORTE_ANTES = 'Rendimiento en mi deporte';
-const SALUD_ANTES = 'Salud y forma física';
+export const NINGUNO = 'Ninguno, solo quiero entrenar';
+const DEPORTES = [
+  CROSSFIT,
+  'Fútbol',
+  'Running',
+  'Ciclismo',
+  'Pádel / tenis',
+  'Básquetbol',
+  'Vóleibol',
+  'Natación',
+  'Artes marciales',
+  'Otro',
+  NINGUNO,
+];
+// Nombres de versiones anteriores (fichas ya enviadas con «enfoque»)
+const ENFOQUE_DEPORTE = ['Fuerza para mi deporte', 'Rendimiento en mi deporte'];
+const ENFOQUE_SALUD = ['Fuerza y forma física', 'Salud y forma física'];
 
-export const NO_PRACTICA_CF = 'No, quiero empezar';
-
-const esDeporte = (d: DatosFicha): boolean => d.enfoque === DEPORTE || d.enfoque === DEPORTE_ANTES;
-const esCrossfit = (d: DatosFicha): boolean => d.enfoque === CROSSFIT;
-// Solo quien ya practica CrossFit ve movimientos, marcas y benchmarks
-const practicaCrossfit = (d: DatosFicha): boolean =>
-  esCrossfit(d) && Boolean(d.practica_cf) && d.practica_cf !== NO_PRACTICA_CF;
-// Las fichas antiguas no tienen «enfoque»: se tratan como salud para no perder sus datos
-const esSalud = (d: DatosFicha): boolean => d.enfoque === SALUD || d.enfoque === SALUD_ANTES || !d.enfoque;
+const esCrossfit = (d: DatosFicha): boolean => d.deporte === CROSSFIT || d.enfoque === CROSSFIT;
+const esDeporte = (d: DatosFicha): boolean =>
+  (Boolean(d.deporte) && d.deporte !== CROSSFIT && d.deporte !== NINGUNO) ||
+  ENFOQUE_DEPORTE.includes(String(d.enfoque));
+// Sin deporte (o fichas antiguas sin camino) → fuerza y forma física
+const esSalud = (d: DatosFicha): boolean =>
+  d.deporte === NINGUNO || ENFOQUE_SALUD.includes(String(d.enfoque)) || (!d.deporte && !d.enfoque);
 
 export const pasosFicha: PasoFicha[] = [
   {
-    titulo: '¿Qué buscas?',
-    descripcion: 'Así adaptamos las preguntas y tu plan a lo que necesitas.',
+    titulo: 'Tu deporte',
+    descripcion: 'Así adaptamos las preguntas y tu plan a lo que haces.',
     campos: [
       {
-        clave: 'enfoque',
-        etiqueta: 'Quiero entrenar para…',
-        tipo: 'tarjetas',
+        clave: 'deporte',
+        etiqueta: '¿Qué deporte o actividad practicas?',
+        tipo: 'opciones',
         requerido: true,
-        opciones: [DEPORTE, SALUD, CROSSFIT],
-        descripciones: {
-          [DEPORTE]:
-            'Practico un deporte (fútbol, running, pádel, ciclismo…) y quiero sesiones de fuerza que me ayuden a rendir más y lesionarme menos.',
-          [SALUD]:
-            'Quiero entrenar fuerza en el gimnasio o en casa para verme y sentirme mejor: ganar músculo, bajar de peso o crear el hábito.',
-          [CROSSFIT]: 'Quiero empezar en CrossFit o ya lo practico y quiero mejorar o competir.',
-        },
+        ayuda: 'Si practicas varios, elige el principal.',
+        opciones: DEPORTES,
+      },
+      {
+        clave: 'deporte_otro',
+        etiqueta: '¿Cuál?',
+        tipo: 'texto',
+        requerido: true,
+        mostrarSi: (d) => d.deporte === 'Otro',
       },
     ],
   },
@@ -76,35 +87,11 @@ export const pasosFicha: PasoFicha[] = [
     ],
   },
 
-  // ---------- Camino: deporte ----------
+  // ---------- Camino: otro deporte (plan de fuerza para complementarlo) ----------
   {
-    titulo: 'Tu deporte',
+    titulo: 'Sobre tu deporte',
     mostrarSi: esDeporte,
     campos: [
-      {
-        clave: 'deporte',
-        etiqueta: '¿Qué deporte practicas?',
-        tipo: 'opciones',
-        requerido: true,
-        opciones: [
-          'Fútbol',
-          'Running',
-          'Ciclismo',
-          'Pádel / tenis',
-          'Básquetbol',
-          'Vóleibol',
-          'Natación',
-          'Artes marciales',
-          'Otro',
-        ],
-      },
-      {
-        clave: 'deporte_otro',
-        etiqueta: '¿Cuál?',
-        tipo: 'texto',
-        requerido: true,
-        mostrarSi: (d) => d.deporte === 'Otro',
-      },
       {
         clave: 'posicion',
         etiqueta: 'Posición, prueba o distancia',
@@ -143,6 +130,7 @@ export const pasosFicha: PasoFicha[] = [
           'Agilidad',
           'Movilidad',
           'Prevenir lesiones',
+          'Ganar músculo',
           'Bajar de peso',
         ],
       },
@@ -155,7 +143,7 @@ export const pasosFicha: PasoFicha[] = [
     ],
   },
 
-  // ---------- Camino: salud y forma física ----------
+  // ---------- Camino: sin deporte (fuerza y forma física) ----------
   {
     titulo: 'Tu objetivo',
     mostrarSi: esSalud,
@@ -172,6 +160,7 @@ export const pasosFicha: PasoFicha[] = [
           'Tonificar',
           'Más energía y menos dolores',
           'Crear el hábito de entrenar',
+          'Prepararme para empezar CrossFit',
         ],
       },
       { clave: 'objetivo_secundario', etiqueta: '¿Algo más que quieras lograr?', tipo: 'texto' },
@@ -190,39 +179,29 @@ export const pasosFicha: PasoFicha[] = [
     mostrarSi: esCrossfit,
     campos: [
       {
-        clave: 'practica_cf',
-        etiqueta: '¿Practicas CrossFit hoy?',
+        clave: 'anos_cf',
+        etiqueta: '¿Hace cuánto practicas CrossFit?',
         tipo: 'opciones',
         requerido: true,
-        opciones: [NO_PRACTICA_CF, 'Sí, hace menos de 1 año', 'Sí, hace 1 año o más'],
-      },
-      {
-        clave: 'actividad_actual',
-        etiqueta: '¿Qué deporte o actividad haces hoy?',
-        tipo: 'texto',
-        ayuda: 'Ej. gimnasio 3 veces por semana, fútbol los sábados, nada todavía',
-        mostrarSi: (d) => d.practica_cf === NO_PRACTICA_CF,
+        opciones: ['Menos de 6 meses', '6 meses a 1 año', '1 a 3 años', 'Más de 3 años'],
       },
       {
         clave: 'objetivo_cf',
         etiqueta: '¿Qué quieres lograr?',
         tipo: 'opciones',
         requerido: true,
-        mostrarSi: practicaCrossfit,
-        opciones: ['Mejorar mi nivel', 'Competir'],
+        opciones: ['Aprender bien la técnica', 'Mejorar mi nivel', 'Competir'],
       },
       {
         clave: 'evento',
         etiqueta: '¿Tienes una competencia en mente?',
         tipo: 'texto',
         ayuda: 'Opcional. Ej. Open 2027, un throwdown local',
-        mostrarSi: practicaCrossfit,
       },
       {
         clave: 'movimientos',
         etiqueta: 'Movimientos que dominas',
         tipo: 'multi',
-        mostrarSi: practicaCrossfit,
         opciones: [
           'Sentadilla',
           'Peso muerto',
@@ -240,7 +219,6 @@ export const pasosFicha: PasoFicha[] = [
         clave: 'debilidades',
         etiqueta: '¿Qué te cuesta más?',
         tipo: 'texto',
-        mostrarSi: practicaCrossfit,
         ayuda: 'Ej. gimnásticos, olímpicos, motor, movilidad',
       },
     ],
@@ -248,7 +226,7 @@ export const pasosFicha: PasoFicha[] = [
   {
     titulo: 'Tus marcas',
     descripcion: 'Opcional: completa solo las que sepas. Si no, las medimos juntos.',
-    mostrarSi: practicaCrossfit,
+    mostrarSi: esCrossfit,
     campos: [
       { clave: 'back_squat', etiqueta: 'Back squat (1RM)', tipo: 'numero', unidad: 'kg' },
       { clave: 'front_squat', etiqueta: 'Front squat (1RM)', tipo: 'numero', unidad: 'kg' },
@@ -282,7 +260,7 @@ export const pasosFicha: PasoFicha[] = [
         clave: 'tipo_entrenamiento',
         etiqueta: '¿Qué has hecho antes?',
         tipo: 'multi',
-        mostrarSi: (d) => !practicaCrossfit(d),
+        mostrarSi: (d) => !esCrossfit(d),
         opciones: ['Gimnasio', 'Clases (funcional, spinning…)', 'Running', 'Otro deporte', 'Nada todavía'],
       },
       {
@@ -290,7 +268,7 @@ export const pasosFicha: PasoFicha[] = [
         etiqueta: 'Si entrenas con pesas, ¿con cuánto haces sentadilla o prensa?',
         tipo: 'texto',
         ayuda: 'Opcional y aproximado. Ej. sentadilla 60 kg × 8',
-        mostrarSi: (d) => !practicaCrossfit(d),
+        mostrarSi: (d) => !esCrossfit(d),
       },
     ],
   },
