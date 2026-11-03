@@ -15,6 +15,7 @@ export interface CampoFicha {
   ayuda?: string;
   unidad?: string;
   requerido?: boolean;
+  exclusiva?: string; // en «multi»: opción que no se combina con las demás (ej. «Ninguno»)
   mostrarSi?: (d: DatosFicha) => boolean;
 }
 
@@ -25,11 +26,14 @@ export interface PasoFicha {
   mostrarSi?: (d: DatosFicha) => boolean;
 }
 
-// La primera pregunta es el deporte; de ahí salen tres caminos
+// La primera pregunta es el deporte (puede elegir varios); de ahí salen los caminos
 export const CROSSFIT = 'CrossFit';
-export const NINGUNO = 'Ninguno, solo quiero entrenar';
+export const GIMNASIO = 'Gimnasio';
+export const NINGUNO = 'Ninguno todavía';
+const NINGUNO_ANTES = 'Ninguno, solo quiero entrenar';
 const DEPORTES = [
   CROSSFIT,
+  GIMNASIO,
   'Fútbol',
   'Running',
   'Ciclismo',
@@ -45,13 +49,21 @@ const DEPORTES = [
 const ENFOQUE_DEPORTE = ['Fuerza para mi deporte', 'Rendimiento en mi deporte'];
 const ENFOQUE_SALUD = ['Fuerza y forma física', 'Salud y forma física'];
 
-const esCrossfit = (d: DatosFicha): boolean => d.deporte === CROSSFIT || d.enfoque === CROSSFIT;
+// «deporte» era un texto en fichas antiguas y ahora es una lista
+export const deportesDe = (d: DatosFicha): string[] =>
+  Array.isArray(d.deporte) ? d.deporte : typeof d.deporte === 'string' && d.deporte ? [d.deporte] : [];
+const SIN_DEPORTE = [CROSSFIT, GIMNASIO, NINGUNO, NINGUNO_ANTES];
+
+const esCrossfit = (d: DatosFicha): boolean => deportesDe(d).includes(CROSSFIT) || d.enfoque === CROSSFIT;
+// Practica al menos un deporte distinto de CrossFit y gimnasio → plan de fuerza para su deporte
 const esDeporte = (d: DatosFicha): boolean =>
-  (Boolean(d.deporte) && d.deporte !== CROSSFIT && d.deporte !== NINGUNO) ||
-  ENFOQUE_DEPORTE.includes(String(d.enfoque));
-// Sin deporte (o fichas antiguas sin camino) → fuerza y forma física
-const esSalud = (d: DatosFicha): boolean =>
-  d.deporte === NINGUNO || ENFOQUE_SALUD.includes(String(d.enfoque)) || (!d.deporte && !d.enfoque);
+  deportesDe(d).some((x) => !SIN_DEPORTE.includes(x)) || ENFOQUE_DEPORTE.includes(String(d.enfoque));
+// Solo gimnasio o ninguno (o fichas antiguas sin camino) → fuerza y forma física
+const esSalud = (d: DatosFicha): boolean => {
+  if (d.enfoque) return ENFOQUE_SALUD.includes(String(d.enfoque));
+  const lista = deportesDe(d);
+  return !lista.length || lista.every((x) => x === GIMNASIO || x === NINGUNO || x === NINGUNO_ANTES);
+};
 
 export const pasosFicha: PasoFicha[] = [
   {
@@ -60,18 +72,19 @@ export const pasosFicha: PasoFicha[] = [
     campos: [
       {
         clave: 'deporte',
-        etiqueta: '¿Qué deporte o actividad practicas?',
-        tipo: 'opciones',
+        etiqueta: '¿Qué deportes o actividades practicas?',
+        tipo: 'multi',
         requerido: true,
-        ayuda: 'Si practicas varios, elige el principal.',
+        ayuda: 'Puedes elegir más de uno.',
         opciones: DEPORTES,
+        exclusiva: NINGUNO,
       },
       {
         clave: 'deporte_otro',
         etiqueta: '¿Cuál?',
         tipo: 'texto',
         requerido: true,
-        mostrarSi: (d) => d.deporte === 'Otro',
+        mostrarSi: (d) => deportesDe(d).includes('Otro'),
       },
     ],
   },
@@ -100,7 +113,7 @@ export const pasosFicha: PasoFicha[] = [
       },
       {
         clave: 'nivel_deporte',
-        etiqueta: '¿A qué nivel lo practicas?',
+        etiqueta: '¿A qué nivel practicas tu deporte principal?',
         tipo: 'opciones',
         requerido: true,
         opciones: ['Por diversión', 'Liga o competencias amateur', 'Club o federado'],

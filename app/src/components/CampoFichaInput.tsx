@@ -52,7 +52,13 @@ function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element 
     const elegidos = campo.tipo === 'multi' ? ((valor as string[]) ?? []) : [valor as string];
     const alternar = (op: string) => {
       if (campo.tipo === 'opciones') onCambiar(campo.clave, valor === op ? '' : op);
-      else onCambiar(campo.clave, elegidos.includes(op) ? elegidos.filter((e) => e !== op) : [...elegidos, op]);
+      else if (elegidos.includes(op))
+        onCambiar(
+          campo.clave,
+          elegidos.filter((e) => e !== op),
+        );
+      else if (op === campo.exclusiva) onCambiar(campo.clave, [op]);
+      else onCambiar(campo.clave, [...elegidos.filter((e) => e !== campo.exclusiva), op]);
     };
     return (
       <div className="campo-ficha">
