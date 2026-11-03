@@ -2,7 +2,7 @@
 // La primera pregunta («deporte») decide qué pasos y preguntas ve cada persona.
 // Para agregar o quitar una pregunta basta con editar este archivo.
 
-export type TipoCampo = 'texto' | 'numero' | 'area' | 'opciones' | 'multi' | 'check' | 'tarjetas';
+export type TipoCampo = 'texto' | 'numero' | 'area' | 'opciones' | 'multi' | 'check' | 'tarjetas' | 'fecha';
 
 export type DatosFicha = Record<string, string | string[] | boolean>;
 
@@ -275,6 +275,13 @@ export const pasosFicha: PasoFicha[] = [
   {
     titulo: 'Tu tiempo',
     campos: [
+      {
+        clave: 'inicio',
+        etiqueta: '¿Desde cuándo quieres empezar?',
+        tipo: 'fecha',
+        requerido: true,
+        ayuda: 'Los planes parten un lunes: si eliges otro día, partimos el lunes siguiente.',
+      },
       {
         clave: 'dias',
         etiqueta: '¿Cuántos días a la semana puedes entrenar con el plan?',

@@ -2,11 +2,13 @@
 
 import type { DatosFicha } from '../data/ficha';
 import { pasosFicha } from '../data/ficha';
+import { esFechaISO, fechaLarga } from '../domain/fechas';
 
 function texto(v: DatosFicha[string] | undefined): string {
   if (v === undefined || v === '' || v === false) return '';
   if (v === true) return 'Sí';
   if (Array.isArray(v)) return v.join(', ');
+  if (esFechaISO(v)) return fechaLarga(v);
   return v;
 }
 

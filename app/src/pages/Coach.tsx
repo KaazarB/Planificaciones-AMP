@@ -8,6 +8,7 @@ import FichaResumen from '../components/FichaResumen';
 import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
+import { esFechaISO, fechaLarga, lunesDeISO } from '../domain/fechas';
 import type { Estado, Perfil } from '../services/cuenta';
 import { leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
@@ -153,6 +154,12 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
         {esYo && <span>Tu cuenta</span>}
         <span>Desde {new Date(atleta.creado).toLocaleDateString('es-CL')}</span>
       </div>
+      {esFechaISO(ficha?.inicio) && (
+        <p className="aviso inicio-atleta">
+          Quiere empezar el {fechaLarga(ficha.inicio)}. Su plan debería partir el{' '}
+          <strong>{fechaLarga(lunesDeISO(ficha.inicio))}</strong>.
+        </p>
+      )}
 
       <div className="fila-botones">
         {whatsapp && (

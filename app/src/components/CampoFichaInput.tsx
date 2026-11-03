@@ -1,6 +1,7 @@
 // Capa de componentes: dibuja una pregunta de la ficha según su tipo
 
 import type { CampoFicha, DatosFicha } from '../data/ficha';
+import { esFechaISO, fechaLarga, hoyISO, lunesDeISO } from '../domain/fechas';
 
 interface Props {
   campo: CampoFicha;
@@ -78,7 +79,20 @@ function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element 
     <label className="campo-ficha">
       {etiqueta}
       {campo.ayuda && <span className="campo-ayuda">{campo.ayuda}</span>}
-      {campo.tipo === 'area' ? (
+      {campo.tipo === 'fecha' ? (
+        <>
+          <input
+            type="date"
+            className="campo-fecha"
+            min={hoyISO()}
+            value={(valor as string) ?? ''}
+            onChange={(e) => onCambiar(campo.clave, e.target.value)}
+          />
+          {esFechaISO(valor) && (
+            <span className="campo-ayuda">Tu plan partiría el {fechaLarga(lunesDeISO(valor))}.</span>
+          )}
+        </>
+      ) : campo.tipo === 'area' ? (
         <textarea rows={3} value={(valor as string) ?? ''} onChange={(e) => onCambiar(campo.clave, e.target.value)} />
       ) : (
         <span className="con-unidad">
