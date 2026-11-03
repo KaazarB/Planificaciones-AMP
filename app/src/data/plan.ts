@@ -12,6 +12,7 @@ export interface Item {
   obj?: string;
   kg?: string;
   video?: string; // link de YouTube solo para este ítem (si no, se usa la biblioteca del coach)
+  alternativas?: string[]; // reemplazos si no tiene la máquina (si no, se usa la lista general)
 }
 
 export interface Seccion {

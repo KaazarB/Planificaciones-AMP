@@ -6,6 +6,7 @@ import type { Campo, Item, Seccion } from '../data/plan';
 import { claveItem } from '../data/plan';
 import type { FilaSerie, RegistroDia } from '../data/registro';
 import { progresoSeccion } from '../domain/progreso';
+import { alternativasDe } from '../domain/sustituciones';
 import { claveEjercicio } from '../domain/videos';
 import type { Videos } from '../services/videos';
 
@@ -26,6 +27,79 @@ interface Props {
 function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar, videos }: Props): React.JSX.Element {
   const progreso = progresoSeccion(seccion, indice, registro);
   const [videoAbierto, setVideoAbierto] = useState<string | null>(null);
+  const [cambioAbierto, setCambioAbierto] = useState<string | null>(null);
+
+  // Si el atleta eligió una alternativa, se muestra esa (sin el peso sugerido del original)
+  function efectivo(clave: string, item: Item): Item {
+    const elegido = registro.sustituciones?.[clave];
+    if (!elegido) return item;
+    // Se quita el peso sugerido del original («· 20 kg», «· 2 × 8 kg», «· ~10 kg»)
+    const presc = item.presc.replace(/\s·\s[^·]*\bkg\b[^·]*(?=\s·|$)/g, '');
+    return { ...item, nombre: elegido, presc, kg: '', video: undefined };
+  }
+
+  function sustituir(clave: string, nombre: string | null) {
+    const resto = { ...(registro.sustituciones ?? {}) };
+    if (nombre) resto[clave] = nombre;
+    else delete resto[clave];
+    onCambiar({ sustituciones: resto });
+    setCambioAbierto(null);
+    setVideoAbierto(null);
+  }
+
+  // Botón ⇄ para ejercicios de máquina; dentro de una casilla no debe marcarla
+  function botonCambio(clave: string, original: Item) {
+    if (!alternativasDe(original).length) return null;
+    const abierto = cambioAbierto === clave;
+    return (
+      <button
+        type="button"
+        className={`boton-cambio ${abierto ? 'abierto' : ''}`}
+        aria-expanded={abierto}
+        aria-label={`Cambiar ${original.nombre} por otro ejercicio`}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setCambioAbierto(abierto ? null : clave);
+        }}
+      >
+        ⇄ Cambiar
+      </button>
+    );
+  }
+
+  function panelCambio(clave: string, original: Item) {
+    const elegido = registro.sustituciones?.[clave];
+    const aviso = elegido ? (
+      <p className="sustituido">
+        En vez de <strong>{original.nombre}</strong>
+      </p>
+    ) : null;
+    if (cambioAbierto !== clave) return aviso;
+    return (
+      <>
+        {aviso}
+        <div className="panel-cambio">
+          <p>¿No tienes la máquina? Elige una alternativa:</p>
+          {alternativasDe(original).map((alt) => (
+            <button
+              key={alt}
+              type="button"
+              className={`opcion-cambio ${elegido === alt ? 'elegido' : ''}`}
+              onClick={() => sustituir(clave, alt)}
+            >
+              {alt}
+            </button>
+          ))}
+          {elegido && (
+            <button type="button" className="enlace" onClick={() => sustituir(clave, null)}>
+              Volver a {original.nombre}
+            </button>
+          )}
+        </div>
+      </>
+    );
+  }
 
   const videoDe = (item: Item) => item.video || videos?.get(claveEjercicio(item.nombre));
 
@@ -81,8 +155,11 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
 
       {abierta && (
         <div className="seccion-cuerpo">
-          {seccion.items.map((item, ii) => {
+          {seccion.items.map((itemPlan, ii) => {
+            let item = itemPlan;
             const clave = claveItem(indice, ii);
+            const original = item;
+            item = efectivo(clave, original);
 
             if (seccion.check) {
               const hecho = Boolean(registro.checks[clave]);
@@ -94,9 +171,11 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
                     <span className="item-texto">
                       <span className="item-nombre">{item.nombre}</span>
                       {botonVideo(clave, item)}
+                      {botonCambio(clave, original)}
                     </span>
                     <span className="item-presc">{item.presc}</span>
                   </label>
+                  {panelCambio(clave, original)}
                   {video(clave, item)}
                 </div>
               );
@@ -110,9 +189,11 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
                     <span className="item-texto">
                       <span className="item-nombre">{item.nombre}</span>
                       {botonVideo(clave, item)}
+                      {botonCambio(clave, original)}
                     </span>
                     <span className="item-presc">{item.presc}</span>
                   </div>
+                  {panelCambio(clave, original)}
                   {video(clave, item)}
                   {Array.from({ length: item.series }, (_, k) => (
                     <div key={k} className="fila-serie">
@@ -141,9 +222,11 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
                   <span className="item-texto">
                     <span className="item-nombre">{item.nombre}</span>
                     {botonVideo(clave, item)}
+                    {botonCambio(clave, original)}
                   </span>
                   <span className="item-presc">{item.presc}</span>
                 </div>
+                {panelCambio(clave, original)}
                 {video(clave, item)}
               </div>
             );

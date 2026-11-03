@@ -17,6 +17,7 @@ export interface RegistroDia {
   lumbarDespues?: number; // 0-10
   sueno?: string; // horas o Body Battery
   notas?: string;
+  sustituciones?: Record<string, string>; // clave s{i}i{j} → ejercicio que hizo en vez del original
   actualizado: string; // ISO
 }
 
