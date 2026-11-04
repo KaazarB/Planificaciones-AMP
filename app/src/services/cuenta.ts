@@ -21,9 +21,11 @@ export interface Perfil {
 // Traduce los errores de Supabase a mensajes claros
 export function mensajeError(e: unknown): string {
   const m = e instanceof Error ? e.message : String(e);
+  if (/codigo_invalido|Database error saving new user/i.test(m))
+    return 'El código de invitación no es válido o ya no está activo. Pídele uno a tu coach.';
   if (/Invalid login credentials/i.test(m)) return 'Correo o clave incorrectos.';
   if (/already registered/i.test(m)) return 'Ese correo ya tiene cuenta. Ingresa con tu clave.';
-  if (/Password should be at least/i.test(m)) return 'La clave debe tener al menos 6 caracteres.';
+  if (/Password should be at least/i.test(m)) return 'La clave es muy corta. Usa al menos 8 caracteres.';
   if (/Email not confirmed/i.test(m)) return 'Confirma tu correo antes de ingresar (revisa tu bandeja).';
   if (/valid email|invalid.*email/i.test(m)) return 'Revisa que el correo esté bien escrito.';
   if (/Failed to fetch|NetworkError/i.test(m)) return 'Sin conexión. Revisa tu internet e intenta de nuevo.';
@@ -41,11 +43,14 @@ export async function entrar(correo: string, clave: string): Promise<void> {
 }
 
 // Devuelve true si quedó con sesión abierta; false si debe confirmar el correo primero
-export async function crearCuenta(nombre: string, correo: string, clave: string): Promise<boolean> {
+export async function crearCuenta(nombre: string, correo: string, clave: string, codigo: string): Promise<boolean> {
   const { data, error } = await supabase.auth.signUp({
     email: correo.trim(),
     password: clave,
-    options: { data: { nombre: nombre.trim() }, emailRedirectTo: window.location.origin + window.location.pathname },
+    options: {
+      data: { nombre: nombre.trim(), codigo: codigo.trim().toUpperCase() },
+      emailRedirectTo: window.location.origin + window.location.pathname,
+    },
   });
   if (error) throw error;
   return Boolean(data.session);

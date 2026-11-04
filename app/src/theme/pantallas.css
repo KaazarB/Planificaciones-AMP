@@ -455,3 +455,47 @@
   background: #f4ead9;
   color: #5c3c0c;
 }
+
+.acceso-invitaciones {
+  margin-top: 12px;
+  background: #ececea;
+}
+.acceso-invitaciones + .acceso-videos {
+  margin-top: 0;
+}
+.fila-invitacion {
+  margin-top: 10px;
+}
+.fila-invitacion.inactiva {
+  opacity: 0.6;
+}
+.fila-invitacion .tenue {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.fila-invitacion .fila-botones {
+  margin: 10px 0 0;
+}
+.fila-invitacion-cabeza {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.codigo {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.enlace-invitacion {
+  word-break: break-all;
+  font-size: 12px !important;
+}
+.texto-copiar {
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+}

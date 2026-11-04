@@ -10,6 +10,8 @@ function Ingreso(): React.JSX.Element {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
+  // El link de invitación trae el código: …/movil/?codigo=AB12CD
+  const [codigo, setCodigo] = useState(() => new URLSearchParams(window.location.search).get('codigo') ?? '');
   const [error, setError] = useState('');
   const [aviso, setAviso] = useState('');
   const [trabajando, setTrabajando] = useState(false);
@@ -19,11 +21,13 @@ function Ingreso(): React.JSX.Element {
     setError('');
     setAviso('');
     if (modo === 'crear' && !nombre.trim()) return setError('Escribe tu nombre.');
+    if (modo === 'crear' && !codigo.trim()) return setError('Escribe el código de invitación que te dio tu coach.');
     if (!correo.trim() || !clave) return setError('Escribe tu correo y tu clave.');
+    if (modo === 'crear' && clave.length < 8) return setError('La clave debe tener al menos 8 caracteres.');
     setTrabajando(true);
     try {
       if (modo === 'entrar') await entrar(correo, clave);
-      else if (!(await crearCuenta(nombre, correo, clave))) {
+      else if (!(await crearCuenta(nombre, correo, clave, codigo))) {
         setAviso('Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego ingresa aquí con tu clave.');
         setModo('entrar');
       }
@@ -54,6 +58,18 @@ function Ingreso(): React.JSX.Element {
           <form onSubmit={enviar} className="tarjeta">
             {modo === 'crear' && (
               <label className="campo-ficha">
+                <span className="campo-etiqueta">Código de invitación</span>
+                <input
+                  autoCapitalize="characters"
+                  autoComplete="off"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value.toUpperCase())}
+                />
+                <span className="campo-ayuda">Te lo entrega tu coach junto con el link.</span>
+              </label>
+            )}
+            {modo === 'crear' && (
+              <label className="campo-ficha">
                 <span className="campo-etiqueta">Nombre y apellido</span>
                 <input autoComplete="name" value={nombre} onChange={(e) => setNombre(e.target.value)} />
               </label>
@@ -77,7 +93,7 @@ function Ingreso(): React.JSX.Element {
                 value={clave}
                 onChange={(e) => setClave(e.target.value)}
               />
-              {modo === 'crear' && <span className="campo-ayuda">Mínimo 6 caracteres</span>}
+              {modo === 'crear' && <span className="campo-ayuda">Mínimo 8 caracteres</span>}
             </label>
 
             {error && <p className="aviso-error">{error}</p>}

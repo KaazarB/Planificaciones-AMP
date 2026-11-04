@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import BibliotecaVideos from '../components/BibliotecaVideos';
 import FichaResumen from '../components/FichaResumen';
+import Invitaciones from '../components/Invitaciones';
 import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
@@ -271,6 +272,7 @@ function Coach(): React.JSX.Element {
   const [atletas, setAtletas] = useState<Perfil[]>([]);
   const [elegido, setElegido] = useState<Perfil | null>(null);
   const [verVideos, setVerVideos] = useState(false);
+  const [verInvitaciones, setVerInvitaciones] = useState(false);
   const [error, setError] = useState('');
 
   const [version, setVersion] = useState(0);
@@ -303,7 +305,9 @@ function Coach(): React.JSX.Element {
     <IonPage>
       <IonContent className="plan">
         <div className="plan-envoltura">
-          {verVideos ? (
+          {verInvitaciones ? (
+            <Invitaciones onVolver={() => setVerInvitaciones(false)} />
+          ) : verVideos ? (
             <BibliotecaVideos onVolver={() => setVerVideos(false)} />
           ) : elegido ? (
             <DetalleAtleta
@@ -322,6 +326,12 @@ function Coach(): React.JSX.Element {
                   Actualizar
                 </button>
               </header>
+              <button className="fila-atleta acceso-invitaciones" onClick={() => setVerInvitaciones(true)}>
+                <span>
+                  <strong>🔒 Invitaciones</strong>
+                </span>
+                <span className="tenue">Códigos para crear cuenta ›</span>
+              </button>
               <button className="fila-atleta acceso-videos" onClick={() => setVerVideos(true)}>
                 <span>
                   <strong>▶ Videos de ejercicios</strong>
