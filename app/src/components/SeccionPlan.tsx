@@ -179,8 +179,20 @@ function SeccionPlan({
               const hecho = Boolean(registro.checks[clave]);
               return (
                 <div key={clave} className="item-envoltura">
-                  <label className={`item item-check ${hecho ? 'hecho' : ''}`}>
-                    <input type="checkbox" checked={hecho} disabled={soloLectura} onChange={() => marcar(clave)} />
+                  {/* La fila completa responde al toque directamente (sin depender de que Safari active una casilla oculta) */}
+                  <div
+                    role="checkbox"
+                    aria-checked={hecho}
+                    aria-disabled={soloLectura}
+                    tabIndex={soloLectura ? -1 : 0}
+                    className={`item item-check ${hecho ? 'hecho' : ''} ${soloLectura ? 'solo-lectura' : ''}`}
+                    onClick={() => !soloLectura && marcar(clave)}
+                    onKeyDown={(e) => {
+                      if (soloLectura || (e.key !== ' ' && e.key !== 'Enter')) return;
+                      e.preventDefault();
+                      marcar(clave);
+                    }}
+                  >
                     <span className="caja" aria-hidden="true" />
                     <span className="item-texto">
                       <span className="item-nombre">{item.nombre}</span>
@@ -188,7 +200,7 @@ function SeccionPlan({
                       {botonCambio(clave, original)}
                     </span>
                     <span className="item-presc">{item.presc}</span>
-                  </label>
+                  </div>
                   {panelCambio(clave, original)}
                   {video(clave, item)}
                 </div>

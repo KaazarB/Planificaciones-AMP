@@ -365,9 +365,21 @@
   color: var(--gris);
   text-decoration: line-through;
 }
-.item-check input:focus-visible + .caja {
+.item-check {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.item-check:focus-visible .caja {
   outline: 2px solid var(--azul);
   outline-offset: 2px;
+}
+.item-check:focus {
+  outline: none;
+}
+.item-check.solo-lectura {
+  cursor: default;
 }
 
 .item-series {
