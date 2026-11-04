@@ -10,6 +10,7 @@ interface Props {
   registro: RegistroDia;
   onAlternar: () => void;
   onCambiar: (cambio: Partial<RegistroDia>) => void;
+  soloLectura?: boolean;
 }
 
 function Escala({
@@ -51,7 +52,15 @@ function semaforo(reg: RegistroDia, reglas: Plan['reglas']) {
   return { color: 'rojo', texto: s.rojo ?? 'Detener y consultar' };
 }
 
-function RegistroCierre({ dia, reglas, abierta, registro, onAlternar, onCambiar }: Props): React.JSX.Element {
+function RegistroCierre({
+  dia,
+  reglas,
+  abierta,
+  registro,
+  onAlternar,
+  onCambiar,
+  soloLectura = false,
+}: Props): React.JSX.Element {
   const luz = semaforo(registro, reglas);
   const esDescanso = dia.tipo === 'descanso';
 
@@ -65,7 +74,7 @@ function RegistroCierre({ dia, reglas, abierta, registro, onAlternar, onCambiar 
       </button>
 
       {abierta && (
-        <div className="seccion-cuerpo registro">
+        <fieldset className="seccion-cuerpo registro" disabled={soloLectura}>
           {dia.tipo === 'clase' && (
             <label className="campo-texto">
               <span>Qué hiciste en clase</span>
@@ -141,7 +150,7 @@ function RegistroCierre({ dia, reglas, abierta, registro, onAlternar, onCambiar 
             <span>Notas y sensaciones</span>
             <textarea rows={3} value={registro.notas ?? ''} onChange={(e) => onCambiar({ notas: e.target.value })} />
           </label>
-        </div>
+        </fieldset>
       )}
     </section>
   );

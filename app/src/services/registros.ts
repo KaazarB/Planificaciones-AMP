@@ -46,6 +46,17 @@ export async function sincronizar(atleta: string): Promise<{ registros: Mapa; nu
   }
 }
 
+// El coach lee los registros de un atleta desde Supabase (sin tocar el teléfono)
+export async function leerRegistrosNube(atleta: string): Promise<Mapa> {
+  try {
+    const { data, error } = await supabase.from('registros_dia').select('fecha, datos').eq('atleta', atleta);
+    if (error) throw error;
+    return Object.fromEntries(((data ?? []) as { fecha: string; datos: RegistroDia }[]).map((f) => [f.fecha, f.datos]));
+  } catch {
+    return {};
+  }
+}
+
 export function guardarLocal(atleta: string, registro: RegistroDia): void {
   const mapa = leerLocal(atleta);
   mapa[registro.fecha] = registro;

@@ -678,3 +678,19 @@
   border-color: var(--barra);
   color: #fff;
 }
+
+fieldset.seccion-cuerpo {
+  margin: 0;
+  min-width: 0;
+}
+fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
+  opacity: 0.55;
+}
+.vista-coach {
+  margin: 4px 0 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #ececea;
+  color: var(--gris);
+  font-size: 13px;
+}

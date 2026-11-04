@@ -22,9 +22,19 @@ interface Props {
   onAlternar: () => void;
   onCambiar: (cambio: Partial<RegistroDia>) => void;
   videos?: Videos;
+  soloLectura?: boolean;
 }
 
-function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar, videos }: Props): React.JSX.Element {
+function SeccionPlan({
+  seccion,
+  indice,
+  abierta,
+  registro,
+  onAlternar,
+  onCambiar,
+  videos,
+  soloLectura = false,
+}: Props): React.JSX.Element {
   const progreso = progresoSeccion(seccion, indice, registro);
   const [videoAbierto, setVideoAbierto] = useState<string | null>(null);
   const [cambioAbierto, setCambioAbierto] = useState<string | null>(null);
@@ -49,7 +59,7 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
 
   // Botón ⇄ para ejercicios de máquina; dentro de una casilla no debe marcarla
   function botonCambio(clave: string, original: Item) {
-    if (!alternativasDe(original).length) return null;
+    if (soloLectura || !alternativasDe(original).length) return null;
     const abierto = cambioAbierto === clave;
     return (
       <button
@@ -166,7 +176,7 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
               return (
                 <div key={clave} className="item-envoltura">
                   <label className={`item item-check ${hecho ? 'hecho' : ''}`}>
-                    <input type="checkbox" checked={hecho} onChange={() => marcar(clave)} />
+                    <input type="checkbox" checked={hecho} disabled={soloLectura} onChange={() => marcar(clave)} />
                     <span className="caja" aria-hidden="true" />
                     <span className="item-texto">
                       <span className="item-nombre">{item.nombre}</span>
@@ -204,6 +214,7 @@ function SeccionPlan({ seccion, indice, abierta, registro, onAlternar, onCambiar
                             inputMode={campo === 'kg' ? 'decimal' : 'numeric'}
                             placeholder={campo === 'kg' ? (item.kg ?? '') : (item.obj ?? '')}
                             value={registro.series[clave]?.[k]?.[campo] ?? ''}
+                            readOnly={soloLectura}
                             onChange={(e) => escribirSerie(clave, k, campo, e.target.value, item.series!)}
                             aria-label={`${item.nombre} serie ${k + 1} ${unidad[campo]}`}
                           />

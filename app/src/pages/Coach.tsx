@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import BibliotecaVideos from '../components/BibliotecaVideos';
 import FichaResumen from '../components/FichaResumen';
 import Invitaciones from '../components/Invitaciones';
+import PlanVista from '../components/PlanVista';
 import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
@@ -70,6 +71,7 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
   const [pendiente, setPendiente] = useState<{ plan: Plan; resumen: string } | null>(null);
   const [porQuitar, setPorQuitar] = useState<FilaPlan | null>(null);
   const [planCargado, setPlanCargado] = useState('');
+  const [verPlan, setVerPlan] = useState(false);
   const [error, setError] = useState('');
 
   const recargarPlanes = useCallback(() => planesDe(atleta.id).then(setPlanes), [atleta.id]);
@@ -144,6 +146,18 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
       'Revisa tu primera sesión y cualquier duda me escribes. ¡Vamos con todo!',
   );
 
+  if (verPlan) {
+    return (
+      <>
+        <button className="enlace volver" onClick={() => setVerPlan(false)}>
+          ‹ Ficha de {primerNombre}
+        </button>
+        <p className="vista-coach">Vista de coach: ves su plan y lo que ha registrado, sin poder modificarlo.</p>
+        <PlanVista atleta={atleta.id} apodo={primerNombre} soloLectura />
+      </>
+    );
+  }
+
   return (
     <>
       <button className="enlace volver" onClick={onVolver}>
@@ -174,6 +188,11 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
       )}
 
       <div className="fila-botones">
+        {planes.length > 0 && (
+          <button className="boton" onClick={() => setVerPlan(true)}>
+            Ver su planificación
+          </button>
+        )}
         {whatsapp && (
           <a className="boton secundario" href={enlaceWhatsapp(whatsapp)} target={destinoWhatsapp} rel="noreferrer">
             WhatsApp
