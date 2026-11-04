@@ -100,7 +100,7 @@ function RegistroCierre({
           {!esDescanso && (
             <>
               <div className="campo-texto">
-                <span>RPE (1-10)</span>
+                <span>Esfuerzo de la sesión (1 = muy fácil, 10 = máximo)</span>
                 <Escala
                   desde={1}
                   hasta={10}

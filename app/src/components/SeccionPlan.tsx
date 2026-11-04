@@ -14,6 +14,10 @@ import VideoEjercicio from './VideoEjercicio';
 
 const unidad: Record<Campo, string> = { kg: 'kg', reps: 'reps', seg: 'seg' };
 
+// «2 × 12» = dos mancuernas de 12 kg: la casilla muestra 12 y dice «kg c/u»
+const dosMancuernas = (kg?: string) => /^2\s*×\s*/.test(kg ?? '');
+const pesoGuia = (kg?: string) => (kg ?? '').replace(/^2\s*×\s*/, '');
+
 interface Props {
   seccion: Seccion;
   indice: number;
@@ -201,7 +205,14 @@ function SeccionPlan({
                       {botonVideo(clave, item)}
                       {botonCambio(clave, original)}
                     </span>
-                    <span className="item-presc">{item.presc}</span>
+                  </div>
+                  {/* La indicación va en partes («3 series de 8 reps · Mancuernas de 12 kg · Esfuerzo 7/10») */}
+                  <div className="presc-partes">
+                    {item.presc.split(' · ').map((parte, ip) => (
+                      <span key={ip} className={ip === 0 ? 'principal' : ''}>
+                        {parte}
+                      </span>
+                    ))}
                   </div>
                   {panelCambio(clave, original)}
                   {video(clave, item)}
@@ -212,13 +223,13 @@ function SeccionPlan({
                         <label key={campo} className="campo">
                           <input
                             inputMode={campo === 'kg' ? 'decimal' : 'numeric'}
-                            placeholder={campo === 'kg' ? (item.kg ?? '') : (item.obj ?? '')}
+                            placeholder={campo === 'kg' ? pesoGuia(item.kg) : (item.obj ?? '')}
                             value={registro.series[clave]?.[k]?.[campo] ?? ''}
                             readOnly={soloLectura}
                             onChange={(e) => escribirSerie(clave, k, campo, e.target.value, item.series!)}
                             aria-label={`${item.nombre} serie ${k + 1} ${unidad[campo]}`}
                           />
-                          <span>{unidad[campo]}</span>
+                          <span>{campo === 'kg' && dosMancuernas(item.kg) ? 'kg c/u' : unidad[campo]}</span>
                         </label>
                       ))}
                     </div>

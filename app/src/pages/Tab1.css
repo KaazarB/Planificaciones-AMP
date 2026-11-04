@@ -694,3 +694,24 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   color: var(--gris);
   font-size: 13px;
 }
+
+/* Indicación de los ejercicios con series, en partes */
+.presc-partes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 4px;
+}
+.presc-partes span {
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: #f1f1ef;
+  color: var(--gris);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.presc-partes span.principal {
+  background: var(--barra);
+  color: #fff;
+  font-weight: 600;
+}
