@@ -1,5 +1,6 @@
 import {
   IonApp,
+  IonBadge,
   IonContent,
   IonIcon,
   IonPage,
@@ -15,6 +16,7 @@ import { calendarOutline, peopleOutline, personCircleOutline } from 'ionicons/ic
 import { Navigate, Route } from 'react-router-dom';
 
 import { CuentaProvider, useCuenta } from './context/Cuenta';
+import { useRenovaciones } from './context/useRenovaciones';
 import Coach from './pages/Coach';
 import Espera from './pages/Espera';
 import Ingreso from './pages/Ingreso';
@@ -75,6 +77,7 @@ function Mensaje({ texto, conSalir }: { texto: string; conSalir?: boolean }) {
 
 // Ionic no acepta hijos vacíos (false/null) en las pestañas: se arma la lista solo con lo que corresponde
 function Pestanas({ coach }: { coach: boolean }) {
+  const porRenovar = useRenovaciones(coach);
   const rutas = [
     <Route key="plan" path="/plan" element={<Tab1 />} />,
     <Route key="perfil" path="/perfil" element={<Perfil />} />,
@@ -91,6 +94,13 @@ function Pestanas({ coach }: { coach: boolean }) {
           <IonTabButton key="coach" tab="coach" href="/coach">
             <IonIcon aria-hidden="true" icon={peopleOutline} />
             <IonLabel>Coach</IonLabel>
+            {porRenovar > 0 ? (
+              <IonBadge color="danger" aria-label={`${porRenovar} bloques por renovar`}>
+                {porRenovar}
+              </IonBadge>
+            ) : (
+              <></>
+            )}
           </IonTabButton>,
         ]
       : []),

@@ -27,6 +27,18 @@ export function fechaLarga(iso: string): string {
   return `${dia} ${f.getDate()} de ${mes}${anio}`;
 }
 
+// Días entre dos fechas AAAA-MM-DD (negativo si «hasta» ya pasó)
+export function diasEntre(desde: string, hasta: string): number {
+  return Math.round((aFecha(hasta).getTime() - aFecha(desde).getTime()) / (24 * 3600 * 1000));
+}
+
+// Día siguiente a una fecha AAAA-MM-DD
+export function diaSiguiente(iso: string): string {
+  const f = aFecha(iso);
+  f.setDate(f.getDate() + 1);
+  return aISO(f);
+}
+
 // Semanas completas entre dos fechas AAAA-MM-DD
 export function semanasEntre(desde: string, hasta: string): number {
   return Math.floor((aFecha(hasta).getTime() - aFecha(desde).getTime()) / (7 * 24 * 3600 * 1000));

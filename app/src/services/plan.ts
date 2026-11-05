@@ -1,6 +1,7 @@
 // Capa de servicios: planes del atleta guardados en Supabase (tabla planes)
 
 import type { Plan } from '../data/plan';
+import type { UltimoBloque } from '../domain/renovacion';
 
 import { supabase } from './supabase';
 
@@ -35,6 +36,18 @@ export async function cargarPlan(atletaId: string): Promise<Plan | null> {
   const dias = [...porFecha.values()].sort((a, b) => a.fecha.localeCompare(b.fecha));
 
   return { ...actual.contenido, bloque: { ...actual.contenido.bloque }, dias };
+}
+
+// Último bloque de cada atleta (para los avisos de renovación del coach)
+export async function ultimosBloques(): Promise<Map<string, UltimoBloque>> {
+  const { data, error } = await supabase.from('planes').select('atleta_id, bloque, fin');
+  if (error) throw error;
+  const mapa = new Map<string, UltimoBloque>();
+  for (const f of (data ?? []) as { atleta_id: string; bloque: number; fin: string }[]) {
+    const actual = mapa.get(f.atleta_id);
+    if (!actual || f.fin > actual.fin) mapa.set(f.atleta_id, { bloque: f.bloque, fin: f.fin });
+  }
+  return mapa;
 }
 
 export async function planesDe(atletaId: string): Promise<FilaPlan[]> {

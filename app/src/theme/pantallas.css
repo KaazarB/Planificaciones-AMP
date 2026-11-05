@@ -499,3 +499,32 @@
   padding: 8px;
   font-size: 14px;
 }
+
+/* Avisos de bloques por renovar */
+.fila-renovar {
+  align-items: flex-start;
+  background: #fbf0cc;
+  border-color: #ecd98f;
+}
+.fila-renovar.urgente {
+  background: #fbe0de;
+  border-color: #f0b8b3;
+}
+.renovar-texto {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
+  color: #5c4a10;
+}
+.fila-renovar.urgente .renovar-texto {
+  color: #8a1c14;
+}
+.aviso-renovar {
+  margin: 0 0 8px;
+  background: #fbf0cc;
+  color: #5c4a10;
+}
+.aviso-renovar.urgente {
+  background: #fbe0de;
+  color: #8a1c14;
+}

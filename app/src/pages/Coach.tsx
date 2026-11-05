@@ -11,10 +11,12 @@ import { useCuenta } from '../context/Cuenta';
 import type { DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
 import { esFechaISO, fechaLarga, hoyISO, lunesDeISO, semanasEntre } from '../domain/fechas';
+import type { UltimoBloque } from '../domain/renovacion';
+import { alertaDe, alertasRenovacion, textoAlerta } from '../domain/renovacion';
 import type { Estado, Perfil } from '../services/cuenta';
 import { leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
-import { borrarPlan, planesDe, subirPlan, validarPlan } from '../services/plan';
+import { borrarPlan, planesDe, subirPlan, ultimosBloques, validarPlan } from '../services/plan';
 import { supabase } from '../services/supabase';
 
 const textoEstado: Record<Estado, string> = {
@@ -211,6 +213,18 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
       </div>
 
       <h3 className="subtitulo">Planes</h3>
+      {(() => {
+        if (estado !== 'activo' || !planes.length) return null;
+        const ultimo = planes.reduce((a, b) => (b.fin > a.fin ? b : a));
+        const al = alertaDe(atleta.id, { bloque: ultimo.bloque, fin: ultimo.fin }, hoyISO());
+        if (!al) return null;
+        return (
+          <p className={`aviso aviso-renovar ${al.urgente ? 'urgente' : ''}`}>
+            {textoAlerta(al, fechaLarga)}. Carga el <strong>Bloque {ultimo.bloque + 1}</strong> para que empiece el{' '}
+            {fechaLarga(al.proximoInicio)}.
+          </p>
+        );
+      })()}
       <div className="tarjeta">
         {planes.length === 0 && <p className="tenue">Aún no tiene planes cargados.</p>}
         {planes.map((p) => (
@@ -297,6 +311,8 @@ function Coach(): React.JSX.Element {
   const [version, setVersion] = useState(0);
   const cargar = () => setVersion((v) => v + 1);
 
+  const [ultimos, setUltimos] = useState<Map<string, UltimoBloque>>(new Map());
+
   useEffect(() => {
     let vigente = true;
     supabase
@@ -311,10 +327,16 @@ function Coach(): React.JSX.Element {
           setAtletas((data ?? []) as Perfil[]);
         }
       });
+    ultimosBloques()
+      .then((m) => vigente && setUltimos(m))
+      .catch(() => undefined);
     return () => {
       vigente = false;
     };
   }, [version]);
+
+  const alertas = alertasRenovacion(atletas, ultimos, hoyISO());
+  const porId = new Map(atletas.map((a) => [a.id, a]));
 
   const grupos = ordenEstado
     .map((estado) => ({ estado, lista: atletas.filter((a) => a.estado === estado) }))
@@ -357,6 +379,30 @@ function Coach(): React.JSX.Element {
                 </span>
                 <span className="tenue">Tutoriales ›</span>
               </button>
+              {alertas.length > 0 && (
+                <section className="renovar">
+                  <h3 className="subtitulo">Bloques por renovar · {alertas.length}</h3>
+                  {alertas.map((al) => {
+                    const a = porId.get(al.atletaId);
+                    if (!a) return null;
+                    return (
+                      <button
+                        key={al.atletaId}
+                        className={`fila-atleta fila-renovar ${al.urgente ? 'urgente' : ''}`}
+                        onClick={() => setElegido(a)}
+                      >
+                        <span>
+                          <strong>{a.nombre || 'Sin nombre'}</strong>
+                          {a.id === perfil?.id && <span className="tenue"> · tú</span>}
+                          <span className="renovar-texto">{textoAlerta(al, fechaLarga)}</span>
+                          <span className="renovar-texto">Próximo bloque desde el {fechaLarga(al.proximoInicio)}</span>
+                        </span>
+                        <span aria-hidden="true">›</span>
+                      </button>
+                    );
+                  })}
+                </section>
+              )}
               {error && <p className="aviso-error">{error}</p>}
               {grupos.map((g) => (
                 <section key={g.estado}>
