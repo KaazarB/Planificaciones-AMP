@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Dia, Plan, TipoDia } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 import { registroVacio } from '../data/registro';
+import { DIAS_REVISION } from '../data/revision';
+import { diasEntre } from '../domain/fechas';
 import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
 import { cargarPlan } from '../services/plan';
 import { guardarLocal, leerLocales, leerRegistrosNube, sincronizar, subirRegistro } from '../services/registros';
@@ -14,6 +16,7 @@ import '../pages/Tab1.css';
 
 import Calendario from './Calendario';
 import RegistroCierre from './RegistroCierre';
+import RevisionBloque from './RevisionBloque';
 import SeccionPlan from './SeccionPlan';
 
 const etiquetaTipo: Record<TipoDia, string> = {
@@ -139,6 +142,13 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
   if (error) return <p className="aviso">{error}</p>;
 
   const antesDelBloque = plan && hoy < plan.bloque.inicio;
+  // Revisión de fin de bloque: cuando al último bloque cargado le quedan pocos días
+  const ultimoDia = plan?.dias[plan.dias.length - 1];
+  const pedirRevision =
+    !soloLectura &&
+    ultimoDia &&
+    diasEntre(hoy, ultimoDia.fecha) <= DIAS_REVISION &&
+    diasEntre(hoy, ultimoDia.fecha) >= -21;
   const despuesDelBloque = plan && hoy > plan.bloque.fin;
 
   return (
@@ -204,6 +214,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
         </button>
       </nav>
 
+      {pedirRevision && ultimoDia && <RevisionBloque atleta={atleta} bloque={ultimoDia.bloque} fin={ultimoDia.fecha} />}
       {antesDelBloque && plan && (
         <p className="aviso">
           El bloque {plan.bloque.numero} empieza el{' '}

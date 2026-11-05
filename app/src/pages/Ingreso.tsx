@@ -10,6 +10,7 @@ function Ingreso(): React.JSX.Element {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   // El link de invitación trae el código: …/movil/?codigo=AB12CD
   const [codigo, setCodigo] = useState(() => new URLSearchParams(window.location.search).get('codigo') ?? '');
   const [error, setError] = useState('');
@@ -22,12 +23,14 @@ function Ingreso(): React.JSX.Element {
     setAviso('');
     if (modo === 'crear' && !nombre.trim()) return setError('Escribe tu nombre.');
     if (modo === 'crear' && !codigo.trim()) return setError('Escribe el código de invitación que te dio tu coach.');
+    if (modo === 'crear' && whatsapp.replace(/\D/g, '').length < 8)
+      return setError('Escribe tu WhatsApp para que tu coach pueda contactarte.');
     if (!correo.trim() || !clave) return setError('Escribe tu correo y tu clave.');
     if (modo === 'crear' && clave.length < 8) return setError('La clave debe tener al menos 8 caracteres.');
     setTrabajando(true);
     try {
       if (modo === 'entrar') await entrar(correo, clave);
-      else if (!(await crearCuenta(nombre, correo, clave, codigo))) {
+      else if (!(await crearCuenta(nombre, correo, clave, codigo, whatsapp))) {
         setAviso('Te enviamos un correo para confirmar tu cuenta. Ábrelo y luego ingresa aquí con tu clave.');
         setModo('entrar');
       }
@@ -72,6 +75,19 @@ function Ingreso(): React.JSX.Element {
               <label className="campo-ficha">
                 <span className="campo-etiqueta">Nombre y apellido</span>
                 <input autoComplete="name" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              </label>
+            )}
+            {modo === 'crear' && (
+              <label className="campo-ficha">
+                <span className="campo-etiqueta">WhatsApp</span>
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="9 1234 5678"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                />
               </label>
             )}
             <label className="campo-ficha">

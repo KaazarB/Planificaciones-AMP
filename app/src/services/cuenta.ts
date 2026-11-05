@@ -16,6 +16,8 @@ export interface Perfil {
   rol: Rol;
   estado: Estado;
   creado: string;
+  whatsapp?: string;
+  correo?: string;
 }
 
 // Traduce los errores de Supabase a mensajes claros
@@ -43,12 +45,18 @@ export async function entrar(correo: string, clave: string): Promise<void> {
 }
 
 // Devuelve true si quedó con sesión abierta; false si debe confirmar el correo primero
-export async function crearCuenta(nombre: string, correo: string, clave: string, codigo: string): Promise<boolean> {
+export async function crearCuenta(
+  nombre: string,
+  correo: string,
+  clave: string,
+  codigo: string,
+  whatsapp: string,
+): Promise<boolean> {
   const { data, error } = await supabase.auth.signUp({
     email: correo.trim(),
     password: clave,
     options: {
-      data: { nombre: nombre.trim(), codigo: codigo.trim().toUpperCase() },
+      data: { nombre: nombre.trim(), codigo: codigo.trim().toUpperCase(), whatsapp: whatsapp.trim() },
       emailRedirectTo: window.location.origin + window.location.pathname,
     },
   });

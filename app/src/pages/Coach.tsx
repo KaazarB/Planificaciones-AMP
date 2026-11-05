@@ -8,16 +8,54 @@ import FichaResumen from '../components/FichaResumen';
 import Invitaciones from '../components/Invitaciones';
 import PlanVista from '../components/PlanVista';
 import { useCuenta } from '../context/Cuenta';
-import type { DatosFicha } from '../data/ficha';
+import type { CampoFicha, DatosFicha  } from '../data/ficha';
 import type { Plan } from '../data/plan';
-import { esFechaISO, fechaLarga, hoyISO, lunesDeISO, semanasEntre } from '../domain/fechas';
+import { camposRevision } from '../data/revision';
+import { diasEntre, esFechaISO, fechaLarga, hoyISO, lunesDeISO, semanasEntre } from '../domain/fechas';
 import type { UltimoBloque } from '../domain/renovacion';
 import { alertaDe, alertasRenovacion, textoAlerta } from '../domain/renovacion';
+import { destinoWhatsapp, enlaceApp, enlaceWhatsapp, numeroWhatsapp } from '../domain/whatsapp';
 import type { Estado, Perfil } from '../services/cuenta';
 import { leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
 import { borrarPlan, planesDe, subirPlan, ultimosBloques, validarPlan } from '../services/plan';
+import type { Revision } from '../services/revisiones';
+import { revisionesRespondidas, ultimaRevision } from '../services/revisiones';
 import { supabase } from '../services/supabase';
+
+const mensajeRevision = (apodo: string, bloque: number, fin: string) =>
+  `¡Hola ${apodo}! 💪 Tu Bloque ${bloque} termina el ${fechaLarga(fin)}.\n\n` +
+  `Antes de armar el siguiente, responde la revisión que aparece arriba en tu plan (es 1 minuto): ${enlaceApp()}\n\n` +
+  '¡Gracias!';
+
+// Respuestas de la revisión de fin de bloque, para el coach
+function RevisionResumen({ revision }: { revision: Revision }) {
+  const texto = (v: unknown) => (Array.isArray(v) ? v.join(', ') : typeof v === 'string' ? v : '');
+  const filas = camposRevision.map((c: CampoFicha) => ({ c, v: texto(revision.datos[c.clave]) })).filter((f) => f.v);
+  const molestiaFuerte = revision.datos.molestia_nivel === 'Fuerte (7-10)';
+  return (
+    <div className="ficha-resumen">
+      <section className={molestiaFuerte ? 'revision-alerta' : ''}>
+        <h3>
+          Revisión del Bloque {revision.bloque} · {new Date(revision.creado).toLocaleDateString('es-CL')}
+        </h3>
+        <dl>
+          {filas.map(({ c, v }) => (
+            <div key={c.clave}>
+              <dt>{c.etiqueta}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    </div>
+  );
+}
+
+const mensajeFicha = (apodo: string) =>
+  `¡Hola ${apodo}! 👋 Vi que creaste tu cuenta en la app, pero todavía falta tu ficha.\n\n` +
+  `Entra desde el ícono o aquí: ${enlaceApp()}\n\n` +
+  'Son unos 10 minutos y con eso armo tu planificación 💪';
 
 const textoEstado: Record<Estado, string> = {
   ficha: 'Ficha pendiente',
@@ -36,24 +74,6 @@ function leerTexto(archivo: File): Promise<string> {
   });
 }
 
-// Deja el número listo para WhatsApp: solo dígitos y con código de Chile si falta
-function numeroWhatsapp(valor: unknown): string {
-  if (typeof valor !== 'string') return '';
-  let n = valor.replace(/\D/g, '');
-  if (n.length === 9 && n.startsWith('9')) n = `56${n}`;
-  if (n.length === 8) n = `569${n}`;
-  return n.length >= 10 ? n : '';
-}
-
-// En el teléfono abre la app de WhatsApp directo; en el computador, WhatsApp Web
-const esMovil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-const destinoWhatsapp = esMovil ? undefined : '_blank';
-
-function enlaceWhatsapp(numero: string, texto = ''): string {
-  const t = texto ? `&text=${texto}` : '';
-  return esMovil ? `whatsapp://send?phone=${numero}${t}` : `https://web.whatsapp.com/send?phone=${numero}${t}`;
-}
-
 const fechaCorta = (iso: string) => {
   const [a, m, d] = iso.split('-').map(Number);
   const f = new Date(a, m - 1, d);
@@ -62,10 +82,12 @@ const fechaCorta = (iso: string) => {
   return `${dia} ${d} de ${mes}`;
 };
 
-const ordenEstado: Estado[] = ['evaluacion', 'activo', 'ficha', 'pausa'];
+// «Ficha pendiente» va en su propia sección con el botón de recordatorio
+const ordenEstado: Estado[] = ['evaluacion', 'activo', 'pausa'];
 
 function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
   const [ficha, setFicha] = useState<DatosFicha | null>(null);
+  const [revision, setRevision] = useState<Revision | null>(null);
   const [planes, setPlanes] = useState<FilaPlan[]>([]);
   const [estado, setEstado] = useState<Estado>(atleta.estado);
   const [mensaje, setMensaje] = useState('');
@@ -80,6 +102,9 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
 
   useEffect(() => {
     leerFicha(atleta.id).then(setFicha);
+    ultimaRevision(atleta.id)
+      .then(setRevision)
+      .catch(() => setRevision(null));
     recargarPlanes();
   }, [atleta.id, recargarPlanes]);
 
@@ -139,14 +164,13 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
     }
   }
 
-  const whatsapp = numeroWhatsapp(ficha?.whatsapp);
+  const whatsapp = numeroWhatsapp(ficha?.whatsapp ?? atleta.whatsapp);
   const primerNombre = atleta.apodo || atleta.nombre.split(' ')[0];
-  const enlaceApp = `${window.location.origin}${window.location.pathname}`;
-  const avisoPlan = encodeURIComponent(
+
+  const avisoPlan =
     `¡Hola ${primerNombre}! 💪 Ya está cargada tu planificación en la app (${planCargado}).\n\n` +
-      `Ábrela desde el ícono o en este link: ${enlaceApp}\n\n` +
-      'Revisa tu primera sesión y cualquier duda me escribes. ¡Vamos con todo!',
-  );
+    `Ábrela desde el ícono o en este link: ${enlaceApp()}\n\n` +
+    'Revisa tu primera sesión y cualquier duda me escribes. ¡Vamos con todo!';
 
   if (verPlan) {
     return (
@@ -190,6 +214,16 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
       )}
 
       <div className="fila-botones">
+        {estado === 'ficha' && whatsapp && (
+          <a
+            className="boton whatsapp-boton"
+            href={enlaceWhatsapp(whatsapp, mensajeFicha(primerNombre))}
+            target={destinoWhatsapp}
+            rel="noreferrer"
+          >
+            Recordar ficha por WhatsApp
+          </a>
+        )}
         {planes.length > 0 && (
           <button className="boton" onClick={() => setVerPlan(true)}>
             Ver su planificación
@@ -218,11 +252,25 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
         const ultimo = planes.reduce((a, b) => (b.fin > a.fin ? b : a));
         const al = alertaDe(atleta.id, { bloque: ultimo.bloque, fin: ultimo.fin }, hoyISO());
         if (!al) return null;
+        const respondida = revision?.bloque === ultimo.bloque;
         return (
-          <p className={`aviso aviso-renovar ${al.urgente ? 'urgente' : ''}`}>
-            {textoAlerta(al, fechaLarga)}. Carga el <strong>Bloque {ultimo.bloque + 1}</strong> para que empiece el{' '}
-            {fechaLarga(al.proximoInicio)}.
-          </p>
+          <>
+            <p className={`aviso aviso-renovar ${al.urgente ? 'urgente' : ''}`}>
+              {textoAlerta(al, fechaLarga)}. Carga el <strong>Bloque {ultimo.bloque + 1}</strong> para que empiece el{' '}
+              {fechaLarga(al.proximoInicio)}.{' '}
+              {respondida ? '✓ Ya respondió su revisión (abajo).' : 'Todavía no responde su revisión.'}
+            </p>
+            {!respondida && whatsapp && (
+              <a
+                className="boton whatsapp-boton ancho recordar-revision"
+                href={enlaceWhatsapp(whatsapp, mensajeRevision(primerNombre, ultimo.bloque, ultimo.fin))}
+                target={destinoWhatsapp}
+                rel="noreferrer"
+              >
+                Recordar revisión por WhatsApp
+              </a>
+            )}
+          </>
         );
       })()}
       <div className="tarjeta">
@@ -294,6 +342,13 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
         {error && <p className="aviso-error">{error}</p>}
       </div>
 
+      {revision && (
+        <>
+          <h3 className="subtitulo">Última revisión</h3>
+          <RevisionResumen revision={revision} />
+        </>
+      )}
+
       <h3 className="subtitulo">Ficha</h3>
       {ficha ? <FichaResumen datos={ficha} /> : <p className="tenue">Todavía no envía su ficha.</p>}
     </>
@@ -312,6 +367,7 @@ function Coach(): React.JSX.Element {
   const cargar = () => setVersion((v) => v + 1);
 
   const [ultimos, setUltimos] = useState<Map<string, UltimoBloque>>(new Map());
+  const [respondidas, setRespondidas] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let vigente = true;
@@ -330,6 +386,9 @@ function Coach(): React.JSX.Element {
     ultimosBloques()
       .then((m) => vigente && setUltimos(m))
       .catch(() => undefined);
+    revisionesRespondidas()
+      .then((r) => vigente && setRespondidas(r))
+      .catch(() => undefined);
     return () => {
       vigente = false;
     };
@@ -337,6 +396,7 @@ function Coach(): React.JSX.Element {
 
   const alertas = alertasRenovacion(atletas, ultimos, hoyISO());
   const porId = new Map(atletas.map((a) => [a.id, a]));
+  const pendientes = atletas.filter((a) => a.estado === 'ficha' && a.rol !== 'coach');
 
   const grupos = ordenEstado
     .map((estado) => ({ estado, lista: atletas.filter((a) => a.estado === estado) }))
@@ -396,9 +456,56 @@ function Coach(): React.JSX.Element {
                           {a.id === perfil?.id && <span className="tenue"> · tú</span>}
                           <span className="renovar-texto">{textoAlerta(al, fechaLarga)}</span>
                           <span className="renovar-texto">Próximo bloque desde el {fechaLarga(al.proximoInicio)}</span>
+                          {al.bloque !== null && (
+                            <span className="renovar-texto revision-estado">
+                              {respondidas.has(`${al.atletaId}:${al.bloque}`)
+                                ? '✓ Revisión respondida'
+                                : '○ Revisión pendiente'}
+                            </span>
+                          )}
                         </span>
                         <span aria-hidden="true">›</span>
                       </button>
+                    );
+                  })}
+                </section>
+              )}
+              {pendientes.length > 0 && (
+                <section>
+                  <h3 className="subtitulo">Fichas pendientes · {pendientes.length}</h3>
+                  {pendientes.map((a) => {
+                    const numero = numeroWhatsapp(a.whatsapp);
+                    const dias = diasEntre(a.creado.slice(0, 10), hoyISO());
+                    const apodo = a.apodo || a.nombre.split(' ')[0];
+                    return (
+                      <div key={a.id} className="tarjeta fila-pendiente">
+                        <button className="enlace-fila" onClick={() => setElegido(a)}>
+                          <strong>{a.nombre || 'Sin nombre'}</strong>
+                          <span className="tenue">
+                            Creó su cuenta {dias <= 0 ? 'hoy' : dias === 1 ? 'ayer' : `hace ${dias} días`} y no ha
+                            enviado su ficha
+                          </span>
+                        </button>
+                        {numero ? (
+                          <a
+                            className="boton whatsapp-boton"
+                            href={enlaceWhatsapp(numero, mensajeFicha(apodo))}
+                            target={destinoWhatsapp}
+                            rel="noreferrer"
+                          >
+                            Recordar por WhatsApp
+                          </a>
+                        ) : a.correo ? (
+                          <a
+                            className="boton secundario"
+                            href={`mailto:${a.correo}?subject=${encodeURIComponent('Tu ficha de entrenamiento')}&body=${encodeURIComponent(mensajeFicha(apodo))}`}
+                          >
+                            Recordar por correo ({a.correo})
+                          </a>
+                        ) : (
+                          <p className="tenue">Sin WhatsApp ni correo guardado.</p>
+                        )}
+                      </div>
                     );
                   })}
                 </section>

@@ -727,3 +727,31 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   color: #fff;
   font-weight: 600;
 }
+
+/* Revisión de fin de bloque (atleta) */
+.revision {
+  margin: 20px 0 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1.5px solid var(--barra);
+}
+.revision-titulo {
+  margin: 0;
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+.revision-texto {
+  margin: 4px 0 12px;
+  color: var(--gris);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.revision-form {
+  margin-top: 8px;
+}
+.revision-lista {
+  background: #dff1e6;
+  color: #135c32;
+}
