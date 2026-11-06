@@ -7,6 +7,7 @@ import type { RegistroDia } from '../data/registro';
 import { registroVacio } from '../data/registro';
 import { DIAS_REVISION } from '../data/revision';
 import { diasEntre } from '../domain/fechas';
+import { tieneDatos } from '../domain/metricas';
 import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
 import { cargarPlan } from '../services/plan';
 import { guardarLocal, leerLocales, leerRegistrosNube, sincronizar, subirRegistro } from '../services/registros';
@@ -33,18 +34,6 @@ const aFecha = (iso: string) => {
   return new Date(a, m - 1, d);
 };
 const minuscula = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
-
-function tieneDatos(r?: RegistroDia) {
-  if (!r) return false;
-  return Boolean(
-    r.rpe !== undefined ||
-    r.notas ||
-    r.clase ||
-    Object.values(r.checks).some(Boolean) ||
-    Object.values(r.campos).some(Boolean) ||
-    Object.values(r.series).some((filas) => filas.some((f) => f && (f.kg || f.reps || f.seg))),
-  );
-}
 
 type EstadoGuardado = 'listo' | 'guardando' | 'nube' | 'local';
 

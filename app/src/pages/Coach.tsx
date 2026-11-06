@@ -4,11 +4,12 @@ import { IonContent, IonPage } from '@ionic/react';
 import { useCallback, useEffect, useState } from 'react';
 
 import BibliotecaVideos from '../components/BibliotecaVideos';
+import Dashboard from '../components/Dashboard';
 import FichaResumen from '../components/FichaResumen';
 import Invitaciones from '../components/Invitaciones';
 import PlanVista from '../components/PlanVista';
 import { useCuenta } from '../context/Cuenta';
-import type { CampoFicha, DatosFicha  } from '../data/ficha';
+import type { CampoFicha, DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
 import { camposRevision } from '../data/revision';
 import { diasEntre, esFechaISO, fechaLarga, hoyISO, lunesDeISO, semanasEntre } from '../domain/fechas';
@@ -360,6 +361,7 @@ function Coach(): React.JSX.Element {
   const [atletas, setAtletas] = useState<Perfil[]>([]);
   const [elegido, setElegido] = useState<Perfil | null>(null);
   const [verVideos, setVerVideos] = useState(false);
+  const [verDashboard, setVerDashboard] = useState(false);
   const [verInvitaciones, setVerInvitaciones] = useState(false);
   const [error, setError] = useState('');
 
@@ -406,7 +408,9 @@ function Coach(): React.JSX.Element {
     <IonPage>
       <IonContent className="plan">
         <div className="plan-envoltura">
-          {verInvitaciones ? (
+          {verDashboard ? (
+            <Dashboard atletas={atletas} onVolver={() => setVerDashboard(false)} />
+          ) : verInvitaciones ? (
             <Invitaciones onVolver={() => setVerInvitaciones(false)} />
           ) : verVideos ? (
             <BibliotecaVideos onVolver={() => setVerVideos(false)} />
@@ -427,6 +431,12 @@ function Coach(): React.JSX.Element {
                   Actualizar
                 </button>
               </header>
+              <button className="fila-atleta acceso-dashboard" onClick={() => setVerDashboard(true)}>
+                <span>
+                  <strong>📊 Dashboard</strong>
+                </span>
+                <span className="tenue">Cumplimiento y cargas ›</span>
+              </button>
               <button className="fila-atleta acceso-invitaciones" onClick={() => setVerInvitaciones(true)}>
                 <span>
                   <strong>🔒 Invitaciones</strong>

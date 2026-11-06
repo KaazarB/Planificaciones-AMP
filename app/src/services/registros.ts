@@ -73,3 +73,16 @@ export async function subirRegistro(atleta: string, registro: RegistroDia): Prom
     return false;
   }
 }
+
+// Dashboard del coach: todos los registros de todos los atletas en una sola consulta
+export async function registrosDeTodos(): Promise<Map<string, Mapa>> {
+  const { data, error } = await supabase.from('registros_dia').select('atleta, fecha, datos');
+  if (error) throw error;
+  const porAtleta = new Map<string, Mapa>();
+  for (const f of (data ?? []) as { atleta: string; fecha: string; datos: RegistroDia }[]) {
+    const m = porAtleta.get(f.atleta) ?? {};
+    m[f.fecha] = f.datos;
+    porAtleta.set(f.atleta, m);
+  }
+  return porAtleta;
+}

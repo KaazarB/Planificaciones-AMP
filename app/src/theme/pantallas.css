@@ -562,3 +562,257 @@
   border-color: #f0b8b3;
   background: #fdf3f2;
 }
+
+/* Dashboard del coach */
+.acceso-dashboard {
+  margin-top: 12px;
+  background: #e2f3e8;
+  border-color: #bfe3cc;
+}
+.dash-datos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+@media (min-width: 640px) {
+  .dash-datos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.dash-dato {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+}
+.dash-dato-valor {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
+.dash-dato-etiqueta {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.dash-dato-detalle {
+  font-size: 12px;
+  color: var(--gris);
+}
+.dash-alerta {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: left;
+  border: 0;
+}
+.dash-alerta.critica {
+  background: #fbe0de;
+  color: #8a1c14;
+}
+.dash-alerta.atencion {
+  background: #fdf0dc;
+  color: #7a4106;
+}
+/* Barras de cumplimiento */
+.dash-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 150px;
+}
+.dash-barra-col {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  cursor: default;
+}
+.dash-barra-pista {
+  flex: 1;
+  width: 100%;
+  max-width: 36px;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--linea);
+}
+.dash-barra {
+  width: 100%;
+  background: var(--verde);
+  border-radius: 4px 4px 0 0;
+}
+.dash-barra.futura {
+  background: transparent;
+  border: 1px dashed var(--linea);
+  border-bottom: 0;
+}
+.dash-barra-col:hover .dash-barra:not(.futura) {
+  filter: brightness(1.15);
+}
+.dash-barra-valor {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tinta);
+  min-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.dash-barra-eje {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--gris);
+}
+.dash-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: max-content;
+  max-width: 200px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--barra);
+  color: #fff;
+  font-size: 12px;
+  pointer-events: none;
+}
+.dash-barra-col:first-child .dash-tooltip {
+  left: 0;
+  transform: none;
+}
+.dash-barra-col:last-child:not(:first-child) .dash-tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+.dash-barras.compacto {
+  height: 32px;
+  width: 72px;
+  flex: none;
+}
+.dash-barras.compacto .dash-barra-pista {
+  border-bottom: 0;
+}
+.dash-barras.compacto .dash-barra {
+  border-radius: 2px 2px 0 0;
+}
+/* Fila de atleta */
+.dash-fila {
+  gap: 12px;
+}
+.dash-fila-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dash-fila-texto .tenue {
+  font-size: 13px;
+}
+.dash-nivel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 64px;
+  font-size: 12px;
+  padding-left: 10px;
+  border-left: 3px solid var(--linea);
+}
+.dash-nivel strong {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.dash-nivel.nivel-bien {
+  border-left-color: var(--verde);
+}
+.dash-nivel.nivel-medio {
+  border-left-color: var(--naranja);
+}
+.dash-nivel.nivel-bajo {
+  border-left-color: #b42318;
+}
+/* Tabla por semana */
+.dash-tabla-envoltura {
+  overflow-x: auto;
+  padding: 8px 12px;
+}
+.dash-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.dash-tabla th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gris);
+  padding: 6px 8px 6px 0;
+  border-bottom: 1px solid var(--linea);
+  white-space: nowrap;
+}
+.dash-tabla td {
+  padding: 8px 8px 8px 0;
+  border-bottom: 1px solid #ececea;
+  white-space: nowrap;
+}
+.dash-tabla tr:last-child td {
+  border-bottom: 0;
+}
+.dash-celda-alerta {
+  color: #8a1c14;
+  font-weight: 700;
+}
+.dash-nota {
+  margin: 8px 2px 0;
+  font-size: 12px;
+}
+/* Progreso de cargas */
+.dash-ejercicio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececea;
+}
+.dash-ejercicio:last-child {
+  border-bottom: 0;
+}
+.dash-ejercicio-nombre {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.dash-ejercicio-nombre .tenue {
+  font-size: 12px;
+}
+.dash-ejercicio-kg {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 72px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.dash-ejercicio-kg span {
+  font-size: 12px;
+}
+.dash-ejercicio-kg .sube {
+  color: var(--verde);
+  font-weight: 600;
+}

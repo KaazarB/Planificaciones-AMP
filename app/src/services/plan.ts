@@ -89,3 +89,16 @@ export async function borrarPlan(id: number): Promise<void> {
   const { error } = await supabase.from('planes').delete().eq('id', id);
   if (error) throw error;
 }
+
+// Dashboard del coach: los días de todos los bloques de cada atleta
+export async function diasDeTodos(): Promise<Map<string, Plan['dias']>> {
+  const { data, error } = await supabase.from('planes').select('atleta_id, inicio, contenido').order('inicio');
+  if (error) throw error;
+  const porAtleta = new Map<string, Map<string, Plan['dias'][number]>>();
+  for (const f of (data ?? []) as { atleta_id: string; contenido: Plan }[]) {
+    const m = porAtleta.get(f.atleta_id) ?? new Map();
+    for (const d of f.contenido?.dias ?? []) m.set(d.fecha, d);
+    porAtleta.set(f.atleta_id, m);
+  }
+  return new Map([...porAtleta].map(([id, m]) => [id, [...m.values()]]));
+}
