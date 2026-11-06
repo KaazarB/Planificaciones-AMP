@@ -8,6 +8,7 @@ import Dashboard from '../components/Dashboard';
 import FichaResumen from '../components/FichaResumen';
 import Invitaciones from '../components/Invitaciones';
 import PlanVista from '../components/PlanVista';
+import RecordarCorreo from '../components/RecordarCorreo';
 import { useCuenta } from '../context/Cuenta';
 import type { CampoFicha, DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
@@ -214,6 +215,13 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
         </p>
       )}
 
+      {estado === 'ficha' && !whatsapp && atleta.correo && (
+        <RecordarCorreo
+          correo={atleta.correo}
+          asunto="Tu ficha de entrenamiento"
+          mensaje={mensajeFicha(primerNombre)}
+        />
+      )}
       <div className="fila-botones">
         {estado === 'ficha' && whatsapp && (
           <a
@@ -506,12 +514,11 @@ function Coach(): React.JSX.Element {
                             Recordar por WhatsApp
                           </a>
                         ) : a.correo ? (
-                          <a
-                            className="boton secundario"
-                            href={`mailto:${a.correo}?subject=${encodeURIComponent('Tu ficha de entrenamiento')}&body=${encodeURIComponent(mensajeFicha(apodo))}`}
-                          >
-                            Recordar por correo ({a.correo})
-                          </a>
+                          <RecordarCorreo
+                            correo={a.correo}
+                            asunto="Tu ficha de entrenamiento"
+                            mensaje={mensajeFicha(apodo)}
+                          />
                         ) : (
                           <p className="tenue">Sin WhatsApp ni correo guardado.</p>
                         )}

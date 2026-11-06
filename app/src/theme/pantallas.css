@@ -816,3 +816,22 @@
   color: var(--verde);
   font-weight: 600;
 }
+
+/* Recordar por correo (Gmail en el navegador + copiar) */
+.recordar-correo-direccion {
+  margin: 8px 0 0;
+  font-size: 14px;
+  word-break: break-all;
+}
+.recordar-correo .fila-botones {
+  margin: 8px 0 0;
+}
+.recordar-correo .boton {
+  min-height: 40px;
+  font-size: 14px;
+  padding: 0 14px;
+}
+.recordar-correo-aviso {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
