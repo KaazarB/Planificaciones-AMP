@@ -13,12 +13,21 @@ import { useCuenta } from '../context/Cuenta';
 import type { CampoFicha, DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
 import { camposRevision } from '../data/revision';
-import { diasEntre, esFechaISO, fechaLarga, hoyISO, lunesDeISO, semanasEntre } from '../domain/fechas';
+import {
+  diasEntre,
+  esFechaISO,
+  fechaDeMarca,
+  fechaLarga,
+  haceDias,
+  hoyISO,
+  lunesDeISO,
+  semanasEntre,
+} from '../domain/fechas';
 import type { UltimoBloque } from '../domain/renovacion';
 import { alertaDe, alertasRenovacion, textoAlerta } from '../domain/renovacion';
 import { destinoWhatsapp, enlaceApp, enlaceWhatsapp, numeroWhatsapp } from '../domain/whatsapp';
-import type { Estado, Perfil } from '../services/cuenta';
-import { leerFicha, mensajeError } from '../services/cuenta';
+import type { Estado, FichaBreve, Perfil } from '../services/cuenta';
+import { fichasBreves, leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
 import { borrarPlan, planesDe, subirPlan, ultimosBloques, validarPlan } from '../services/plan';
 import type { Revision } from '../services/revisiones';
@@ -59,6 +68,15 @@ const mensajeFicha = (apodo: string) =>
   `Entra desde el ícono o aquí: ${enlaceApp()}\n\n` +
   'Son unos 10 minutos y con eso armo tu planificación 💪';
 
+// Aviso para quien ya envió su ficha y está esperando su plan (sirve por correo y por WhatsApp)
+const asuntoEspera = 'Recibí tu ficha: tu planificación está en camino';
+const mensajeEspera = (apodo: string) =>
+  `¡Hola ${apodo}! 👋 Recibí tu ficha, ¡gracias por completarla!\n\n` +
+  'Ya estoy trabajando en tu planificación. Antes de cargarla la revisamos juntos y, cuando esté lista, ' +
+  `la verás directo en la app: ${enlaceApp()}\n\n` +
+  'Si quieres cambiar algo, puedes editar tu ficha desde la app.\n\n' +
+  '¡Vamos con todo! 💪';
+
 const textoEstado: Record<Estado, string> = {
   ficha: 'Ficha pendiente',
   evaluacion: 'En evaluación',
@@ -84,8 +102,49 @@ const fechaCorta = (iso: string) => {
   return `${dia} ${d} de ${mes}`;
 };
 
-// «Ficha pendiente» va en su propia sección con el botón de recordatorio
-const ordenEstado: Estado[] = ['evaluacion', 'activo', 'pausa'];
+// «Ficha pendiente» y «Esperando su plan» van en sus propias secciones, con su aviso por correo o WhatsApp
+const ordenEstado: Estado[] = ['activo', 'pausa'];
+
+// Quien envió su ficha y espera su plan: aviso por Gmail (con copiar) y, si tiene número, por WhatsApp
+function TarjetaEspera({ atleta, ficha, onAbrir }: { atleta: Perfil; ficha?: FichaBreve; onAbrir: () => void }) {
+  const apodo = atleta.apodo || atleta.nombre.split(' ')[0];
+  const numero = numeroWhatsapp(ficha?.whatsapp || atleta.whatsapp);
+  const enviada = ficha
+    ? `Envió su ficha ${haceDias(diasEntre(fechaDeMarca(ficha.actualizado), hoyISO()))}`
+    : 'Ficha enviada';
+  return (
+    <div className="tarjeta fila-pendiente">
+      <button className="enlace-fila" onClick={onAbrir}>
+        <strong>{atleta.nombre || 'Sin nombre'}</strong>
+        <span className="tenue">
+          {enviada}
+          {esFechaISO(ficha?.inicio) ? ` · quiere empezar el ${fechaLarga(ficha.inicio)}` : ''}
+        </span>
+      </button>
+      {atleta.correo && (
+        <RecordarCorreo
+          correo={atleta.correo}
+          asunto={asuntoEspera}
+          mensaje={mensajeEspera(apodo)}
+          textoBoton="Informar por Gmail"
+        />
+      )}
+      {numero && (
+        <div className="fila-botones aviso-espera-whatsapp">
+          <a
+            className="boton whatsapp-boton"
+            href={enlaceWhatsapp(numero, mensajeEspera(apodo))}
+            target={destinoWhatsapp}
+            rel="noreferrer"
+          >
+            Informar por WhatsApp
+          </a>
+        </div>
+      )}
+      {!atleta.correo && !numero && <p className="tenue">Sin WhatsApp ni correo guardado.</p>}
+    </div>
+  );
+}
 
 function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
   const [ficha, setFicha] = useState<DatosFicha | null>(null);
@@ -222,6 +281,14 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
           mensaje={mensajeFicha(primerNombre)}
         />
       )}
+      {estado === 'evaluacion' && atleta.correo && (
+        <RecordarCorreo
+          correo={atleta.correo}
+          asunto={asuntoEspera}
+          mensaje={mensajeEspera(primerNombre)}
+          textoBoton="Informar por Gmail"
+        />
+      )}
       <div className="fila-botones">
         {estado === 'ficha' && whatsapp && (
           <a
@@ -231,6 +298,16 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
             rel="noreferrer"
           >
             Recordar ficha por WhatsApp
+          </a>
+        )}
+        {estado === 'evaluacion' && whatsapp && (
+          <a
+            className="boton whatsapp-boton"
+            href={enlaceWhatsapp(whatsapp, mensajeEspera(primerNombre))}
+            target={destinoWhatsapp}
+            rel="noreferrer"
+          >
+            Informar por WhatsApp
           </a>
         )}
         {planes.length > 0 && (
@@ -378,6 +455,7 @@ function Coach(): React.JSX.Element {
 
   const [ultimos, setUltimos] = useState<Map<string, UltimoBloque>>(new Map());
   const [respondidas, setRespondidas] = useState<Set<string>>(new Set());
+  const [fichasEspera, setFichasEspera] = useState<Map<string, FichaBreve>>(new Map());
 
   useEffect(() => {
     let vigente = true;
@@ -390,7 +468,12 @@ function Coach(): React.JSX.Element {
         if (e) setError(mensajeError(e));
         else {
           setError('');
-          setAtletas((data ?? []) as Perfil[]);
+          const lista = (data ?? []) as Perfil[];
+          setAtletas(lista);
+          // Para «Esperando su plan»: cuándo enviaron su ficha, su WhatsApp y cuándo quieren empezar
+          fichasBreves(lista.filter((a) => a.estado === 'evaluacion').map((a) => a.id))
+            .then((m) => vigente && setFichasEspera(m))
+            .catch(() => undefined);
         }
       });
     ultimosBloques()
@@ -407,6 +490,7 @@ function Coach(): React.JSX.Element {
   const alertas = alertasRenovacion(atletas, ultimos, hoyISO());
   const porId = new Map(atletas.map((a) => [a.id, a]));
   const pendientes = atletas.filter((a) => a.estado === 'ficha' && a.rol !== 'coach');
+  const esperando = atletas.filter((a) => a.estado === 'evaluacion');
 
   const grupos = ordenEstado
     .map((estado) => ({ estado, lista: atletas.filter((a) => a.estado === estado) }))
@@ -493,16 +577,13 @@ function Coach(): React.JSX.Element {
                   <h3 className="subtitulo">Fichas pendientes · {pendientes.length}</h3>
                   {pendientes.map((a) => {
                     const numero = numeroWhatsapp(a.whatsapp);
-                    const dias = diasEntre(a.creado.slice(0, 10), hoyISO());
+                    const dias = diasEntre(fechaDeMarca(a.creado), hoyISO());
                     const apodo = a.apodo || a.nombre.split(' ')[0];
                     return (
                       <div key={a.id} className="tarjeta fila-pendiente">
                         <button className="enlace-fila" onClick={() => setElegido(a)}>
                           <strong>{a.nombre || 'Sin nombre'}</strong>
-                          <span className="tenue">
-                            Creó su cuenta {dias <= 0 ? 'hoy' : dias === 1 ? 'ayer' : `hace ${dias} días`} y no ha
-                            enviado su ficha
-                          </span>
+                          <span className="tenue">Creó su cuenta {haceDias(dias)} y no ha enviado su ficha</span>
                         </button>
                         {numero ? (
                           <a
@@ -525,6 +606,14 @@ function Coach(): React.JSX.Element {
                       </div>
                     );
                   })}
+                </section>
+              )}
+              {esperando.length > 0 && (
+                <section>
+                  <h3 className="subtitulo">Esperando su plan · {esperando.length}</h3>
+                  {esperando.map((a) => (
+                    <TarjetaEspera key={a.id} atleta={a} ficha={fichasEspera.get(a.id)} onAbrir={() => setElegido(a)} />
+                  ))}
                 </section>
               )}
               {error && <p className="aviso-error">{error}</p>}

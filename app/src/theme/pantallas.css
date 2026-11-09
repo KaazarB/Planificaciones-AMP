@@ -835,3 +835,13 @@
   margin: 6px 0 0;
   font-size: 13px;
 }
+
+/* Esperando su plan: WhatsApp bajo el correo, del mismo tamaño */
+.aviso-espera-whatsapp {
+  margin: 8px 0 0;
+}
+.aviso-espera-whatsapp .boton {
+  min-height: 40px;
+  font-size: 14px;
+  padding: 0 14px;
+}

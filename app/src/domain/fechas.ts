@@ -10,6 +10,15 @@ const aISO = (f: Date): string =>
 
 export const hoyISO = (): string => aISO(new Date());
 
+// Fecha local AAAA-MM-DD de una marca de tiempo de Supabase (p. ej. «creado» o «actualizado»)
+export function fechaDeMarca(marca: string): string {
+  const f = new Date(marca);
+  return Number.isNaN(f.getTime()) ? marca.slice(0, 10) : aISO(f);
+}
+
+// «hoy», «ayer» o «hace N días»
+export const haceDias = (dias: number): string => (dias <= 0 ? 'hoy' : dias === 1 ? 'ayer' : `hace ${dias} días`);
+
 // Primer lunes desde esa fecha (si ya es lunes, la misma): el plan nunca parte antes de lo pedido
 export function lunesDeISO(iso: string): string {
   const f = aFecha(iso);

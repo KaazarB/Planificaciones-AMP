@@ -85,6 +85,31 @@ export async function leerFicha(atletaId: string): Promise<DatosFicha | null> {
   return (data?.datos as DatosFicha) ?? null;
 }
 
+// Lo justo de varias fichas para el panel del coach: cuándo la envió, su WhatsApp y cuándo quiere empezar
+export interface FichaBreve {
+  actualizado: string;
+  whatsapp: string;
+  inicio: string;
+}
+
+export async function fichasBreves(ids: string[]): Promise<Map<string, FichaBreve>> {
+  if (!ids.length) return new Map();
+  const { data, error } = await supabase
+    .from('fichas')
+    .select('atleta_id, actualizado, whatsapp:datos->>whatsapp, inicio:datos->>inicio')
+    .in('atleta_id', ids);
+  if (error) throw error;
+  const filas = (data ?? []) as {
+    atleta_id: string;
+    actualizado: string;
+    whatsapp: string | null;
+    inicio: string | null;
+  }[];
+  return new Map(
+    filas.map((f) => [f.atleta_id, { actualizado: f.actualizado, whatsapp: f.whatsapp ?? '', inicio: f.inicio ?? '' }]),
+  );
+}
+
 export async function enviarFicha(atletaId: string, datos: DatosFicha): Promise<void> {
   const { error } = await supabase
     .from('fichas')
