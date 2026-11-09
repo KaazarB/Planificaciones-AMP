@@ -95,7 +95,7 @@ function Pestanas({ coach }: { coach: boolean }) {
             <IonIcon aria-hidden="true" icon={peopleOutline} />
             <IonLabel>Coach</IonLabel>
             {porRenovar > 0 ? (
-              <IonBadge color="danger" aria-label={`${porRenovar} bloques por renovar`}>
+              <IonBadge color="danger" aria-label={`${porRenovar} pendientes del coach`}>
                 {porRenovar}
               </IonBadge>
             ) : (

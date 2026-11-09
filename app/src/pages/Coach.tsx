@@ -583,6 +583,7 @@ function Coach(): React.JSX.Element {
     (a) => a.estado === 'evaluacion' || (a.rol !== 'coach' && Boolean(a.ficha_modificada)),
   );
   const hoy = hoyISO();
+  const modificadas = atletas.filter((a) => a.rol !== 'coach' && Boolean(a.ficha_modificada));
   // Activos que tienen pendiente la guía mensual: se marca en su fila y el correo está en su ficha
   const guiaAl = (a: Perfil) =>
     a.rol !== 'coach' && a.estado === 'activo' && Boolean(a.correo) && guiaPendiente(envios.get(a.id), hoy);
@@ -646,6 +647,26 @@ function Coach(): React.JSX.Element {
                 </span>
                 <span className="tenue">Tutoriales ›</span>
               </button>
+              {modificadas.length > 0 && (
+                <div className="alerta-fichas" role="status">
+                  <p>
+                    <strong>
+                      🔔{' '}
+                      {modificadas.length === 1
+                        ? 'Un atleta cambió su ficha'
+                        : `${modificadas.length} atletas cambiaron su ficha`}
+                    </strong>
+                    Revisa los cambios y ajusta su planificación.
+                  </p>
+                  <div className="fila-botones">
+                    {modificadas.map((a) => (
+                      <button key={a.id} className="boton" onClick={() => setElegido(a)}>
+                        {a.apodo || a.nombre.split(' ')[0]} ›
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {alertas.length > 0 && (
                 <section className="renovar">
                   <h3 className="subtitulo">Bloques por renovar · {alertas.length}</h3>

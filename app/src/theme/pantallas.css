@@ -886,3 +886,28 @@
 .aviso-ficha-modificada p {
   margin: 0;
 }
+
+/* Alerta arriba del panel: atletas que cambiaron su ficha */
+.alerta-fichas {
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fbeedd;
+  border: 1px solid #f0cfa3;
+  color: #5c3208;
+}
+.alerta-fichas p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+}
+.alerta-fichas .fila-botones {
+  margin: 8px 0 0;
+}
+.alerta-fichas .boton {
+  min-height: 38px;
+  font-size: 14px;
+  padding: 0 14px;
+}

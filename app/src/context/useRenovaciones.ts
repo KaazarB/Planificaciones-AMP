@@ -1,4 +1,5 @@
-// Capa de estado: cuántos atletas necesitan algo del coach (bloque por renovar o ficha pendiente)
+// Capa de estado: cuántos atletas necesitan algo del coach
+// (bloque por renovar, ficha pendiente, esperando su plan o ficha modificada)
 
 import { useEffect, useState } from 'react';
 
@@ -16,12 +17,21 @@ export function useRenovaciones(activo: boolean): number {
     const contar = async () => {
       try {
         const [{ data }, ultimos] = await Promise.all([
-          supabase.from('perfiles').select('id, estado, rol'),
+          supabase.from('perfiles').select('id, estado, rol, ficha_modificada'),
           ultimosBloques(),
         ]);
-        const perfiles = (data ?? []) as { id: string; estado: string; rol: string }[];
+        const perfiles = (data ?? []) as {
+          id: string;
+          estado: string;
+          rol: string;
+          ficha_modificada?: string | null;
+        }[];
         const fichas = perfiles.filter((p) => p.estado === 'ficha' && p.rol !== 'coach').length;
-        if (vigente) setCantidad(alertasRenovacion(perfiles, ultimos, hoyISO()).length + fichas);
+        // Esperando su plan: ficha recién enviada o ficha cambiada teniendo plan
+        const esperando = perfiles.filter(
+          (p) => p.rol !== 'coach' && (p.estado === 'evaluacion' || Boolean(p.ficha_modificada)),
+        ).length;
+        if (vigente) setCantidad(alertasRenovacion(perfiles, ultimos, hoyISO()).length + fichas + esperando);
       } catch {
         /* sin conexión: se mantiene el último valor */
       }

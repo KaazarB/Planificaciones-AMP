@@ -191,6 +191,8 @@ test('ficha modificada por un atleta con plan: aparece en «Esperando su plan» 
   ana.ficha_modificada = '2026-11-08T15:00:00Z';
   try {
     render(<Coach />);
+    expect(await screen.findByText('🔔 Un atleta cambió su ficha')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ana ›' })).toBeInTheDocument();
     const titulo = await screen.findByText('Esperando su plan · 2');
     const seccion = titulo.closest('section') as HTMLElement;
     expect(
