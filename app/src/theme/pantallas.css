@@ -847,9 +847,17 @@
 }
 
 /* Guía mensual por correo */
-.guia-explicacion {
-  margin: -4px 0 4px;
-  font-size: 13px;
+/* En la fila del atleta activo: le toca la guía (el correo está en su ficha) */
+.etiqueta-guia {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #fbeedd;
+  color: #7a420b;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
 }
 .guia-estado {
   margin: 4px 0 0;

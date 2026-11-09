@@ -479,8 +479,6 @@ function Coach(): React.JSX.Element {
   const [respondidas, setRespondidas] = useState<Set<string>>(new Set());
   const [fichasEspera, setFichasEspera] = useState<Map<string, FichaBreve>>(new Map());
   const [envios, setEnvios] = useState<Map<string, string>>(new Map());
-  // Quien recibió la guía en esta visita sigue a la vista (con «Deshacer») hasta actualizar
-  const [recienGuia, setRecienGuia] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let vigente = true;
@@ -520,13 +518,9 @@ function Coach(): React.JSX.Element {
   const pendientes = atletas.filter((a) => a.estado === 'ficha' && a.rol !== 'coach');
   const esperando = atletas.filter((a) => a.estado === 'evaluacion');
   const hoy = hoyISO();
-  const conGuia = atletas.filter(
-    (a) =>
-      a.rol !== 'coach' &&
-      a.estado === 'activo' &&
-      a.correo &&
-      (guiaPendiente(envios.get(a.id), hoy) || recienGuia.has(a.id)),
-  );
+  // Activos que tienen pendiente la guía mensual: se marca en su fila y el correo está en su ficha
+  const guiaAl = (a: Perfil) =>
+    a.rol !== 'coach' && a.estado === 'activo' && Boolean(a.correo) && guiaPendiente(envios.get(a.id), hoy);
   function cambioGuia(atletaId: string, enviado: string | null) {
     setEnvios((m) => {
       const n = new Map(m);
@@ -534,7 +528,6 @@ function Coach(): React.JSX.Element {
       else n.delete(atletaId);
       return n;
     });
-    setRecienGuia((s) => new Set(s).add(atletaId));
   }
 
   const grupos = ordenEstado
@@ -663,23 +656,6 @@ function Coach(): React.JSX.Element {
                   ))}
                 </section>
               )}
-              {conGuia.length > 0 && (
-                <section>
-                  <h3 className="subtitulo">Guía mensual por correo · {conGuia.length}</h3>
-                  <p className="tenue guia-explicacion">
-                    Cómo dejar la app en el inicio y por qué registrar cada sesión. Aparece a quien no la ha recibido y
-                    vuelve a aparecer a los 30 días del último envío.
-                  </p>
-                  {conGuia.map((a) => (
-                    <div key={a.id} className="tarjeta fila-pendiente">
-                      <button className="enlace-fila" onClick={() => setElegido(a)}>
-                        <strong>{a.nombre || 'Sin nombre'}</strong>
-                      </button>
-                      <GuiaMensual atleta={a} ultimo={envios.get(a.id)} onCambio={cambioGuia} />
-                    </div>
-                  ))}
-                </section>
-              )}
               {error && <p className="aviso-error">{error}</p>}
               {grupos.map((g) => (
                 <section key={g.estado}>
@@ -691,6 +667,7 @@ function Coach(): React.JSX.Element {
                       <span>
                         <strong>{a.nombre || 'Sin nombre'}</strong>
                         {a.id === perfil?.id && <span className="tenue"> · tú</span>}
+                        {guiaAl(a) && <span className="etiqueta-guia">✉ Guía pendiente</span>}
                       </span>
                       <span className="tenue">{new Date(a.creado).toLocaleDateString('es-CL')} ›</span>
                     </button>
