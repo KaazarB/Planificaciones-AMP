@@ -18,6 +18,7 @@ export interface Perfil {
   creado: string;
   whatsapp?: string;
   correo?: string;
+  ficha_modificada?: string | null; // el atleta cambió su ficha teniendo plan: el coach debe revisarlo
 }
 
 // Traduce los errores de Supabase a mensajes claros
@@ -108,6 +109,12 @@ export async function fichasBreves(ids: string[]): Promise<Map<string, FichaBrev
   return new Map(
     filas.map((f) => [f.atleta_id, { actualizado: f.actualizado, whatsapp: f.whatsapp ?? '', inicio: f.inicio ?? '' }]),
   );
+}
+
+// El coach deja de ver el aviso de ficha modificada (revisó el plan o cargó uno nuevo)
+export async function marcarFichaRevisada(atletaId: string): Promise<void> {
+  const { error } = await supabase.rpc('coach_ficha_revisada', { p_atleta: atletaId });
+  if (error) throw error;
 }
 
 export async function enviarFicha(atletaId: string, datos: DatosFicha): Promise<void> {

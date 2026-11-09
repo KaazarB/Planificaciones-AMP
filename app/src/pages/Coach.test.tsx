@@ -185,3 +185,22 @@ test('la ficha de quien ya recibió la guía dice cuándo vuelve a estar disponi
   expect(await screen.findByText(/Vuelve a estar disponible el viernes 4 de diciembre/)).toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'Enviar guía por Gmail' })).not.toBeInTheDocument();
 });
+
+test('ficha modificada por un atleta con plan: aparece en «Esperando su plan» y se marca revisado', async () => {
+  const ana = datos.perfiles.find((p) => p.id === 'a4') as Record<string, unknown>;
+  ana.ficha_modificada = '2026-11-08T15:00:00Z';
+  try {
+    render(<Coach />);
+    const titulo = await screen.findByText('Esperando su plan · 2');
+    const seccion = titulo.closest('section') as HTMLElement;
+    expect(
+      within(seccion).getByText('Modificó su ficha ayer · ya tiene plan: revisa si hay que ajustarlo'),
+    ).toBeInTheDocument();
+    expect(within(seccion).getByRole('button', { name: 'Plan revisado' })).toBeInTheDocument();
+
+    fireEvent.click(within(seccion).getByRole('button', { name: 'Ver su ficha' }));
+    expect(await screen.findByText(/Revisa abajo los cambios/)).toBeInTheDocument();
+  } finally {
+    delete ana.ficha_modificada;
+  }
+});

@@ -20,6 +20,7 @@ function Perfil(): React.JSX.Element {
   const { perfil, sesion } = useCuenta();
   const [ficha, setFicha] = useState<DatosFicha | null>(null);
   const [editando, setEditando] = useState(false);
+  const [aviso, setAviso] = useState('');
 
   useEffect(() => {
     if (perfil)
@@ -55,13 +56,24 @@ function Perfil(): React.JSX.Element {
                 await enviarFicha(perfil.id, datos);
                 setFicha(datos);
                 setEditando(false);
+                setAviso(
+                  perfil.estado === 'activo' || perfil.estado === 'pausa'
+                    ? 'Ficha actualizada ✓. Tu coach verá los cambios para revisar tu planificación.'
+                    : 'Ficha actualizada ✓',
+                );
               }}
             />
           ) : (
             <>
               <div className="fila-botones">
                 {perfil.rol !== 'coach' && (
-                  <button className="boton secundario" onClick={() => setEditando(true)}>
+                  <button
+                    className="boton secundario"
+                    onClick={() => {
+                      setAviso('');
+                      setEditando(true);
+                    }}
+                  >
                     {ficha ? 'Actualizar mi ficha' : 'Completar mi ficha'}
                   </button>
                 )}
@@ -69,6 +81,12 @@ function Perfil(): React.JSX.Element {
                   Cerrar sesión
                 </button>
               </div>
+              {aviso && <p className="aviso">{aviso}</p>}
+              {perfil.rol !== 'coach' && ficha && !aviso && (
+                <p className="tenue">
+                  ¿Te equivocaste en algo o cambió tu situación? Actualiza tu ficha y tu coach lo verá.
+                </p>
+              )}
               {ficha && <FichaResumen datos={ficha} />}
             </>
           )}

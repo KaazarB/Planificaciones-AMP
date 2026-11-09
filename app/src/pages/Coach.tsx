@@ -30,7 +30,7 @@ import { alertaDe, alertasRenovacion, textoAlerta } from '../domain/renovacion';
 import { destinoWhatsapp, enlaceApp, enlaceWhatsapp, numeroWhatsapp } from '../domain/whatsapp';
 import { ultimosEnvios } from '../services/correos';
 import type { Estado, FichaBreve, Perfil } from '../services/cuenta';
-import { fichasBreves, leerFicha, mensajeError } from '../services/cuenta';
+import { fichasBreves, leerFicha, marcarFichaRevisada, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
 import { borrarPlan, planesDe, subirPlan, ultimosBloques, validarPlan } from '../services/plan';
 import type { Revision } from '../services/revisiones';
@@ -109,6 +109,46 @@ const fechaCorta = (iso: string) => {
 const ordenEstado: Estado[] = ['activo', 'pausa'];
 
 // Quien envió su ficha y espera su plan: aviso por Gmail (con copiar) y, si tiene número, por WhatsApp
+// Atleta con plan que cambió su ficha: hay que revisar si su planificación necesita ajustes
+function TarjetaFichaModificada({
+  atleta,
+  onAbrir,
+  onRevisado,
+}: {
+  atleta: Perfil;
+  onAbrir: () => void;
+  onRevisado: () => void;
+}) {
+  const [error, setError] = useState('');
+  const cuando = haceDias(diasEntre(fechaDeMarca(atleta.ficha_modificada ?? atleta.creado), hoyISO()));
+  async function revisado() {
+    setError('');
+    try {
+      await marcarFichaRevisada(atleta.id);
+      onRevisado();
+    } catch (e) {
+      setError(mensajeError(e));
+    }
+  }
+  return (
+    <div className="tarjeta fila-pendiente ficha-modificada">
+      <button className="enlace-fila" onClick={onAbrir}>
+        <strong>{atleta.nombre || 'Sin nombre'}</strong>
+        <span className="tenue">Modificó su ficha {cuando} · ya tiene plan: revisa si hay que ajustarlo</span>
+      </button>
+      <div className="fila-botones aviso-espera-whatsapp">
+        <button className="boton" onClick={onAbrir}>
+          Ver su ficha
+        </button>
+        <button className="boton secundario" onClick={revisado}>
+          Plan revisado
+        </button>
+      </div>
+      {error && <p className="aviso-error">{error}</p>}
+    </div>
+  );
+}
+
 function TarjetaEspera({ atleta, ficha, onAbrir }: { atleta: Perfil; ficha?: FichaBreve; onAbrir: () => void }) {
   const apodo = atleta.apodo || atleta.nombre.split(' ')[0];
   const numero = numeroWhatsapp(ficha?.whatsapp || atleta.whatsapp);
@@ -166,6 +206,17 @@ function DetalleAtleta({
   const [revision, setRevision] = useState<Revision | null>(null);
   const [planes, setPlanes] = useState<FilaPlan[]>([]);
   const [estado, setEstado] = useState<Estado>(atleta.estado);
+  const [modificada, setModificada] = useState(atleta.ficha_modificada ?? null);
+
+  async function revisarFicha() {
+    setError('');
+    try {
+      await marcarFichaRevisada(atleta.id);
+      setModificada(null);
+    } catch (e) {
+      setError(mensajeError(e));
+    }
+  }
   const [mensaje, setMensaje] = useState('');
   const [trabajando, setTrabajando] = useState('');
   const [pendiente, setPendiente] = useState<{ plan: Plan; resumen: string } | null>(null);
@@ -218,6 +269,7 @@ function DetalleAtleta({
     try {
       await subirPlan(atleta.id, pendiente.plan);
       if (estado !== 'activo') await cambiarEstado('activo');
+      if (modificada) await revisarFicha();
       await recargarPlanes();
       setMensaje(`Plan cargado: ${pendiente.resumen}. ${atleta.nombre.split(' ')[0]} ya lo ve en su app.`);
       setPlanCargado(`bloque ${pendiente.plan.bloque.numero}, desde el ${fechaCorta(pendiente.plan.bloque.inicio)}`);
@@ -271,6 +323,17 @@ function DetalleAtleta({
         {esYo && <span>Tu cuenta</span>}
         <span>Desde {new Date(atleta.creado).toLocaleDateString('es-CL')}</span>
       </div>
+      {modificada && (
+        <div className="aviso aviso-ficha-modificada">
+          <p>
+            <strong>Modificó su ficha</strong> el {fechaLarga(fechaDeMarca(modificada))}. Revisa abajo los cambios y si
+            su plan necesita ajustes; si cargas un plan nuevo, este aviso se quita solo.
+          </p>
+          <button className="boton secundario" onClick={revisarFicha}>
+            Plan revisado
+          </button>
+        </div>
+      )}
       {esFechaISO(ficha?.inicio) && (
         <p className="aviso inicio-atleta">
           Quiere empezar el {fechaLarga(ficha.inicio)}. Su plan debería partir el{' '}
@@ -516,7 +579,9 @@ function Coach(): React.JSX.Element {
   const alertas = alertasRenovacion(atletas, ultimos, hoyISO());
   const porId = new Map(atletas.map((a) => [a.id, a]));
   const pendientes = atletas.filter((a) => a.estado === 'ficha' && a.rol !== 'coach');
-  const esperando = atletas.filter((a) => a.estado === 'evaluacion');
+  const esperando = atletas.filter(
+    (a) => a.estado === 'evaluacion' || (a.rol !== 'coach' && Boolean(a.ficha_modificada)),
+  );
   const hoy = hoyISO();
   // Activos que tienen pendiente la guía mensual: se marca en su fila y el correo está en su ficha
   const guiaAl = (a: Perfil) =>
@@ -651,9 +716,18 @@ function Coach(): React.JSX.Element {
               {esperando.length > 0 && (
                 <section>
                   <h3 className="subtitulo">Esperando su plan · {esperando.length}</h3>
-                  {esperando.map((a) => (
-                    <TarjetaEspera key={a.id} atleta={a} ficha={fichasEspera.get(a.id)} onAbrir={() => setElegido(a)} />
-                  ))}
+                  {esperando.map((a) =>
+                    a.estado === 'evaluacion' ? (
+                      <TarjetaEspera
+                        key={a.id}
+                        atleta={a}
+                        ficha={fichasEspera.get(a.id)}
+                        onAbrir={() => setElegido(a)}
+                      />
+                    ) : (
+                      <TarjetaFichaModificada key={a.id} atleta={a} onAbrir={() => setElegido(a)} onRevisado={cargar} />
+                    ),
+                  )}
                 </section>
               )}
               {error && <p className="aviso-error">{error}</p>}

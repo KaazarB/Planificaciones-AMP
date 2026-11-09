@@ -871,3 +871,18 @@
   margin-top: 6px;
   font-size: 13px;
 }
+
+/* Ficha modificada por un atleta con plan */
+.ficha-modificada {
+  border-left: 4px solid var(--naranja);
+}
+.aviso-ficha-modificada {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fbeedd;
+  color: #5c3208;
+}
+.aviso-ficha-modificada p {
+  margin: 0;
+}
