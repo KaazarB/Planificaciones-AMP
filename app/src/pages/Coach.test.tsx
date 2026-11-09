@@ -42,6 +42,16 @@ const datos = vi.hoisted(() => {
         whatsapp: '',
         correo: 'luis@ejemplo.cl',
       },
+      {
+        id: 'a4',
+        nombre: 'Ana Enviada',
+        apodo: 'Ana',
+        rol: 'atleta',
+        estado: 'activo',
+        creado: '2026-11-01T15:00:00Z',
+        whatsapp: '',
+        correo: 'ana@ejemplo.cl',
+      },
       coach,
     ],
   };
@@ -52,6 +62,17 @@ vi.mock('../services/supabase', () => ({
     from: () => ({ select: () => ({ order: () => Promise.resolve({ data: datos.perfiles, error: null }) }) }),
     rpc: vi.fn(async () => ({ error: null })),
   },
+}));
+
+const correos = vi.hoisted(() => ({
+  registrarEnvio: vi.fn(async () => ({ id: 7, enviado: '2026-11-09T15:00:00Z' })),
+  deshacerEnvio: vi.fn(async () => undefined),
+}));
+vi.mock('../services/correos', () => ({
+  // Ana recibió la guía hace 5 días; Luis nunca
+  ultimosEnvios: vi.fn(async () => new Map([['a4', '2026-11-04T15:00:00Z']])),
+  registrarEnvio: correos.registrarEnvio,
+  deshacerEnvio: correos.deshacerEnvio,
 }));
 
 vi.mock('../context/Cuenta', () => ({ useCuenta: () => ({ perfil: datos.coach }) }));
@@ -116,7 +137,7 @@ test('«Esperando su plan» muestra el correo informativo por Gmail y el aviso p
 
   // Ya no se repite en una lista aparte de «En evaluación»; los activos siguen en su grupo
   expect(screen.queryByText(/^En evaluación ·/)).not.toBeInTheDocument();
-  expect(screen.getByText('Activo · 2')).toBeInTheDocument();
+  expect(screen.getByText('Activo · 3')).toBeInTheDocument();
 });
 
 test('la ficha de quien espera su plan también trae el correo informativo', async () => {
@@ -128,4 +149,24 @@ test('la ficha de quien espera su plan también trae el correo informativo', asy
   const gmail = await screen.findByRole('link', { name: 'Informar por Gmail' });
   expect(parametro(gmail.getAttribute('href'), 'su')).toBe('Recibí tu ficha: tu planificación está en camino');
   expect(await screen.findByRole('link', { name: 'Informar por WhatsApp' })).toBeInTheDocument();
+});
+
+test('guía mensual: solo a quien no la ha recibido en 30 días, y al enviarla queda registrada', async () => {
+  render(<Coach />);
+
+  const titulo = await screen.findByText('Guía mensual por correo · 1');
+  const seccion = titulo.closest('section') as HTMLElement;
+  expect(within(seccion).getByText('Luis Activo')).toBeInTheDocument();
+  expect(within(seccion).queryByText('Ana Enviada')).not.toBeInTheDocument();
+  expect(within(seccion).getByText('Todavía no recibe la guía')).toBeInTheDocument();
+
+  const gmail = within(seccion).getByRole('link', { name: 'Enviar guía por Gmail' });
+  expect(parametro(gmail.getAttribute('href'), 'to')).toBe('luis@ejemplo.cl');
+  expect(parametro(gmail.getAttribute('href'), 'body')).toContain('Agregar a pantalla de inicio');
+  expect(parametro(gmail.getAttribute('href'), 'body')).toContain('REGISTRA CADA SESIÓN');
+
+  fireEvent.click(gmail);
+  expect(await within(seccion).findByText(/Guía registrada hoy/)).toBeInTheDocument();
+  expect(correos.registrarEnvio).toHaveBeenCalledWith('a2', 'guia');
+  expect(within(seccion).getByText(/miércoles 9 de diciembre/)).toBeInTheDocument();
 });

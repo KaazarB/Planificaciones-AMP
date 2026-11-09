@@ -48,6 +48,13 @@ export function diaSiguiente(iso: string): string {
   return aISO(f);
 }
 
+// Fecha AAAA-MM-DD n días después (o antes, si n es negativo)
+export function sumarDias(iso: string, n: number): string {
+  const f = aFecha(iso);
+  f.setDate(f.getDate() + n);
+  return aISO(f);
+}
+
 // Semanas completas entre dos fechas AAAA-MM-DD
 export function semanasEntre(desde: string, hasta: string): number {
   return Math.floor((aFecha(hasta).getTime() - aFecha(desde).getTime()) / (7 * 24 * 3600 * 1000));

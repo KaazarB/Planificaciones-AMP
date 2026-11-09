@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import BibliotecaVideos from '../components/BibliotecaVideos';
 import Dashboard from '../components/Dashboard';
 import FichaResumen from '../components/FichaResumen';
+import GuiaMensual from '../components/GuiaMensual';
 import Invitaciones from '../components/Invitaciones';
 import PlanVista from '../components/PlanVista';
 import RecordarCorreo from '../components/RecordarCorreo';
@@ -13,6 +14,7 @@ import { useCuenta } from '../context/Cuenta';
 import type { CampoFicha, DatosFicha } from '../data/ficha';
 import type { Plan } from '../data/plan';
 import { camposRevision } from '../data/revision';
+import { guiaPendiente } from '../domain/correo';
 import {
   diasEntre,
   esFechaISO,
@@ -26,6 +28,7 @@ import {
 import type { UltimoBloque } from '../domain/renovacion';
 import { alertaDe, alertasRenovacion, textoAlerta } from '../domain/renovacion';
 import { destinoWhatsapp, enlaceApp, enlaceWhatsapp, numeroWhatsapp } from '../domain/whatsapp';
+import { ultimosEnvios } from '../services/correos';
 import type { Estado, FichaBreve, Perfil } from '../services/cuenta';
 import { fichasBreves, leerFicha, mensajeError } from '../services/cuenta';
 import type { FilaPlan } from '../services/plan';
@@ -146,7 +149,19 @@ function TarjetaEspera({ atleta, ficha, onAbrir }: { atleta: Perfil; ficha?: Fic
   );
 }
 
-function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boolean; onVolver: () => void }) {
+function DetalleAtleta({
+  atleta,
+  esYo,
+  onVolver,
+  ultimaGuia,
+  onCambioGuia,
+}: {
+  atleta: Perfil;
+  esYo: boolean;
+  onVolver: () => void;
+  ultimaGuia?: string;
+  onCambioGuia: (atletaId: string, enviado: string | null) => void;
+}) {
   const [ficha, setFicha] = useState<DatosFicha | null>(null);
   const [revision, setRevision] = useState<Revision | null>(null);
   const [planes, setPlanes] = useState<FilaPlan[]>([]);
@@ -332,6 +347,13 @@ function DetalleAtleta({ atleta, esYo, onVolver }: { atleta: Perfil; esYo: boole
         )}
       </div>
 
+      {estado === 'activo' && !esYo && atleta.correo && (
+        <>
+          <h3 className="subtitulo">Guía mensual por correo</h3>
+          <GuiaMensual atleta={atleta} ultimo={ultimaGuia} onCambio={onCambioGuia} />
+        </>
+      )}
+
       <h3 className="subtitulo">Planes</h3>
       {(() => {
         if (estado !== 'activo' || !planes.length) return null;
@@ -456,6 +478,9 @@ function Coach(): React.JSX.Element {
   const [ultimos, setUltimos] = useState<Map<string, UltimoBloque>>(new Map());
   const [respondidas, setRespondidas] = useState<Set<string>>(new Set());
   const [fichasEspera, setFichasEspera] = useState<Map<string, FichaBreve>>(new Map());
+  const [envios, setEnvios] = useState<Map<string, string>>(new Map());
+  // Quien recibió la guía en esta visita sigue a la vista (con «Deshacer») hasta actualizar
+  const [recienGuia, setRecienGuia] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let vigente = true;
@@ -476,6 +501,9 @@ function Coach(): React.JSX.Element {
             .catch(() => undefined);
         }
       });
+    ultimosEnvios('guia')
+      .then((m) => vigente && setEnvios(m))
+      .catch(() => undefined);
     ultimosBloques()
       .then((m) => vigente && setUltimos(m))
       .catch(() => undefined);
@@ -491,6 +519,23 @@ function Coach(): React.JSX.Element {
   const porId = new Map(atletas.map((a) => [a.id, a]));
   const pendientes = atletas.filter((a) => a.estado === 'ficha' && a.rol !== 'coach');
   const esperando = atletas.filter((a) => a.estado === 'evaluacion');
+  const hoy = hoyISO();
+  const conGuia = atletas.filter(
+    (a) =>
+      a.rol !== 'coach' &&
+      a.estado === 'activo' &&
+      a.correo &&
+      (guiaPendiente(envios.get(a.id), hoy) || recienGuia.has(a.id)),
+  );
+  function cambioGuia(atletaId: string, enviado: string | null) {
+    setEnvios((m) => {
+      const n = new Map(m);
+      if (enviado) n.set(atletaId, enviado);
+      else n.delete(atletaId);
+      return n;
+    });
+    setRecienGuia((s) => new Set(s).add(atletaId));
+  }
 
   const grupos = ordenEstado
     .map((estado) => ({ estado, lista: atletas.filter((a) => a.estado === estado) }))
@@ -510,6 +555,8 @@ function Coach(): React.JSX.Element {
             <DetalleAtleta
               atleta={elegido}
               esYo={elegido.id === perfil?.id}
+              ultimaGuia={envios.get(elegido.id)}
+              onCambioGuia={cambioGuia}
               onVolver={() => {
                 setElegido(null);
                 cargar();
@@ -613,6 +660,23 @@ function Coach(): React.JSX.Element {
                   <h3 className="subtitulo">Esperando su plan · {esperando.length}</h3>
                   {esperando.map((a) => (
                     <TarjetaEspera key={a.id} atleta={a} ficha={fichasEspera.get(a.id)} onAbrir={() => setElegido(a)} />
+                  ))}
+                </section>
+              )}
+              {conGuia.length > 0 && (
+                <section>
+                  <h3 className="subtitulo">Guía mensual por correo · {conGuia.length}</h3>
+                  <p className="tenue guia-explicacion">
+                    Cómo dejar la app en el inicio y por qué registrar cada sesión. Aparece a quien no la ha recibido y
+                    vuelve a aparecer a los 30 días del último envío.
+                  </p>
+                  {conGuia.map((a) => (
+                    <div key={a.id} className="tarjeta fila-pendiente">
+                      <button className="enlace-fila" onClick={() => setElegido(a)}>
+                        <strong>{a.nombre || 'Sin nombre'}</strong>
+                      </button>
+                      <GuiaMensual atleta={a} ultimo={envios.get(a.id)} onCambio={cambioGuia} />
+                    </div>
                   ))}
                 </section>
               )}

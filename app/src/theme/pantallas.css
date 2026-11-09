@@ -845,3 +845,21 @@
   font-size: 14px;
   padding: 0 14px;
 }
+
+/* Guía mensual por correo */
+.guia-explicacion {
+  margin: -4px 0 4px;
+  font-size: 13px;
+}
+.guia-estado {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.guia-estado.enviada {
+  color: var(--verde);
+  font-weight: 600;
+}
+.guia-marcar {
+  margin-top: 6px;
+  font-size: 13px;
+}

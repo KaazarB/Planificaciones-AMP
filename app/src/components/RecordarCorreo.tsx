@@ -11,6 +11,8 @@ interface Props {
   mensaje: string;
   // Texto del botón de Gmail (por defecto «Recordar por Gmail»)
   textoBoton?: string;
+  // Se llama al abrir Gmail (p. ej. para registrar el envío)
+  onAbrir?: () => void;
 }
 
 async function copiar(texto: string): Promise<boolean> {
@@ -22,7 +24,13 @@ async function copiar(texto: string): Promise<boolean> {
   }
 }
 
-function RecordarCorreo({ correo, asunto, mensaje, textoBoton = 'Recordar por Gmail' }: Props): React.JSX.Element {
+function RecordarCorreo({
+  correo,
+  asunto,
+  mensaje,
+  textoBoton = 'Recordar por Gmail',
+  onAbrir,
+}: Props): React.JSX.Element {
   const [copiado, setCopiado] = useState('');
 
   async function copiarYAvisar(texto: string, que: string) {
@@ -36,7 +44,13 @@ function RecordarCorreo({ correo, asunto, mensaje, textoBoton = 'Recordar por Gm
         ✉ <strong>{correo}</strong>
       </p>
       <div className="fila-botones">
-        <a className="boton" href={enlaceGmail(correo, asunto, mensaje)} target="_blank" rel="noreferrer">
+        <a
+          className="boton"
+          href={enlaceGmail(correo, asunto, mensaje)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={onAbrir}
+        >
           {textoBoton}
         </a>
         <button className="boton secundario" onClick={() => copiarYAvisar(correo, 'Correo')}>
