@@ -19,6 +19,7 @@ export interface RegistroDia {
   sueno?: string; // horas o Body Battery
   notas?: string;
   sustituciones?: Record<string, string>; // clave s{i}i{j} → ejercicio que hizo en vez del original
+  cerrada?: string; // ISO: cuándo el atleta tocó «Registrar sesión»
   actualizado: string; // ISO
 }
 

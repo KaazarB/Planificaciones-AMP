@@ -117,6 +117,20 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
     }, 800);
   }
 
+  // Botón «Registrar sesión»: guarda al tiro (sin esperar) y avisa si llegó a la nube
+  async function registrarSesion(): Promise<boolean> {
+    if (soloLectura) return false;
+    window.clearTimeout(temporizador.current);
+    const ahora = new Date().toISOString();
+    const nuevo: RegistroDia = { ...registro, fecha, cerrada: ahora, actualizado: ahora };
+    setRegistros((r) => ({ ...r, [fecha]: nuevo }));
+    guardarLocal(atleta, nuevo);
+    setGuardado('guardando');
+    const ok = await subirRegistro(atleta, nuevo);
+    setGuardado(ok ? 'nube' : 'local');
+    return ok;
+  }
+
   function alternar(clave: string) {
     setAbiertas((a) => {
       const n = new Set(a);
@@ -272,6 +286,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             registro={registro}
             onAlternar={() => alternar('registro')}
             onCambiar={cambiar}
+            onRegistrar={registrarSesion}
             soloLectura={soloLectura}
           />
         </article>

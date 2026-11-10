@@ -790,3 +790,79 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   background: #dff1e6;
   color: #135c32;
 }
+
+/* Botón «Registrar sesión» y confirmación */
+.registrar-sesion {
+  margin-top: 4px;
+  background: var(--verde);
+}
+.registrar-listo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #dff1e6;
+  color: #135c32;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.registrar-listo strong {
+  display: block;
+  font-size: 16px;
+}
+.registrar-listo small {
+  display: block;
+  font-size: 13px;
+}
+.registrar-listo.local {
+  background: #fbf0cc;
+  color: #6b5100;
+}
+.registrar-check {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+}
+.registrar-listo.local .registrar-check {
+  background: var(--naranja);
+}
+.registrar-check.nuevo {
+  animation: registrar-pop 0.45s ease-out;
+}
+.registrar-reintentar {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+}
+@keyframes registrar-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .registrar-check.nuevo {
+    animation: none;
+  }
+}

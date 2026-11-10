@@ -16,6 +16,7 @@ const ENTRENA: Dia['tipo'][] = ['sesion', 'clase', 'carrera'];
 export function tieneDatos(r?: RegistroDia): boolean {
   if (!r) return false;
   return Boolean(
+    r.cerrada ||
     r.rpe !== undefined ||
     r.notas ||
     r.clase ||

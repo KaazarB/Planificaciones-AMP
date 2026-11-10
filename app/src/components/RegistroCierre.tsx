@@ -1,5 +1,7 @@
 // Capa de componentes: "Registro al terminar" (RPE, lumbar, sueño, notas y campos del día)
 
+import { useState } from 'react';
+
 import type { Dia, Plan } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 
@@ -10,7 +12,79 @@ interface Props {
   registro: RegistroDia;
   onAlternar: () => void;
   onCambiar: (cambio: Partial<RegistroDia>) => void;
+  onRegistrar?: () => Promise<boolean>; // true = llegó a la nube
   soloLectura?: boolean;
+}
+
+type EstadoEnvio = 'inicio' | 'enviando' | 'nube' | 'local';
+
+const hora = (iso: string) => new Date(iso).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+
+function BotonRegistrar({
+  registro,
+  onRegistrar,
+  soloLectura,
+}: {
+  registro: RegistroDia;
+  onRegistrar?: () => Promise<boolean>;
+  soloLectura: boolean;
+}) {
+  const [envio, setEnvio] = useState<EstadoEnvio>('inicio');
+
+  const registrada = Boolean(registro.cerrada);
+  const editadaDespues = registrada && registro.actualizado > (registro.cerrada as string);
+
+  if (soloLectura) {
+    return registrada ? (
+      <p className="registrar-listo">
+        <span className="registrar-check" aria-hidden="true">
+          ✓
+        </span>
+        Sesión registrada a las {hora(registro.cerrada as string)}
+      </p>
+    ) : null;
+  }
+
+  async function registrar() {
+    if (!onRegistrar || envio === 'enviando') return;
+    setEnvio('enviando');
+    const ok = await onRegistrar();
+    setEnvio(ok ? 'nube' : 'local');
+    try {
+      navigator.vibrate?.(40);
+    } catch {
+      /* sin vibración */
+    }
+  }
+
+  if (registrada && !editadaDespues && envio !== 'enviando') {
+    return (
+      <div className={`registrar-listo ${envio === 'local' ? 'local' : ''}`} role="status">
+        <span className={`registrar-check ${envio === 'nube' ? 'nuevo' : ''}`} aria-hidden="true">
+          ✓
+        </span>
+        <div>
+          <strong>{envio === 'local' ? 'Guardada en tu teléfono' : '¡Sesión registrada!'}</strong>
+          <small>
+            {envio === 'local'
+              ? 'Sin conexión: tu coach la verá cuando la envíes de nuevo.'
+              : `Guardada a las ${hora(registro.cerrada as string)}. Tu coach ya puede verla.`}
+          </small>
+          {envio === 'local' && (
+            <button type="button" className="registrar-reintentar" onClick={registrar}>
+              Reintentar envío
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button type="button" className="boton ancho registrar-sesion" onClick={registrar} disabled={envio === 'enviando'}>
+      {envio === 'enviando' ? 'Guardando…' : editadaDespues ? 'Actualizar registro' : 'Registrar sesión'}
+    </button>
+  );
 }
 
 function Escala({
@@ -59,6 +133,7 @@ function RegistroCierre({
   registro,
   onAlternar,
   onCambiar,
+  onRegistrar,
   soloLectura = false,
 }: Props): React.JSX.Element {
   const luz = semaforo(registro, reglas);
@@ -150,6 +225,13 @@ function RegistroCierre({
             <span>Notas y sensaciones</span>
             <textarea rows={3} value={registro.notas ?? ''} onChange={(e) => onCambiar({ notas: e.target.value })} />
           </label>
+
+          <BotonRegistrar
+            key={registro.fecha}
+            registro={registro}
+            onRegistrar={onRegistrar}
+            soloLectura={soloLectura}
+          />
         </fieldset>
       )}
     </section>
