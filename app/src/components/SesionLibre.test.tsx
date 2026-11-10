@@ -61,3 +61,8 @@ describe('SesionLibre', () => {
     expect(screen.getByText('＋ Registrar un entrenamiento')).toBeTruthy();
   });
 });
+
+it('en un día con plan se ofrece como entrenamiento extra', () => {
+  render(<SesionLibre registro={registroVacio('2026-11-10')} onCambiar={() => undefined} conCierre extra />);
+  expect(screen.getByText('＋ Registrar entrenamiento extra')).toBeTruthy();
+});

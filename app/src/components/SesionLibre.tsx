@@ -13,7 +13,8 @@ interface Props {
   onCambiar: (cambio: Partial<RegistroDia>) => void;
   sugerencias?: string[]; // nombres de ejercicios del plan, para autocompletar
   onRegistrar?: () => Promise<boolean>; // botón «Registrar sesión» (solo si el día no tiene su propio cierre)
-  conCierre?: boolean; // el día ya tiene «Registro al terminar» (notas propias): no se repiten aquí
+  conCierre?: boolean;
+  extra?: boolean; // día con entrenamiento planificado: se ofrece como «entrenamiento extra» // el día ya tiene «Registro al terminar» (notas propias): no se repiten aquí
   soloLectura?: boolean;
 }
 
@@ -23,6 +24,7 @@ function SesionLibre({
   sugerencias = [],
   onRegistrar,
   conCierre = false,
+  extra = false,
   soloLectura = false,
 }: Props): React.JSX.Element | null {
   const sesion = registro.libre;
@@ -32,9 +34,19 @@ function SesionLibre({
     if (soloLectura) return null;
     return (
       <div className="libre-invitacion">
-        <p>{conCierre ? '¿Entrenaste igual hoy?' : '¿Entrenaste por tu cuenta este día?'}</p>
-        <button type="button" className="boton ancho" onClick={() => onCambiar({ libre: sesionNueva() })}>
-          ＋ Registrar un entrenamiento
+        <p>
+          {extra
+            ? '¿Hiciste otro entrenamiento además del plan?'
+            : conCierre
+              ? '¿Entrenaste igual hoy?'
+              : '¿Entrenaste por tu cuenta este día?'}
+        </p>
+        <button
+          type="button"
+          className={`boton ancho ${extra ? 'secundario' : ''}`}
+          onClick={() => onCambiar({ libre: sesionNueva() })}
+        >
+          {extra ? '＋ Registrar entrenamiento extra' : '＋ Registrar un entrenamiento'}
         </button>
       </div>
     );
@@ -66,7 +78,7 @@ function SesionLibre({
   return (
     <section className="seccion abierta libre">
       <div className="seccion-barra libre-barra">
-        <span className="seccion-titulo">Entrenamiento libre</span>
+        <span className="seccion-titulo">{extra ? 'Entrenamiento extra' : 'Entrenamiento libre'}</span>
       </div>
 
       <fieldset className="seccion-cuerpo registro" disabled={soloLectura}>

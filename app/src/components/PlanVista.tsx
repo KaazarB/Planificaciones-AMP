@@ -326,15 +326,15 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             soloLectura={soloLectura}
           />
 
-          {dia.tipo === 'descanso' && (
-            <SesionLibre
-              registro={registro}
-              onCambiar={cambiar}
-              sugerencias={sugerencias}
-              conCierre
-              soloLectura={soloLectura}
-            />
-          )}
+          {/* Todos los días: entrenamiento extra (o «entrené igual» en descanso y viaje) */}
+          <SesionLibre
+            registro={registro}
+            onCambiar={cambiar}
+            sugerencias={sugerencias}
+            conCierre
+            extra={dia.tipo !== 'descanso' && dia.tipo !== 'viaje'}
+            soloLectura={soloLectura}
+          />
         </article>
       )}
       {calendario && (
