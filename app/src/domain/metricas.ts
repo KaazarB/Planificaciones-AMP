@@ -6,7 +6,7 @@ import { claveItem } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 
 import { diasEntre } from './fechas';
-import { progresoSeccion } from './progreso';
+import { serieHecha, seriesSeccion } from './progreso';
 import { aTextoISO, lunesDe } from './semanas';
 
 // Días que cuentan como entrenamiento planificado
@@ -21,7 +21,7 @@ export function tieneDatos(r?: RegistroDia): boolean {
     r.clase ||
     Object.values(r.checks ?? {}).some(Boolean) ||
     Object.values(r.campos ?? {}).some(Boolean) ||
-    Object.values(r.series ?? {}).some((filas) => filas.some((f) => f && (f.kg || f.reps || f.seg))),
+    Object.values(r.series ?? {}).some((filas) => filas.some(serieHecha)),
   );
 }
 
@@ -135,11 +135,10 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
 
     (d.secciones ?? []).forEach((sec, si) => {
       if (!vencido) return;
-      const p = reg ? progresoSeccion(sec, si, reg) : null;
       if (!sec.check) {
         const total = sec.items.reduce((n, it) => n + (it.series ?? 0), 0);
         s.seriesPlan += total;
-        if (p) s.seriesHechas += p[0];
+        if (reg) s.seriesHechas += seriesSeccion(sec, si, reg)[0];
       }
       if (!reg) return;
       sec.items.forEach((item, ii) => {

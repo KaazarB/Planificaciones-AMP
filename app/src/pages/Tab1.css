@@ -439,6 +439,41 @@
   font-weight: 500;
 }
 
+/* ✓ por serie: casilla al final de la fila; el peso sigue editable */
+.caja-serie {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 7px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.caja-serie.hecha {
+  background: var(--verde);
+  border-color: var(--verde);
+}
+.caja-serie.hecha::after {
+  content: '✓';
+}
+.caja-serie:disabled {
+  opacity: 1;
+}
+.fila-serie.hecha .campo {
+  border-color: var(--verde);
+  background: #f2f8f3;
+}
+.fila-serie.hecha .num-serie {
+  background: var(--verde);
+  color: #fff;
+}
+
 /* Registro al terminar */
 .registro {
   padding-top: 10px;

@@ -4,6 +4,7 @@ export interface FilaSerie {
   kg?: string;
   reps?: string;
   seg?: string;
+  hecha?: boolean; // marcada con ✓ (con o sin cambiar el peso)
 }
 
 export interface RegistroDia {
