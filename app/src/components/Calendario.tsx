@@ -66,6 +66,9 @@ function Calendario({ fecha, hoy, porFecha, registrados, onElegir, onCerrar }: P
             return (
               <button key={iso} className={clases} onClick={() => onElegir(iso)} aria-label={dia ? dia.dia : iso}>
                 {d.getDate()}
+                {(!dia || dia.tipo === 'descanso') && registrados.has(iso) && (
+                  <span className="punto libre registrado" aria-hidden="true" />
+                )}
                 {dia && dia.tipo !== 'descanso' && (
                   <span
                     className={`punto ${dia.tipo} ${registrados.has(iso) ? 'registrado' : ''}`}

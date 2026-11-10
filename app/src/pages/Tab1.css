@@ -865,4 +865,102 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   .registrar-check.nuevo {
     animation: none;
   }
+/* Entrenamiento libre (días sin planificación) */
+.punto.libre {
+  background: var(--naranja);
+}
+.libre-invitacion {
+  margin: 18px 0 8px;
+  padding: 16px;
+  border: 1px dashed var(--linea);
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+}
+.libre-invitacion p {
+  margin: 0 0 12px;
+  color: var(--gris);
+}
+.libre .libre-barra {
+  box-sizing: border-box;
+  cursor: default;
+}
+.libre-tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.libre-tipos button {
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tinta);
+  padding: 7px 12px;
+  font-size: 14px;
+}
+.libre-tipos button.elegido {
+  background: var(--barra);
+  border-color: var(--barra);
+  color: #fff;
+}
+.libre-minutos input {
+  max-width: 140px;
+}
+.libre-ejercicio {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid #ededeb;
+  margin-bottom: 8px;
+}
+.libre-ejercicio-cabeza {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.libre-nombre {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  padding: 9px 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta);
+  background: #fafaf9;
+}
+.libre-quitar {
+  border: 0;
+  background: none;
+  color: var(--gris);
+  font-size: 13px;
+  padding: 6px 2px;
+}
+.libre-x {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: #ededeb;
+  color: var(--gris);
+  font-size: 18px;
+  line-height: 1;
+}
+.libre-mas-serie {
+  align-self: flex-start;
+}
+.libre-agregar {
+  margin: 4px 0 16px;
+}
+.libre-borrar {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+.dash-libres {
+  color: var(--naranja);
+  font-size: 12px;
+  white-space: nowrap;
 }

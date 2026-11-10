@@ -81,3 +81,35 @@ test('avisa cuando hay entrenamientos seguidos sin registrar', () => {
   expect(r.ultimoRegistro).toBeNull();
   expect(r.alertas.map((a) => a.texto)).toContain('5 entrenamientos seguidos sin registrar');
 });
+
+test('un entrenamiento libre suma a la semana, al tonelaje, al RPE y a la progresión del ejercicio', () => {
+  const libre = reg('2026-11-07', {
+    rpe: 8,
+    libre: {
+      tipo: 'Fuerza',
+      ejercicios: [
+        {
+          nombre: 'Peso muerto',
+          series: [
+            { kg: '100', reps: '5' },
+            { kg: '110', reps: '3' },
+          ],
+        },
+      ],
+    },
+  });
+  const r = calcularResumen(dias, { '2026-11-07': libre }, '2026-11-10');
+  const s1 = r.semanas.find((s) => s.lunes === '2026-11-02')!;
+  expect(s1.libres).toBe(1);
+  expect(s1.tonelaje).toBe(100 * 5 + 110 * 3);
+  expect(s1.rpe).toBe(8);
+  expect(s1.hechos).toBe(0); // no cuenta como día planificado cumplido
+  expect(r.ejercicios.find((e) => e.nombre === 'Peso muerto')?.mejor).toBe(110);
+  expect(r.ultimoRegistro).toBe('2026-11-07');
+});
+
+test('una sesión libre recién abierta y vacía no cuenta como registro', () => {
+  const vacia = reg('2026-11-07', { libre: { tipo: '', ejercicios: [{ nombre: '', series: [{}] }] } });
+  const r = calcularResumen(dias, { '2026-11-07': vacia }, '2026-11-10');
+  expect(r.ultimoRegistro).toBeNull();
+});

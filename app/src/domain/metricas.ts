@@ -6,6 +6,7 @@ import { claveItem } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 
 import { diasEntre } from './fechas';
+import { tieneLibre } from './libre';
 import { serieHecha, seriesSeccion } from './progreso';
 import { aTextoISO, lunesDe } from './semanas';
 
@@ -20,6 +21,7 @@ export function tieneDatos(r?: RegistroDia): boolean {
     r.rpe !== undefined ||
     r.notas ||
     r.clase ||
+    tieneLibre(r.libre) ||
     Object.values(r.checks ?? {}).some(Boolean) ||
     Object.values(r.campos ?? {}).some(Boolean) ||
     Object.values(r.series ?? {}).some((filas) => filas.some(serieHecha)),
@@ -50,6 +52,7 @@ export interface SemanaMetrica {
   totalSemana: number; // días de entrenamiento de toda la semana
   seriesPlan: number;
   seriesHechas: number;
+  libres: number; // entrenamientos libres (armados por el atleta) esa semana
   tonelaje: number; // kg × reps
   rpe: number | null; // promedio
   lumbar: number | null; // máximo «después»
@@ -111,6 +114,7 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
         totalSemana: 0,
         seriesPlan: 0,
         seriesHechas: 0,
+        libres: 0,
         tonelaje: 0,
         rpe: null,
         lumbar: null,
@@ -174,6 +178,37 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
         if (reg.lumbarDespues >= 6 && diasEntre(d.fecha, hoy) < 14)
           alertas.push({ gravedad: 'critica', texto: `Molestia lumbar ${reg.lumbarDespues}/10 el ${d.fecha}` });
       }
+    }
+  }
+
+  // Entrenamientos libres: suman a la semana, al tonelaje y a la progresión de cada ejercicio
+  const planPorFecha = new Map(dias.map((d) => [d.fecha, d]));
+  for (const [fecha, reg] of Object.entries(registros)) {
+    if (fecha > hoy || !tieneLibre(reg.libre)) continue;
+    const s = porSemana.get(lunesISO(fecha));
+    if (s) s.libres++;
+    for (const ej of reg.libre!.ejercicios ?? []) {
+      let mejor = 0;
+      for (const f of ej.series ?? []) {
+        const kg = numero(f?.kg);
+        const reps = numero(f?.reps);
+        if (s && kg && reps) s.tonelaje += kg * reps;
+        if (kg && kg > mejor) mejor = kg;
+      }
+      const nombre = ej.nombre.trim();
+      if (nombre && mejor > 0) {
+        const m = puntos.get(nombre) ?? new Map<string, number>();
+        m.set(fecha, Math.max(m.get(fecha) ?? 0, mejor));
+        puntos.set(nombre, m);
+      }
+    }
+    // El esfuerzo de un día fuera del plan no se contó arriba
+    if (!planPorFecha.has(fecha) && typeof reg.rpe === 'number') {
+      const lunes = lunesISO(fecha);
+      const l = rpesPorSemana.get(lunes) ?? [];
+      l.push(reg.rpe);
+      rpesPorSemana.set(lunes, l);
+      if (diasEntre(fecha, hoy) < 14) rpesRecientes.push(reg.rpe);
     }
   }
 

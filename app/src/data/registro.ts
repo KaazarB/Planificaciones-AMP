@@ -7,6 +7,19 @@ export interface FilaSerie {
   hecha?: boolean; // marcada con ✓ (con o sin cambiar el peso)
 }
 
+// Entrenamiento que el atleta arma él mismo en un día sin planificación (o de descanso)
+export interface EjercicioLibre {
+  nombre: string;
+  series: FilaSerie[];
+}
+
+export interface SesionLibre {
+  tipo: string; // «Clase CrossFit», «Fuerza», …
+  minutos?: string;
+  ejercicios: EjercicioLibre[];
+  wod?: string; // WOD o descripción libre
+}
+
 export interface RegistroDia {
   fecha: string; // AAAA-MM-DD, igual que el día del plan
   checks: Record<string, boolean>; // clave s{i}i{j}
@@ -20,6 +33,7 @@ export interface RegistroDia {
   notas?: string;
   sustituciones?: Record<string, string>; // clave s{i}i{j} → ejercicio que hizo en vez del original
   cerrada?: string; // ISO: cuándo el atleta tocó «Registrar sesión»
+  libre?: SesionLibre; // entrenamiento armado por el atleta
   actualizado: string; // ISO
 }
 

@@ -20,7 +20,7 @@ type EstadoEnvio = 'inicio' | 'enviando' | 'nube' | 'local';
 
 const hora = (iso: string) => new Date(iso).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
 
-function BotonRegistrar({
+export function BotonRegistrar({
   registro,
   onRegistrar,
   soloLectura,
@@ -28,7 +28,7 @@ function BotonRegistrar({
   registro: RegistroDia;
   onRegistrar?: () => Promise<boolean>;
   soloLectura: boolean;
-}) {
+}): React.JSX.Element | null {
   const [envio, setEnvio] = useState<EstadoEnvio>('inicio');
 
   const registrada = Boolean(registro.cerrada);
@@ -87,7 +87,7 @@ function BotonRegistrar({
   );
 }
 
-function Escala({
+export function Escala({
   desde,
   hasta,
   valor,
@@ -99,7 +99,7 @@ function Escala({
   valor?: number;
   onElegir: (v?: number) => void;
   etiqueta: string;
-}) {
+}): React.JSX.Element {
   return (
     <div className="escala" role="group" aria-label={etiqueta}>
       {Array.from({ length: hasta - desde + 1 }, (_, k) => desde + k).map((n) => (

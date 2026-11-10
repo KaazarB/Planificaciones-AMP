@@ -19,6 +19,7 @@ import Calendario from './Calendario';
 import RegistroCierre from './RegistroCierre';
 import RevisionBloque from './RevisionBloque';
 import SeccionPlan from './SeccionPlan';
+import SesionLibre from './SesionLibre';
 
 const etiquetaTipo: Record<TipoDia, string> = {
   sesion: 'Sesión',
@@ -42,6 +43,18 @@ interface Props {
   apodo: string;
   soloLectura?: boolean; // vista del coach: muestra todo sin poder modificar
   onCambiarApodo?: () => void;
+}
+
+function IndicadorGuardado({ guardado }: { guardado: EstadoGuardado }) {
+  return (
+    <div className="controles">
+      <span className={`estado-guardado ${guardado}`}>
+        {guardado === 'guardando' && 'Guardando…'}
+        {guardado === 'nube' && 'Guardado ✓'}
+        {guardado === 'local' && 'Guardado en el teléfono'}
+      </span>
+    </div>
+  );
 }
 
 function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props): React.JSX.Element {
@@ -85,6 +98,14 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
   const dia: Dia | undefined = porFecha.get(fecha);
   const registro = registros[fecha] ?? registroVacio(fecha);
 
+  // Nombres de ejercicios del plan para autocompletar la sesión libre
+  const sugerencias = useMemo(() => {
+    const nombres = new Set<string>();
+    for (const d of plan?.dias ?? [])
+      for (const sec of d.secciones ?? []) for (const it of sec.items) if (it.series) nombres.add(it.nombre);
+    return [...nombres].sort((a, b) => a.localeCompare(b, 'es'));
+  }, [plan]);
+
   const registrados = useMemo(
     () => new Set(Object.keys(registros).filter((f) => tieneDatos(registros[f]))),
     [registros],
@@ -95,14 +116,9 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
     setAbiertas(new Set());
   }
 
+  // Se puede ir a cualquier semana: los días fuera del plan sirven para registrar entrenamientos libres
   function moverSemana(delta: number) {
-    if (!plan) return;
-    const destino = aTextoISO(sumarDias(lunes, delta * 7));
-    const finSemana = aTextoISO(sumarDias(aFecha(destino), 6));
-    const primero = plan.dias[0].fecha;
-    const ultimo = plan.dias[plan.dias.length - 1].fecha;
-    if (finSemana < primero || destino > ultimo) return;
-    elegirDia(destino < primero ? primero : destino);
+    elegirDia(aTextoISO(sumarDias(lunes, delta * 7)));
   }
 
   function cambiar(cambio: Partial<RegistroDia>) {
@@ -209,6 +225,9 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
               {d && d.tipo !== 'descanso' && (
                 <span className={`punto ${d.tipo} ${registrado ? 'registrado' : ''}`} aria-hidden="true" />
               )}
+              {(!d || d.tipo === 'descanso') && registrado && (
+                <span className="punto libre registrado" aria-hidden="true" />
+              )}
             </button>
           );
         })}
@@ -240,7 +259,24 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
         </p>
       )}
 
-      {plan && !dia && <p className="cargando">No hay nada planificado para este día.</p>}
+      {!dia && (plan || sinPlan) && (
+        <article>
+          {(soloLectura || registro.libre) && (
+            <p className="cargando">
+              No hay nada planificado para este día.
+              {soloLectura && !registro.libre && ' Tampoco registró un entrenamiento libre.'}
+            </p>
+          )}
+          {!soloLectura && registro.libre && <IndicadorGuardado guardado={guardado} />}
+          <SesionLibre
+            registro={registro}
+            onCambiar={cambiar}
+            onRegistrar={registrarSesion}
+            sugerencias={sugerencias}
+            soloLectura={soloLectura}
+          />
+        </article>
+      )}
 
       {dia && (
         <article>
@@ -289,6 +325,16 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             onRegistrar={registrarSesion}
             soloLectura={soloLectura}
           />
+
+          {dia.tipo === 'descanso' && (
+            <SesionLibre
+              registro={registro}
+              onCambiar={cambiar}
+              sugerencias={sugerencias}
+              conCierre
+              soloLectura={soloLectura}
+            />
+          )}
         </article>
       )}
       {calendario && (

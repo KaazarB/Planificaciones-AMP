@@ -205,6 +205,12 @@ function DetalleDashboard({ fila, onVolver }: { fila: Fila; onVolver: () => void
                     </td>
                     <td>
                       {s.hechos}/{s.planificados}
+                      {s.libres > 0 && (
+                        <span className="dash-libres">
+                          {' '}
+                          +{s.libres} libre{s.libres > 1 ? 's' : ''}
+                        </span>
+                      )}
                     </td>
                     <td>{s.seriesPlan ? `${pct(s.seriesHechas, s.seriesPlan)}%` : '–'}</td>
                     <td>{s.tonelaje ? `${miles(s.tonelaje)} kg` : '–'}</td>
@@ -218,7 +224,8 @@ function DetalleDashboard({ fila, onVolver }: { fila: Fila; onVolver: () => void
             </table>
           </div>
           <p className="tenue dash-nota">
-            Series: % de series con datos anotados. Tonelaje: suma de kg × reps. Lumbar: máximo «después» de la semana.
+            Entrenos: días planificados con registro (+ entrenamientos libres). Series: % de series hechas. Tonelaje:
+            suma de kg × reps. Lumbar: máximo «después» de la semana.
           </p>
         </>
       )}
