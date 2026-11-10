@@ -49,6 +49,7 @@ function Perfil(): React.JSX.Element {
 
           {editando ? (
             <FichaFormulario
+              modo="paso"
               usuarioId={perfil.id}
               inicial={ficha}
               textoEnviar="Guardar ficha"

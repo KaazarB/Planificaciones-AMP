@@ -7,9 +7,10 @@ interface Props {
   campo: CampoFicha;
   datos: DatosFicha;
   onCambiar: (clave: string, valor: string | string[] | boolean) => void;
+  autoFoco?: boolean; // ficha de una pregunta por pantalla: el cursor queda listo para escribir
 }
 
-function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element {
+function CampoFichaInput({ campo, datos, onCambiar, autoFoco = false }: Props): React.JSX.Element {
   const valor = datos[campo.clave];
   const etiqueta = (
     <span className="campo-etiqueta">
@@ -64,7 +65,11 @@ function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element 
       <div className="campo-ficha">
         {etiqueta}
         {campo.ayuda && <span className="campo-ayuda">{campo.ayuda}</span>}
-        <div className="chips" role="group" aria-label={campo.etiqueta}>
+        <div
+          className={`chips ${campo.tipo === 'opciones' && campo.opciones?.some((o) => o.length > 3) ? 'chips-unica' : ''}`}
+          role="group"
+          aria-label={campo.etiqueta}
+        >
           {campo.opciones?.map((op) => (
             <button
               key={op}
@@ -104,10 +109,16 @@ function CampoFichaInput({ campo, datos, onCambiar }: Props): React.JSX.Element 
           )}
         </>
       ) : campo.tipo === 'area' ? (
-        <textarea rows={3} value={(valor as string) ?? ''} onChange={(e) => onCambiar(campo.clave, e.target.value)} />
+        <textarea
+          rows={3}
+          autoFocus={autoFoco}
+          value={(valor as string) ?? ''}
+          onChange={(e) => onCambiar(campo.clave, e.target.value)}
+        />
       ) : (
         <span className="con-unidad">
           <input
+            autoFocus={autoFoco}
             inputMode={campo.tipo === 'numero' ? 'decimal' : campo.clave === 'whatsapp' ? 'tel' : 'text'}
             value={(valor as string) ?? ''}
             onChange={(e) => onCambiar(campo.clave, e.target.value)}

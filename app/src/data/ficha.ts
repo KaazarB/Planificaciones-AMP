@@ -24,6 +24,7 @@ export interface PasoFicha {
   descripcion?: string;
   campos: CampoFicha[];
   mostrarSi?: (d: DatosFicha) => boolean;
+  agrupado?: boolean; // en la ficha de una pregunta por pantalla, este paso se muestra completo en una sola
 }
 
 // La primera pregunta es el deporte (puede elegir varios); de ahí salen los caminos
@@ -228,6 +229,7 @@ export const pasosFicha: PasoFicha[] = [
     titulo: 'Tus marcas',
     descripcion: 'Opcional: completa solo las que sepas. Si no, las medimos juntos.',
     mostrarSi: esCrossfit,
+    agrupado: true,
     campos: [
       { clave: 'back_squat', etiqueta: 'Back squat (1RM)', tipo: 'numero', unidad: 'kg' },
       { clave: 'front_squat', etiqueta: 'Front squat (1RM)', tipo: 'numero', unidad: 'kg' },
@@ -434,13 +436,38 @@ export function pasosVisibles(d: DatosFicha): PasoFicha[] {
     .filter((p) => p.campos.length);
 }
 
+// Ficha de una pregunta por pantalla: cada pregunta visible es una pantalla (salvo pasos «agrupado»)
+export interface PantallaFicha {
+  clave: string;
+  paso: PasoFicha;
+  campos: CampoFicha[];
+  numeroPaso: number; // 1, 2, 3…
+  totalPasos: number;
+  primeraDelPaso: boolean;
+}
+
+export function pantallasFicha(d: DatosFicha): PantallaFicha[] {
+  const pasos = pasosVisibles(d);
+  return pasos.flatMap((paso, i) => {
+    const grupos = paso.agrupado ? [paso.campos] : paso.campos.map((c) => [c]);
+    return grupos.map((campos, j) => ({
+      clave: campos[0].clave,
+      paso,
+      campos,
+      numeroPaso: i + 1,
+      totalPasos: pasos.length,
+      primeraDelPaso: j === 0,
+    }));
+  });
+}
+
 // Quita las respuestas de caminos que la persona ya no eligió (si cambió de enfoque)
 export function limpiarFicha(d: DatosFicha): DatosFicha {
   const claves = new Set(pasosVisibles(d).flatMap((p) => p.campos.map((c) => c.clave)));
   return Object.fromEntries(Object.entries(d).filter(([k]) => claves.has(k)));
 }
 
-export function faltantes(paso: PasoFicha, datos: DatosFicha): string[] {
+export function faltantes(paso: { campos: CampoFicha[] }, datos: DatosFicha): string[] {
   return paso.campos
     .filter((c) => c.requerido)
     .filter((c) => {

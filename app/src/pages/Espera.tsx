@@ -33,6 +33,7 @@ function Espera(): React.JSX.Element {
 
           {editando && ficha ? (
             <FichaFormulario
+              modo="paso"
               usuarioId={perfil.id}
               inicial={ficha}
               textoEnviar="Guardar cambios"

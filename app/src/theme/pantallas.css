@@ -248,6 +248,107 @@
   flex: 1;
 }
 
+/* Ficha de una pregunta por pantalla */
+.ficha-barra {
+  height: 6px;
+  border-radius: 3px;
+  background: #d9d9d6;
+  overflow: hidden;
+}
+.ficha-barra span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--verde);
+  transition: width 0.35s ease;
+}
+.ficha-una .ficha-pregunta {
+  min-height: 46vh;
+}
+.ficha-una .ficha-paso {
+  margin-top: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ficha-una .ficha-descripcion {
+  margin: 6px 0 0;
+}
+.ficha-una .campo-ficha {
+  gap: 10px;
+}
+.ficha-una .campo-ficha:first-of-type {
+  margin-top: 14px;
+}
+.ficha-una .campo-etiqueta {
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.ficha-una .campo-ayuda {
+  font-size: 14px;
+}
+.ficha-una .campo-ficha input,
+.ficha-una .campo-ficha textarea {
+  padding: 14px;
+  font-size: 18px;
+}
+.ficha-una .chip {
+  min-height: 46px;
+  font-size: 16px;
+}
+.ficha-una .chips-unica {
+  flex-direction: column;
+}
+.ficha-una .chips-unica .chip {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  border-radius: 12px;
+  text-align: left;
+}
+.ficha-una .ficha-botones {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: var(--ion-background-color, #f1f1ef);
+}
+.ficha-pregunta.adelante {
+  animation: ficha-entra-derecha 0.32s ease both;
+}
+.ficha-pregunta.atras {
+  animation: ficha-entra-izquierda 0.32s ease both;
+}
+@keyframes ficha-entra-derecha {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ficha-entra-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ficha-pregunta.adelante,
+  .ficha-pregunta.atras {
+    animation: none;
+  }
+  .ficha-barra span {
+    transition: none;
+  }
+}
+
 /* Resumen de ficha */
 .ficha-resumen section {
   background: #fff;
