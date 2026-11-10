@@ -865,6 +865,8 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   .registrar-check.nuevo {
     animation: none;
   }
+}
+
 /* Entrenamiento libre (días sin planificación) */
 .punto.libre {
   background: var(--naranja);

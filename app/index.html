@@ -22,6 +22,33 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="AMP" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <script>
+      // Autorrecuperación: si falta un archivo de la app (el teléfono guardó la página de una versión anterior),
+      // se carga la página nueva en vez de quedar en blanco. Como máximo una vez por minuto, para no entrar en bucle.
+      (function () {
+        if (/[?&]v=\d+/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash);
+        function recargar() {
+          try {
+            var antes = Number(sessionStorage.getItem('amp.recarga') || 0);
+            if (Date.now() - antes < 60000) return;
+            sessionStorage.setItem('amp.recarga', String(Date.now()));
+          } catch (e) {
+            /* sin sessionStorage: se recarga igual */
+          }
+          location.replace(location.pathname + '?v=' + Date.now() + location.hash);
+        }
+        window.addEventListener(
+          'error',
+          function (e) {
+            var t = e.target;
+            var url = t && (t.src || t.href);
+            if (url && (t.tagName === 'SCRIPT' || t.tagName === 'LINK') && url.indexOf('/assets/') !== -1) recargar();
+          },
+          true
+        );
+        window.addEventListener('vite:preloadError', recargar);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
