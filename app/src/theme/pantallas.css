@@ -248,17 +248,17 @@
   flex: 1;
 }
 
-/* Ficha de una pregunta por pantalla */
+/* Ficha de una pregunta por pantalla (componentes del sistema de diseño AMP) */
 .ficha-barra {
   height: 6px;
-  border-radius: 3px;
-  background: #d9d9d6;
+  border-radius: var(--radio-pill);
+  background: var(--linea);
   overflow: hidden;
 }
 .ficha-barra span {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: var(--radio-pill);
   background: var(--verde);
   transition: width 0.35s ease;
 }
@@ -267,9 +267,10 @@
 }
 .ficha-una .ficha-paso {
   margin-top: 18px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  color: var(--verde-texto);
 }
 .ficha-una .ficha-descripcion {
   margin: 6px 0 0;
@@ -285,33 +286,99 @@
   font-weight: 700;
   line-height: 1.25;
 }
+.ficha-una .campo-ficha:not(:first-of-type) .campo-etiqueta,
+.ficha-una .ficha-titulo ~ .campo-ficha .campo-etiqueta {
+  font-size: 15px;
+  font-weight: 600;
+}
+.ficha-una .requerido {
+  color: var(--error);
+}
 .ficha-una .campo-ayuda {
   font-size: 14px;
 }
 .ficha-una .campo-ficha input,
 .ficha-una .campo-ficha textarea {
-  padding: 14px;
+  min-height: var(--control-ficha);
+  padding: 0 14px;
+  border-radius: var(--radio-l);
+  background: var(--superficie);
   font-size: 18px;
+}
+.ficha-una .campo-ficha textarea {
+  padding: 14px;
+}
+.ficha-una .campo-ficha input:focus,
+.ficha-una .campo-ficha textarea:focus {
+  border-color: var(--barra);
+  box-shadow: var(--anillo-foco);
+}
+.ficha-una .con-unidad span {
+  font-size: 15px;
 }
 .ficha-una .chip {
   min-height: 46px;
+  padding: 0 var(--espacio-4);
+  background: var(--superficie);
   font-size: 16px;
+}
+.ficha-una .chip.elegido {
+  background: var(--barra);
+  border-color: var(--barra);
+  color: var(--sobre-barra);
+  font-weight: 600;
+}
+.ficha-una .chip.elegido::before {
+  content: '✓ ';
+  color: var(--verde-vivo);
 }
 .ficha-una .chips-unica {
   flex-direction: column;
 }
-.ficha-una .chips-unica .chip {
+.ficha-una .chips-unica .chip,
+.ficha-una .tarjeta-opcion {
+  position: relative;
   width: 100%;
-  min-height: 54px;
-  padding: 0 16px;
-  border-radius: 12px;
+  min-height: var(--control-ficha);
+  padding: 0 48px 0 var(--espacio-4);
+  border-radius: var(--radio-l);
   text-align: left;
+}
+.ficha-una .tarjeta-opcion {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.ficha-una .chips-unica .chip.elegido::before {
+  content: none;
+}
+.ficha-una .chips-unica .chip.elegido::after,
+.ficha-una .tarjeta-opcion.elegido::after {
+  content: '';
+  position: absolute;
+  right: var(--espacio-4);
+  top: 50%;
+  width: 7px;
+  height: 13px;
+  margin-top: -9px;
+  border: solid var(--verde-vivo);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+.ficha-una .campo-check input {
+  accent-color: var(--verde);
+}
+.ficha-una .aviso-error {
+  border-radius: var(--radio-s);
 }
 .ficha-una .ficha-botones {
   position: sticky;
   bottom: 0;
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-  background: var(--ion-background-color, #f1f1ef);
+  padding: var(--espacio-3) 0 calc(var(--espacio-3) + env(safe-area-inset-bottom));
+  background: var(--fondo);
+}
+.ficha-una .ficha-botones .boton {
+  min-height: var(--control-ficha);
+  border-radius: var(--radio-l);
 }
 .ficha-pregunta.adelante {
   animation: ficha-entra-derecha 0.32s ease both;
