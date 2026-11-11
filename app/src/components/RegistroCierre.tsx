@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import type { Dia, Plan } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
+import { sinEntrenamientoCargado } from '../domain/libre';
 
 interface Props {
   dia: Dia;
@@ -137,7 +138,10 @@ function RegistroCierre({
   soloLectura = false,
 }: Props): React.JSX.Element {
   const luz = semaforo(registro, reglas);
-  const esDescanso = dia.tipo === 'descanso';
+  // En un descanso no se pide esfuerzo… salvo que esté anotando un entrenamiento
+  const sinEsfuerzo = dia.tipo === 'descanso' && !registro.libre;
+  // Clase sin contenido cargado: si la está anotando arriba como entrenamiento, no se pide de nuevo aquí
+  const anotaClase = dia.tipo === 'clase' && !(sinEntrenamientoCargado(dia) && registro.libre && !registro.clase);
 
   return (
     <section className={`seccion ${abierta ? 'abierta' : ''}`}>
@@ -150,7 +154,7 @@ function RegistroCierre({
 
       {abierta && (
         <fieldset className="seccion-cuerpo registro" disabled={soloLectura}>
-          {dia.tipo === 'clase' && (
+          {anotaClase && (
             <label className="campo-texto">
               <span>Qué hiciste en clase</span>
               <textarea
@@ -172,7 +176,7 @@ function RegistroCierre({
             </label>
           ))}
 
-          {!esDescanso && (
+          {!sinEsfuerzo && (
             <>
               <div className="campo-texto">
                 <span>Esfuerzo de la sesión (1 = muy fácil, 10 = máximo)</span>

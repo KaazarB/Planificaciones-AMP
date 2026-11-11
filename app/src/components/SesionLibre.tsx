@@ -5,16 +5,19 @@ import { useState } from 'react';
 
 import type { EjercicioLibre, FilaSerie, RegistroDia, SesionLibre as Sesion } from '../data/registro';
 import { sesionNueva, TIPOS_LIBRE } from '../domain/libre';
+import { TIPO_CROSSFIT } from '../domain/wod';
 
 import { BotonRegistrar, Escala } from './RegistroCierre';
+import WodPasoAPaso from './WodPasoAPaso';
 
 interface Props {
   registro: RegistroDia;
   onCambiar: (cambio: Partial<RegistroDia>) => void;
   sugerencias?: string[]; // nombres de ejercicios del plan, para autocompletar
   onRegistrar?: () => Promise<boolean>; // botón «Registrar sesión» (solo si el día no tiene su propio cierre)
-  conCierre?: boolean;
-  extra?: boolean; // día con entrenamiento planificado: se ofrece como «entrenamiento extra» // el día ya tiene «Registro al terminar» (notas propias): no se repiten aquí
+  conCierre?: boolean; // el día ya tiene «Registro al terminar» (notas propias): no se repiten aquí
+  extra?: boolean; // día con entrenamiento planificado: se ofrece como «entrenamiento extra»
+  destacado?: boolean; // día sin entrenamiento cargado: va antes del «Registro al terminar» y es lo principal
   soloLectura?: boolean;
 }
 
@@ -25,6 +28,7 @@ function SesionLibre({
   onRegistrar,
   conCierre = false,
   extra = false,
+  destacado = false,
   soloLectura = false,
 }: Props): React.JSX.Element | null {
   const sesion = registro.libre;
@@ -32,21 +36,24 @@ function SesionLibre({
 
   if (!sesion) {
     if (soloLectura) return null;
+    const comoExtra = extra && !destacado;
     return (
       <div className="libre-invitacion">
         <p>
-          {extra
+          {comoExtra
             ? '¿Hiciste otro entrenamiento además del plan?'
-            : conCierre
-              ? '¿Entrenaste igual hoy?'
-              : '¿Entrenaste por tu cuenta este día?'}
+            : extra
+              ? '¿Entrenaste hoy? Anota lo que hiciste.'
+              : conCierre
+                ? '¿Entrenaste igual hoy?'
+                : '¿Entrenaste por tu cuenta este día?'}
         </p>
         <button
           type="button"
-          className={`boton ancho ${extra ? 'secundario' : ''}`}
+          className={`boton ancho ${comoExtra ? 'secundario' : ''}`}
           onClick={() => onCambiar({ libre: sesionNueva() })}
         >
-          {extra ? '＋ Registrar entrenamiento extra' : '＋ Registrar un entrenamiento'}
+          {comoExtra ? '＋ Registrar entrenamiento extra' : '＋ Registrar un entrenamiento'}
         </button>
       </div>
     );
@@ -188,15 +195,26 @@ function SesionLibre({
           </button>
         )}
 
-        <label className="campo-texto">
-          <span>WOD o qué hiciste</span>
-          <textarea
-            rows={4}
-            placeholder="ej. AMRAP 12 min: 10 wall balls, 10 burpees → 6 rondas + 4"
-            value={sesion.wod ?? ''}
-            onChange={(e) => cambiar({ wod: e.target.value })}
+        {/* Clase CrossFit: el WOD se puede armar paso a paso (formato, tiempo, rondas, ejercicios y peso) */}
+        {sesion.tipo === TIPO_CROSSFIT || sesion.wodArmado ? (
+          <WodPasoAPaso
+            sesion={sesion}
+            onCambiar={cambiar}
+            sugerencias={sugerencias}
+            fecha={registro.fecha}
+            soloLectura={soloLectura}
           />
-        </label>
+        ) : (
+          <label className="campo-texto">
+            <span>WOD o qué hiciste</span>
+            <textarea
+              rows={4}
+              placeholder="ej. AMRAP 12 min: 10 wall balls, 10 burpees → 6 rondas + 4"
+              value={sesion.wod ?? ''}
+              onChange={(e) => cambiar({ wod: e.target.value })}
+            />
+          </label>
+        )}
 
         {!conCierre && (
           <>

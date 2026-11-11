@@ -13,11 +13,29 @@ export interface EjercicioLibre {
   series: FilaSerie[];
 }
 
+// WOD armado paso a paso (entrenamiento libre de tipo «Clase CrossFit»)
+export interface EjercicioWod {
+  nombre: string;
+  reps?: string; // por ronda: «10», «21-15-9», «200 m», «15 cal»
+  kg?: string; // peso usado; vacío = sin peso
+}
+
+export interface WodArmado {
+  formato: string; // «For Time», «AMRAP», «EMOM», «Intervalos», «Otro»
+  minutos?: string; // duración (AMRAP, EMOM, Otro), time cap (For Time) o trabajo por set (Intervalos)
+  descanso?: string; // Intervalos: minutos de descanso entre sets
+  tiempo?: string; // For Time: tiempo final «min:seg»
+  rondas?: string; // rondas del WOD; en AMRAP, rondas completas
+  repsExtra?: string; // AMRAP: repeticiones de la ronda incompleta
+  ejercicios: EjercicioWod[];
+}
+
 export interface SesionLibre {
   tipo: string; // «Clase CrossFit», «Fuerza», …
   minutos?: string;
   ejercicios: EjercicioLibre[];
-  wod?: string; // WOD o descripción libre
+  wod?: string; // WOD o descripción libre (con un WOD armado: notas del WOD)
+  wodArmado?: WodArmado;
 }
 
 export interface RegistroDia {

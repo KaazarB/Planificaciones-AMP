@@ -988,3 +988,334 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   font-size: 12px;
   white-space: nowrap;
 }
+
+/* WOD armado paso a paso (entrenamiento libre «Clase CrossFit») */
+.wod-invitacion {
+  margin: 0 0 12px;
+  padding: var(--espacio-4);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-l);
+  background: #fafaf9;
+}
+.wod-invitacion p {
+  margin: 0 0 var(--espacio-3);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--gris);
+}
+.wod-invitacion strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 16px;
+  color: var(--tinta);
+}
+
+.wod-armado {
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-3) var(--espacio-3);
+  border: 1.5px solid var(--barra);
+  border-radius: var(--radio-l);
+  background: var(--superficie);
+  scroll-margin-top: var(--espacio-3);
+  overflow: hidden;
+}
+.wod-cabeza {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+.wod-titulo {
+  font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  font-size: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--tinta);
+}
+.wod-num {
+  font-size: 13px;
+  color: var(--gris);
+}
+.wod-pasos {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--espacio-1);
+  margin: var(--espacio-3) 0 var(--espacio-1);
+}
+.wod-pasos button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 0 4px;
+  border: 0;
+  background: none;
+  color: var(--gris);
+  font-size: 11px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wod-pasos button::before {
+  content: '';
+  height: 4px;
+  border-radius: var(--radio-pill);
+  background: var(--linea);
+}
+.wod-pasos button.hecho::before {
+  background: var(--verde-vivo);
+}
+.wod-pasos button.actual {
+  color: var(--tinta);
+  font-weight: 700;
+}
+.wod-pasos button.actual::before {
+  background: var(--barra);
+}
+.wod-paso {
+  padding-top: var(--espacio-2);
+}
+.wod-paso.adelante {
+  animation: ficha-entra-derecha 0.28s ease both;
+}
+.wod-paso.atras {
+  animation: ficha-entra-izquierda 0.28s ease both;
+}
+.wod-pregunta {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--tinta);
+}
+.wod-ayuda {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--gris);
+}
+.wod-falta {
+  margin-top: var(--espacio-4);
+}
+
+.wod-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-3);
+}
+.wod-opciones .tarjeta-opcion {
+  position: relative;
+  gap: 2px;
+  padding: var(--espacio-3) 44px var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-l);
+}
+.wod-opciones .tarjeta-opcion span {
+  font-size: 14px;
+}
+.wod-opciones .tarjeta-opcion.elegido::after {
+  content: '';
+  position: absolute;
+  right: var(--espacio-4);
+  top: 50%;
+  width: 7px;
+  height: 13px;
+  margin-top: -9px;
+  border: solid var(--verde-vivo);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.wod-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: var(--espacio-4);
+}
+.wod-etiqueta {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.wod-armado .campo {
+  min-height: var(--control);
+  padding: 0 var(--espacio-3);
+  border-radius: var(--radio-m);
+  background: var(--superficie);
+}
+.wod-armado .campo input {
+  font-size: 18px;
+}
+.wod-armado .campo span {
+  font-size: 14px;
+}
+.wod-armado .campo:focus-within {
+  border-color: var(--barra);
+  box-shadow: var(--anillo-foco);
+}
+.wod-corto {
+  max-width: 168px;
+}
+.wod-minseg {
+  display: flex;
+  gap: var(--espacio-2);
+  max-width: 260px;
+}
+
+.wod-ejercicios {
+  margin-top: var(--espacio-3);
+}
+.wod-columnas,
+.wod-ejercicio {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 30px;
+  gap: var(--espacio-2);
+  align-items: center;
+}
+.wod-columnas {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--gris);
+}
+.wod-ejercicio {
+  margin-bottom: var(--espacio-2);
+}
+.wod-reps,
+.wod-nombre {
+  min-width: 0;
+  height: var(--control);
+  padding: 0 10px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-m);
+  background: var(--superficie);
+  font: inherit;
+  font-size: 16px;
+  color: var(--tinta);
+}
+.wod-reps {
+  text-align: center;
+  font-weight: 700;
+}
+.wod-nombre {
+  font-weight: 600;
+}
+.wod-reps:focus,
+.wod-nombre:focus {
+  outline: none;
+  border-color: var(--barra);
+  box-shadow: var(--anillo-foco);
+}
+.wod-ejercicios .boton {
+  margin-top: 4px;
+}
+
+.wod-pesos {
+  margin-top: var(--espacio-2);
+}
+.wod-peso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-2) 0;
+  border-bottom: 1px solid #ededeb;
+}
+.wod-peso:last-child {
+  border-bottom: 0;
+}
+.wod-peso-nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.wod-peso-reps {
+  color: var(--verde-texto);
+}
+.wod-armado .wod-kg-campo {
+  flex: 0 0 116px;
+}
+
+.wod-botones {
+  display: flex;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-5);
+}
+.wod-botones .boton {
+  flex: 1;
+}
+.wod-armado .aviso-error {
+  border-radius: var(--radio-s);
+}
+
+/* Resumen del WOD (también en la vista del coach) */
+.wod-resumen {
+  margin: 0 0 var(--espacio-2);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-l);
+  background: var(--barra);
+  color: var(--sobre-barra);
+}
+.wod-resumen-titulo {
+  margin: 0;
+  font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif;
+  font-size: 26px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.wod-resumen ul {
+  margin: var(--espacio-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wod-resumen li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espacio-2);
+  padding: 7px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 15px;
+}
+.wod-resumen .wod-r {
+  min-width: 2.6em;
+  font-weight: 700;
+  color: var(--verde-vivo);
+  font-variant-numeric: tabular-nums;
+}
+.wod-resumen .wod-n {
+  flex: 1;
+  min-width: 0;
+}
+.wod-resumen .wod-kg {
+  padding: 2px 8px;
+  border-radius: var(--radio-pill);
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.wod-resumen-resultado {
+  display: inline-block;
+  margin: var(--espacio-3) 0 0;
+  padding: 6px 12px;
+  border-radius: var(--radio-pill);
+  background: var(--verde-vivo);
+  color: #0b2a16;
+  font-size: 15px;
+  font-weight: 700;
+}
+.wod-acciones {
+  display: flex;
+  gap: var(--espacio-5);
+  margin: 0 0 var(--espacio-2);
+}
+.wod-confirmar {
+  margin: 0 0 var(--espacio-3);
+  font-size: 14px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wod-paso.adelante,
+  .wod-paso.atras {
+    animation: none;
+  }
+}

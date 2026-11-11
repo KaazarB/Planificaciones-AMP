@@ -7,6 +7,7 @@ import type { RegistroDia } from '../data/registro';
 import { registroVacio } from '../data/registro';
 import { DIAS_REVISION } from '../data/revision';
 import { diasEntre } from '../domain/fechas';
+import { sinEntrenamientoCargado } from '../domain/libre';
 import { tieneDatos } from '../domain/metricas';
 import { aTextoISO, lunesDe, sumarDias, textoMes } from '../domain/semanas';
 import { cargarPlan } from '../services/plan';
@@ -158,6 +159,26 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
 
   const clavesDelDia = dia ? [...(dia.secciones ?? []).map((_, i) => `s${i}`), 'registro'] : [];
 
+  // Día sin entrenamiento cargado: primero lo que entrenó y después el «Registro al terminar».
+  // Con entrenamiento cargado, el extra queda al final (después del cierre de la sesión del plan).
+  const sinEntrenamiento = dia ? sinEntrenamientoCargado(dia) : false;
+  const entrenamientoDelDia = dia && (
+    <SesionLibre
+      key={`libre-${fecha}`}
+      registro={registro}
+      onCambiar={(c) => {
+        // Al empezar a anotar lo que entrenó, se abre también el cierre que va debajo
+        if (sinEntrenamiento && c.libre && !registro.libre) setAbiertas((a) => new Set([...a, 'registro']));
+        cambiar(c);
+      }}
+      sugerencias={sugerencias}
+      conCierre
+      extra={dia.tipo !== 'descanso' && dia.tipo !== 'viaje'}
+      destacado={sinEntrenamiento}
+      soloLectura={soloLectura}
+    />
+  );
+
   if (error) return <p className="aviso">{error}</p>;
 
   const antesDelBloque = plan && hoy < plan.bloque.inicio;
@@ -269,6 +290,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
           )}
           {!soloLectura && registro.libre && <IndicadorGuardado guardado={guardado} />}
           <SesionLibre
+            key={`libre-${fecha}`}
             registro={registro}
             onCambiar={cambiar}
             onRegistrar={registrarSesion}
@@ -315,6 +337,9 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             />
           ))}
 
+          {/* Todos los días: entrenamiento extra (o «entrené igual» en descanso y viaje) */}
+          {sinEntrenamiento && entrenamientoDelDia}
+
           <RegistroCierre
             dia={dia}
             reglas={plan?.reglas}
@@ -326,15 +351,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             soloLectura={soloLectura}
           />
 
-          {/* Todos los días: entrenamiento extra (o «entrené igual» en descanso y viaje) */}
-          <SesionLibre
-            registro={registro}
-            onCambiar={cambiar}
-            sugerencias={sugerencias}
-            conCierre
-            extra={dia.tipo !== 'descanso' && dia.tipo !== 'viaje'}
-            soloLectura={soloLectura}
-          />
+          {!sinEntrenamiento && entrenamientoDelDia}
         </article>
       )}
       {calendario && (
