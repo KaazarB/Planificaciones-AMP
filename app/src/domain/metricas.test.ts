@@ -68,9 +68,10 @@ test('cumplimiento, tonelaje y progreso por semana', () => {
   expect([s1.hechos, s1.planificados]).toEqual([2, 3]); // el descanso no cuenta
   expect(s1.tonelaje).toBe(60 * 5 + 62.5 * 5);
   expect([s1.seriesHechas, s1.seriesPlan]).toEqual([2, 6]);
-  expect([s2.hechos, s2.planificados, s2.totalSemana]).toEqual([1, 2, 3]); // el viernes 13 aún no vence
+  // Hoy (miércoles 11) cuenta recién cuando lo registre; el viernes 13 aún no vence
+  expect([s2.hechos, s2.planificados, s2.totalSemana]).toEqual([1, 1, 3]);
   expect(r.actual?.lunes).toBe('2026-11-09');
-  expect(r.adherencia).toBe(60); // 3 de 5
+  expect(r.adherencia).toBe(75); // 3 de 4
   expect(r.ejercicios[0]).toMatchObject({ nombre: 'Sentadilla', inicial: 62.5, mejor: 65 });
   expect(r.alertas.some((a) => a.gravedad === 'critica' && a.texto.includes('7/10'))).toBe(true);
   expect(r.diasSinRegistro).toBe(2);
@@ -79,7 +80,26 @@ test('cumplimiento, tonelaje y progreso por semana', () => {
 test('avisa cuando hay entrenamientos seguidos sin registrar', () => {
   const r = calcularResumen(dias, {}, '2026-11-13');
   expect(r.ultimoRegistro).toBeNull();
-  expect(r.alertas.map((a) => a.texto)).toContain('5 entrenamientos seguidos sin registrar');
+  // El de hoy (viernes 13) todavía puede registrarlo: no suma al aviso
+  expect(r.alertas.map((a) => a.texto)).toContain('4 entrenamientos seguidos sin registrar');
+});
+
+test('los días «(opcional)» no bajan el cumplimiento y, si los hace, suman aparte', () => {
+  const opcional = (fecha: string): Dia => ({ ...dia(fecha, 'clase'), titulo: 'Clase en el box (opcional)' });
+  const conOpcionales = [...dias, opcional('2026-11-06'), opcional('2026-11-07')];
+  const r = calcularResumen(
+    conOpcionales,
+    {
+      ...registros,
+      '2026-11-06': reg('2026-11-06', { clase: 'WOD' }), // anotada en el plan
+      '2026-11-07': reg('2026-11-07', { libre: { tipo: 'Clase CrossFit', ejercicios: [] } }), // anotada como libre
+    },
+    '2026-11-11',
+  );
+  const s1 = r.semanas[0];
+  expect([s1.hechos, s1.planificados, s1.totalSemana]).toEqual([2, 3, 3]);
+  expect(s1.opcionales).toBe(1);
+  expect(s1.libres).toBe(1);
 });
 
 test('un entrenamiento libre suma a la semana, al tonelaje, al RPE y a la progresión del ejercicio', () => {

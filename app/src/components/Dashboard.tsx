@@ -211,6 +211,12 @@ function DetalleDashboard({ fila, onVolver }: { fila: Fila; onVolver: () => void
                           +{s.libres} libre{s.libres > 1 ? 's' : ''}
                         </span>
                       )}
+                      {s.opcionales > 0 && (
+                        <span className="dash-libres">
+                          {' '}
+                          +{s.opcionales} opcional{s.opcionales > 1 ? 'es' : ''}
+                        </span>
+                      )}
                     </td>
                     <td>{s.seriesPlan ? `${pct(s.seriesHechas, s.seriesPlan)}%` : '–'}</td>
                     <td>{s.tonelaje ? `${miles(s.tonelaje)} kg` : '–'}</td>
@@ -224,8 +230,8 @@ function DetalleDashboard({ fila, onVolver }: { fila: Fila; onVolver: () => void
             </table>
           </div>
           <p className="tenue dash-nota">
-            Entrenos: días planificados con registro (+ entrenamientos libres). Series: % de series hechas. Tonelaje:
-            suma de kg × reps. Lumbar: máximo «después» de la semana.
+            Entrenos: días planificados con registro (+ libres y opcionales que hizo). Series: % de series hechas.
+            Tonelaje: suma de kg × reps. Lumbar: máximo «después» de la semana.
           </p>
         </>
       )}
@@ -356,7 +362,8 @@ function Dashboard({ atletas, onVolver }: { atletas: Perfil[]; onVolver: () => v
             </p>
           )}
           <p className="tenue dash-nota">
-            Cumplimiento = entrenamientos (sesiones, clases y carreras) ya vencidos que tienen algo anotado.
+            Cumplimiento = entrenamientos (sesiones, clases y carreras) ya vencidos que tienen algo anotado. Los días
+            «(opcional)» no cuentan, y el de hoy cuenta recién cuando lo registra.
           </p>
         </>
       )}

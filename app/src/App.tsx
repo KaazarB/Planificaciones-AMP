@@ -12,7 +12,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactHashRouter } from '@ionic/react-router';
-import { calendarOutline, peopleOutline, personCircleOutline } from 'ionicons/icons';
+import { calendarOutline, peopleOutline, personCircleOutline, statsChartOutline } from 'ionicons/icons';
 import { Navigate, Route } from 'react-router-dom';
 
 import { CuentaProvider, useCuenta } from './context/Cuenta';
@@ -22,6 +22,7 @@ import Espera from './pages/Espera';
 import Ingreso from './pages/Ingreso';
 import Inscripcion from './pages/Inscripcion';
 import Perfil from './pages/Perfil';
+import Progreso from './pages/Progreso';
 import Tab1 from './pages/Tab1';
 import { salir } from './services/cuenta';
 
@@ -80,6 +81,7 @@ function Pestanas({ coach }: { coach: boolean }) {
   const porRenovar = useRenovaciones(coach);
   const rutas = [
     <Route key="plan" path="/plan" element={<Tab1 />} />,
+    <Route key="progreso" path="/progreso" element={<Progreso />} />,
     <Route key="perfil" path="/perfil" element={<Perfil />} />,
     ...(coach ? [<Route key="coach" path="/coach" element={<Coach />} />] : []),
     <Route key="resto" path="*" element={<Navigate to={coach ? '/coach' : '/plan'} replace />} />,
@@ -88,6 +90,10 @@ function Pestanas({ coach }: { coach: boolean }) {
     <IonTabButton key="plan" tab="plan" href="/plan">
       <IonIcon aria-hidden="true" icon={calendarOutline} />
       <IonLabel>Plan</IonLabel>
+    </IonTabButton>,
+    <IonTabButton key="progreso" tab="progreso" href="/progreso">
+      <IonIcon aria-hidden="true" icon={statsChartOutline} />
+      <IonLabel>Progreso</IonLabel>
     </IonTabButton>,
     ...(coach
       ? [

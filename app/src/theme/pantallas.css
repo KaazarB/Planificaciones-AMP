@@ -1079,3 +1079,408 @@
   font-size: 14px;
   padding: 0 14px;
 }
+
+/* Progreso del atleta: su semana, semana a semana y cómo avanza */
+.prog-meta {
+  margin: 6px 0 0;
+}
+.prog-etiqueta {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+.prog-objetivo .prog-etiqueta:not(:first-child) {
+  margin-top: 14px;
+}
+.prog-evento {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--tinta);
+}
+.prog-evento strong {
+  font-size: 18px;
+}
+.prog-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.prog-chips li {
+  padding: 5px 10px;
+  border-radius: var(--radio-pill);
+  background: var(--verde-suave);
+  color: var(--verde-texto);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Esta semana */
+.prog-heroe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 10px 0 12px;
+}
+.prog-heroe-valor {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--tinta);
+}
+.prog-heroe-texto {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.prog-medidor {
+  display: block;
+  height: 10px;
+  border-radius: var(--radio-pill);
+  background: var(--verde-suave);
+  overflow: hidden;
+}
+.prog-medidor.delgado {
+  height: 8px;
+}
+.prog-medidor span {
+  display: block;
+  height: 100%;
+  border-radius: var(--radio-pill);
+  background: var(--verde);
+}
+.prog-estado {
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.prog-estado.bien {
+  color: var(--verde-texto);
+}
+.prog-estado.atencion {
+  color: #7a4106;
+}
+.prog-tira {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.prog-dia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  border-radius: var(--radio-m);
+}
+.prog-dia.hoy {
+  background: var(--fondo);
+}
+.prog-dia-letra,
+.prog-dia-numero {
+  font-size: 12px;
+  color: var(--gris);
+}
+.prog-dia-letra {
+  font-weight: 700;
+}
+.prog-dia.hoy .prog-dia-letra,
+.prog-dia.hoy .prog-dia-numero {
+  color: var(--tinta);
+  font-weight: 700;
+}
+.prog-dia-marca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 800;
+}
+.prog-dia.cumplido .prog-dia-marca {
+  background: var(--verde);
+  color: #fff;
+}
+.prog-dia.sin-registro .prog-dia-marca {
+  background: var(--error-suave);
+  color: var(--error-texto);
+}
+.prog-dia.pendiente .prog-dia-marca {
+  border: 2px solid var(--linea);
+  background: var(--superficie);
+}
+.prog-dia.pendiente.hoy .prog-dia-marca {
+  border-color: var(--tinta);
+}
+.prog-dia.extra .prog-dia-marca {
+  border: 2px solid var(--verde);
+  color: var(--verde-texto);
+}
+.prog-dia.opcional .prog-dia-marca {
+  width: 14px;
+  height: 14px;
+  margin: 9px;
+  border: 2px solid var(--linea);
+}
+.prog-dia.descanso .prog-dia-marca::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--linea);
+}
+.prog-dia-extra {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  width: 17px;
+  height: 17px;
+  box-sizing: border-box;
+  border: 1.5px solid var(--verde);
+  border-radius: 50%;
+  background: var(--superficie);
+  color: var(--verde-texto);
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+}
+.prog-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--gris);
+}
+.prog-leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.prog-leyenda span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+}
+.prog-leyenda .cumplido span {
+  background: var(--verde);
+  color: #fff;
+}
+.prog-leyenda .sin-registro span {
+  background: var(--error-suave);
+  color: var(--error-texto);
+}
+.prog-leyenda .pendiente span {
+  border: 2px solid var(--linea);
+}
+.prog-leyenda .opcional span {
+  width: 10px;
+  height: 10px;
+  margin: 3px;
+  border: 2px solid var(--linea);
+}
+.prog-leyenda .extra span {
+  border: 1.5px solid var(--verde);
+  color: var(--verde-texto);
+}
+
+/* Datos clave */
+.prog-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+@media (min-width: 640px) {
+  .prog-datos {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.prog-dato {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio-l);
+  background: var(--superficie);
+}
+.prog-dato-etiqueta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.prog-dato-valor {
+  margin-top: 2px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--tinta);
+}
+.prog-dato-detalle {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--gris);
+}
+
+/* Semana a semana (una barra por semana, con su cifra al lado) */
+.prog-semanas {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.prog-semana-fila {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) 62px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececea;
+}
+.prog-semana-fila:last-child {
+  border-bottom: 0;
+}
+.prog-semana-nombre,
+.prog-semana-cifra {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: var(--tinta);
+}
+.prog-semana-nombre .tenue,
+.prog-semana-cifra .tenue {
+  font-size: 12px;
+}
+.prog-semana-cifra {
+  align-items: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+.prog-semana-fila:not(.actual) .prog-semana-nombre strong {
+  font-weight: 600;
+}
+
+/* Tu progreso */
+.prog-titulo {
+  margin: 18px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tinta);
+}
+.prog-titulo + .tarjeta {
+  margin-top: 8px;
+}
+.prog-vacio {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.prog-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececea;
+}
+.prog-fila:first-child {
+  padding-top: 0;
+}
+.prog-fila:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.prog-fila-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--tinta);
+}
+.prog-fila-texto .tenue {
+  font-size: 12px;
+  line-height: 1.3;
+}
+.prog-tendencia {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 32px;
+}
+.prog-fila-valor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 72px;
+  font-size: 15px;
+  text-align: right;
+  color: var(--tinta);
+}
+.prog-fila-valor span {
+  font-size: 12px;
+}
+.prog-fila-valor .sube {
+  color: var(--verde-texto);
+  font-weight: 700;
+}
+.prog-wod {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececea;
+  font-size: 14px;
+}
+.prog-wod:first-child {
+  padding-top: 0;
+}
+.prog-wod:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.prog-wod-fecha {
+  font-size: 12px;
+  color: var(--gris);
+}
+.prog-wod-titulo {
+  font-weight: 600;
+  color: var(--tinta);
+  overflow-wrap: anywhere;
+}
+.prog-wod-resultado {
+  max-width: 132px;
+  padding: 3px 9px;
+  border-radius: var(--radio-m);
+  background: var(--verde-suave);
+  color: var(--verde-texto);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+.prog-nota {
+  margin-top: 18px;
+}

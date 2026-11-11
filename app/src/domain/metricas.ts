@@ -13,6 +13,14 @@ import { aTextoISO, lunesDe } from './semanas';
 // Días que cuentan como entrenamiento planificado
 const ENTRENA: Dia['tipo'][] = ['sesion', 'clase', 'carrera'];
 
+// Un entrenamiento «(opcional)» no se exige: si lo hace suma como extra; si no, no baja el cumplimiento
+export const esOpcional = (d: Dia): boolean => ENTRENA.includes(d.tipo) && /opcional/i.test(d.titulo);
+export const cuentaComoEntreno = (d: Dia): boolean => ENTRENA.includes(d.tipo) && !esOpcional(d);
+
+// Un entreno cuenta para el cumplimiento cuando su día ya pasó; el de hoy, solo si ya lo registró
+export const yaCuenta = (fecha: string, reg: RegistroDia | undefined, hoy: string): boolean =>
+  fecha < hoy || (fecha === hoy && tieneDatos(reg));
+
 // ¿El atleta anotó algo ese día? (misma regla que el calendario)
 export function tieneDatos(r?: RegistroDia): boolean {
   if (!r) return false;
@@ -47,12 +55,13 @@ export interface SemanaMetrica {
   bloque: number | null;
   semana: number | null; // semana dentro del bloque
   fase: string;
-  planificados: number; // días de entrenamiento ya vencidos (hasta hoy)
+  planificados: number; // entrenos exigidos que ya cuentan (días pasados, y hoy si lo registró)
   hechos: number; // de esos, cuántos tienen registro
-  totalSemana: number; // días de entrenamiento de toda la semana
+  totalSemana: number; // entrenos exigidos de toda la semana (sin los «(opcional)»)
   seriesPlan: number;
   seriesHechas: number;
   libres: number; // entrenamientos libres (armados por el atleta) esa semana
+  opcionales: number; // entrenos «(opcional)» que igual hizo (anotados en el plan, no como libre)
   tonelaje: number; // kg × reps
   rpe: number | null; // promedio
   lumbar: number | null; // máximo «después»
@@ -115,6 +124,7 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
         seriesPlan: 0,
         seriesHechas: 0,
         libres: 0,
+        opcionales: 0,
         tonelaje: 0,
         rpe: null,
         lumbar: null,
@@ -130,17 +140,20 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
   for (const d of [...dias].sort((a, b) => a.fecha.localeCompare(b.fecha))) {
     const s = semanaDe(d);
     const reg = registros[d.fecha];
-    const entrena = ENTRENA.includes(d.tipo);
+    const entrena = cuentaComoEntreno(d);
     const vencido = d.fecha <= hoy;
+    const cuenta = yaCuenta(d.fecha, reg, hoy);
     if (entrena) s.totalSemana++;
-    if (entrena && vencido) {
+    if (entrena && cuenta) {
       s.planificados++;
       if (tieneDatos(reg)) s.hechos++;
     }
+    if (esOpcional(d) && vencido && tieneDatos(reg) && !tieneLibre(reg?.libre)) s.opcionales++;
 
     (d.secciones ?? []).forEach((sec, si) => {
       if (!vencido) return;
-      if (!sec.check) {
+      // Series del plan: de entrenos que ya cuentan (un opcional, solo si lo hizo)
+      if (!sec.check && cuenta && (entrena || tieneDatos(reg))) {
         const total = sec.items.reduce((n, it) => n + (it.series ?? 0), 0);
         s.seriesPlan += total;
         if (reg) s.seriesHechas += seriesSeccion(sec, si, reg)[0];
@@ -229,9 +242,9 @@ export function calcularResumen(dias: Dia[], registros: Record<string, RegistroD
   const suma = (xs: SemanaMetrica[], k: 'hechos' | 'planificados') => xs.reduce((n, s) => n + s[k], 0);
   const ult4 = pasadas.slice(-4);
 
-  // Entrenamientos vencidos sin registrar, seguidos y recientes
+  // Entrenamientos vencidos sin registrar, seguidos y recientes (el de hoy todavía no cuenta)
   const vencidos = dias
-    .filter((d) => ENTRENA.includes(d.tipo) && d.fecha <= hoy && diasEntre(d.fecha, hoy) <= 10)
+    .filter((d) => cuentaComoEntreno(d) && yaCuenta(d.fecha, registros[d.fecha], hoy) && diasEntre(d.fecha, hoy) <= 10)
     .sort((a, b) => b.fecha.localeCompare(a.fecha));
   let seguidos = 0;
   for (const d of vencidos) {
