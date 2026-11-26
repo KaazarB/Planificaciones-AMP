@@ -19,6 +19,7 @@ interface Props {
   extra?: boolean; // día con entrenamiento planificado: se ofrece como «entrenamiento extra»
   destacado?: boolean; // día sin entrenamiento cargado: va antes del «Registro al terminar» y es lo principal
   soloLectura?: boolean;
+  apodo?: string; // con apodo, al registrar se ofrece «Compartir en Instagram»
 }
 
 function SesionLibre({
@@ -30,6 +31,7 @@ function SesionLibre({
   extra = false,
   destacado = false,
   soloLectura = false,
+  apodo,
 }: Props): React.JSX.Element | null {
   const sesion = registro.libre;
   const [borrando, setBorrando] = useState(false);
@@ -232,7 +234,9 @@ function SesionLibre({
               <span>Notas y sensaciones</span>
               <textarea rows={3} value={registro.notas ?? ''} onChange={(e) => onCambiar({ notas: e.target.value })} />
             </label>
-            {onRegistrar && <BotonRegistrar registro={registro} onRegistrar={onRegistrar} soloLectura={soloLectura} />}
+            {onRegistrar && (
+              <BotonRegistrar registro={registro} onRegistrar={onRegistrar} soloLectura={soloLectura} apodo={apodo} />
+            )}
           </>
         )}
 

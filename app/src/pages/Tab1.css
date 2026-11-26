@@ -1319,3 +1319,41 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
     animation: none;
   }
 }
+
+/* «Compartir en Instagram»: imagen tipo story del entrenamiento */
+.compartir-historia {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #111111, #1f3b2a);
+}
+.historia-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+}
+.historia-ventana {
+  width: 100%;
+  max-width: 360px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+  text-align: center;
+}
+.historia-ventana img {
+  width: auto;
+  max-width: 100%;
+  max-height: 62vh;
+  align-self: center;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.historia-ventana small {
+  font-size: 13px;
+  color: #d4d4d4;
+}

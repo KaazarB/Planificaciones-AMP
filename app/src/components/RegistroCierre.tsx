@@ -6,6 +6,8 @@ import type { Dia, Plan } from '../data/plan';
 import type { RegistroDia } from '../data/registro';
 import { sinEntrenamientoCargado } from '../domain/libre';
 
+import CompartirHistoria from './CompartirHistoria';
+
 interface Props {
   dia: Dia;
   reglas: Plan['reglas'];
@@ -15,6 +17,7 @@ interface Props {
   onCambiar: (cambio: Partial<RegistroDia>) => void;
   onRegistrar?: () => Promise<boolean>; // true = llegó a la nube
   soloLectura?: boolean;
+  apodo?: string; // con apodo, al registrar se ofrece «Compartir en Instagram»
 }
 
 type EstadoEnvio = 'inicio' | 'enviando' | 'nube' | 'local';
@@ -25,10 +28,14 @@ export function BotonRegistrar({
   registro,
   onRegistrar,
   soloLectura,
+  dia,
+  apodo,
 }: {
   registro: RegistroDia;
   onRegistrar?: () => Promise<boolean>;
   soloLectura: boolean;
+  dia?: Dia;
+  apodo?: string;
 }): React.JSX.Element | null {
   const [envio, setEnvio] = useState<EstadoEnvio>('inicio');
 
@@ -60,24 +67,27 @@ export function BotonRegistrar({
 
   if (registrada && !editadaDespues && envio !== 'enviando') {
     return (
-      <div className={`registrar-listo ${envio === 'local' ? 'local' : ''}`} role="status">
-        <span className={`registrar-check ${envio === 'nube' ? 'nuevo' : ''}`} aria-hidden="true">
-          ✓
-        </span>
-        <div>
-          <strong>{envio === 'local' ? 'Guardada en tu teléfono' : '¡Sesión registrada!'}</strong>
-          <small>
-            {envio === 'local'
-              ? 'Sin conexión: tu coach la verá cuando la envíes de nuevo.'
-              : `Guardada a las ${hora(registro.cerrada as string)}. Tu coach ya puede verla.`}
-          </small>
-          {envio === 'local' && (
-            <button type="button" className="registrar-reintentar" onClick={registrar}>
-              Reintentar envío
-            </button>
-          )}
+      <>
+        <div className={`registrar-listo ${envio === 'local' ? 'local' : ''}`} role="status">
+          <span className={`registrar-check ${envio === 'nube' ? 'nuevo' : ''}`} aria-hidden="true">
+            ✓
+          </span>
+          <div>
+            <strong>{envio === 'local' ? 'Guardada en tu teléfono' : '¡Sesión registrada!'}</strong>
+            <small>
+              {envio === 'local'
+                ? 'Sin conexión: tu coach la verá cuando la envíes de nuevo.'
+                : `Guardada a las ${hora(registro.cerrada as string)}. Tu coach ya puede verla.`}
+            </small>
+            {envio === 'local' && (
+              <button type="button" className="registrar-reintentar" onClick={registrar}>
+                Reintentar envío
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+        {apodo && <CompartirHistoria dia={dia} registro={registro} apodo={apodo} />}
+      </>
     );
   }
 
@@ -136,6 +146,7 @@ function RegistroCierre({
   onCambiar,
   onRegistrar,
   soloLectura = false,
+  apodo,
 }: Props): React.JSX.Element {
   const luz = semaforo(registro, reglas);
   // En un descanso no se pide esfuerzo… salvo que esté anotando un entrenamiento
@@ -235,6 +246,8 @@ function RegistroCierre({
             registro={registro}
             onRegistrar={onRegistrar}
             soloLectura={soloLectura}
+            dia={dia}
+            apodo={apodo}
           />
         </fieldset>
       )}

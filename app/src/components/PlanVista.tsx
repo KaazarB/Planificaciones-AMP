@@ -296,6 +296,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             onRegistrar={registrarSesion}
             sugerencias={sugerencias}
             soloLectura={soloLectura}
+            apodo={apodo}
           />
         </article>
       )}
@@ -349,6 +350,7 @@ function PlanVista({ atleta, apodo, soloLectura = false, onCambiarApodo }: Props
             onCambiar={cambiar}
             onRegistrar={registrarSesion}
             soloLectura={soloLectura}
+            apodo={apodo}
           />
 
           {!sinEntrenamiento && entrenamientoDelDia}
