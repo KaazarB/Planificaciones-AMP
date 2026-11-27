@@ -10,16 +10,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --bg:#f2f3f1; --surface:#fff; --ink:#15181b; --muted:#5d646b; --line:#d9ddd9; --grid:#e7eae7;
-  --bar:#16191c; --bar-ink:#f6f7f5; --accent:#1f5fbf; --accent-soft:#e3ecfa;
-  --ok:#1f7a4d; --ok-soft:#e1f2e8; --warn:#a86a00; --warn-soft:#fbefd6; --bad:#b3261e; --bad-soft:#f9e1df;
+  /* Tema AMP: negro y verde, igual que la app nueva */
+  --bg:#0a0a0a; --surface:#171717; --ink:#f5f5f5; --muted:#a3a3a3; --line:#2e2e2e; --grid:#1f1f1f;
+  --bar:#1f1f1f; --bar-ink:#ffffff; --accent:#22c55e; --accent-soft:#0f2a1a; --on-accent:#04130a;
+  --ok:#22c55e; --ok-soft:#0f2a1a; --warn:#f59e0b; --warn-soft:#2a2210; --bad:#f87171; --bad-soft:#2b1414;
   --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
-  --body:"Public Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color-scheme:light;
+  --body:"Public Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root{
-  --bg:#0f1113; --surface:#181b1e; --ink:#ecefed; --muted:#9aa2a8; --line:#2c3135; --grid:#24282c;
-  --bar:#2a2f34; --bar-ink:#f2f4f2; --accent:#7aa7ef; --accent-soft:#1c2a40;
-  --ok:#6fcf9b; --ok-soft:#173225; --warn:#e8b450; --warn-soft:#3a2c10; --bad:#f08b83; --bad-soft:#3d1a18; color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--body)}
 .wrap{max-width:1040px;margin:0 auto;padding:20px 16px 60px}
@@ -28,7 +25,7 @@ h1{font-size:32px;font-weight:800} h2{font-size:22px;font-weight:700} h3{font-si
 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .sub{color:var(--muted);font-size:13.5px}
 .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 12px;border-radius:9px;cursor:pointer;white-space:nowrap}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent, #04130a)}
 .btn.sm{padding:5px 9px;font-size:13px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
