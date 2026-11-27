@@ -8,7 +8,7 @@
   font-size: 15px;
 }
 .plan .enlace.peligro {
-  color: #b42318;
+  color: var(--error);
 }
 .plan .volver {
   margin-bottom: 4px;
@@ -26,8 +26,8 @@
   padding: 0 18px;
   border: 0;
   border-radius: 10px;
-  background: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  color: var(--sobre-verde);
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -36,7 +36,7 @@
   opacity: 0.55;
 }
 .boton.secundario {
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   border: 1px solid var(--linea);
   font-weight: 500;
@@ -53,7 +53,7 @@
 
 /* Tarjetas y avisos */
 .tarjeta {
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: 12px;
   padding: 16px;
@@ -63,8 +63,8 @@
   margin: 12px 0 0;
   padding: 10px 12px;
   border-radius: 8px;
-  background: #fbe0de;
-  color: #8a1c14;
+  background: var(--error-suave);
+  color: var(--error-texto);
   font-size: 14px;
 }
 .subtitulo {
@@ -95,7 +95,7 @@
 .selector {
   display: flex;
   padding: 4px;
-  background: #e4e4e2;
+  background: var(--superficie-3);
   border-radius: 12px;
 }
 .selector button {
@@ -108,7 +108,7 @@
   color: var(--gris);
 }
 .selector button[aria-selected='true'] {
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
@@ -135,7 +135,7 @@
   font-weight: 600;
 }
 .requerido {
-  color: #b42318;
+  color: var(--error);
 }
 .campo-ayuda {
   margin-top: -2px;
@@ -151,7 +151,7 @@
   font: inherit;
   font-size: 16px;
   color: var(--tinta);
-  background: #fff;
+  background: var(--superficie);
 }
 .campo-ficha input:focus,
 .campo-ficha textarea:focus {
@@ -177,14 +177,14 @@
   padding: 0 14px;
   border: 1px solid var(--linea);
   border-radius: 999px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   font-size: 15px;
 }
 .chip.elegido {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
 }
 .campo-check {
   display: flex;
@@ -213,7 +213,7 @@
   flex: 1;
   height: 4px;
   border-radius: 2px;
-  background: #d9d9d6;
+  background: var(--superficie-3);
 }
 .ficha-progreso span.hecho {
   background: var(--verde);
@@ -310,7 +310,7 @@
 }
 .ficha-una .campo-ficha input:focus,
 .ficha-una .campo-ficha textarea:focus {
-  border-color: var(--barra);
+  border-color: var(--verde);
   box-shadow: var(--anillo-foco);
 }
 .ficha-una .con-unidad span {
@@ -323,9 +323,9 @@
   font-size: 16px;
 }
 .ficha-una .chip.elegido {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: var(--sobre-barra);
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
   font-weight: 600;
 }
 .ficha-una .chip.elegido::before {
@@ -418,7 +418,7 @@
 
 /* Resumen de ficha */
 .ficha-resumen section {
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: 12px;
   padding: 12px 16px;
@@ -439,7 +439,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 7px 0;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--linea);
   font-size: 14px;
 }
 .ficha-resumen dt {
@@ -456,7 +456,7 @@
   margin-top: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
 }
 .estado-tarjeta p {
@@ -475,16 +475,16 @@
 
 /* Coach */
 .etiqueta.estado-evaluacion {
-  background: #fbf0cc;
-  color: #6b5100;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 .etiqueta.estado-activo {
-  background: #dff1e6;
+  background: var(--verde-suave);
   color: var(--verde);
 }
 .etiqueta.estado-ficha,
 .etiqueta.estado-pausa {
-  background: #ececea;
+  background: var(--superficie-3);
   color: var(--gris);
 }
 .fila-atleta {
@@ -495,7 +495,7 @@
   gap: 10px;
   padding: 14px 16px;
   margin-bottom: 8px;
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: 12px;
   color: var(--tinta);
@@ -507,7 +507,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--linea);
   font-size: 14px;
 }
 .subir {
@@ -524,7 +524,7 @@
   margin-top: 12px;
   padding: 12px;
   border-radius: 10px;
-  background: #f1f1ef;
+  background: var(--superficie-2);
 }
 .confirmar-plan p {
   margin: 0 0 4px;
@@ -539,13 +539,13 @@
 
 .boton.whatsapp {
   margin-top: 10px;
-  background: #1f8a4c;
+  background: var(--verde);
 }
 
 .acceso-videos {
   margin-top: 12px;
-  background: #e3ecfa;
-  border-color: #c9d9f3;
+  background: var(--verde-suave);
+  border-color: var(--verde-borde);
 }
 .buscar {
   margin: 12px 0 4px;
@@ -572,7 +572,7 @@
   padding: 10px 12px;
   font-size: 16px;
   color: var(--tinta);
-  background: #fff;
+  background: var(--superficie);
 }
 .fila-video-campo .boton {
   min-height: 44px;
@@ -588,7 +588,7 @@
   padding: 14px 16px;
   border: 1.5px solid var(--linea);
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   text-align: left;
   font-size: 15px;
@@ -601,12 +601,12 @@
   line-height: 1.4;
 }
 .tarjeta-opcion.elegido {
-  border-color: var(--barra);
-  background: var(--barra);
-  color: #fff;
+  border-color: var(--verde);
+  background: var(--verde);
+  color: var(--sobre-verde);
 }
 .tarjeta-opcion.elegido span {
-  color: #d4d4d4;
+  color: var(--gris);
 }
 
 .campo-fecha {
@@ -620,13 +620,13 @@
 
 .evento-atleta {
   margin-top: 8px;
-  background: #f4ead9;
-  color: #5c3c0c;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 
 .acceso-invitaciones {
   margin-top: 12px;
-  background: #ececea;
+  background: var(--superficie-3);
 }
 .acceso-invitaciones + .acceso-videos {
   margin-top: 0;
@@ -671,30 +671,30 @@
 /* Avisos de bloques por renovar */
 .fila-renovar {
   align-items: flex-start;
-  background: #fbf0cc;
-  border-color: #ecd98f;
+  background: var(--aviso-suave);
+  border-color: var(--aviso-borde);
 }
 .fila-renovar.urgente {
-  background: #fbe0de;
-  border-color: #f0b8b3;
+  background: var(--error-suave);
+  border-color: var(--error-borde);
 }
 .renovar-texto {
   display: block;
   margin-top: 3px;
   font-size: 13px;
-  color: #5c4a10;
+  color: var(--aviso-texto);
 }
 .fila-renovar.urgente .renovar-texto {
-  color: #8a1c14;
+  color: var(--error-texto);
 }
 .aviso-renovar {
   margin: 0 0 8px;
-  background: #fbf0cc;
-  color: #5c4a10;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 .aviso-renovar.urgente {
-  background: #fbe0de;
-  color: #8a1c14;
+  background: var(--error-suave);
+  color: var(--error-texto);
 }
 
 .fila-pendiente {
@@ -717,7 +717,7 @@
   font-size: 13px;
 }
 .boton.whatsapp-boton {
-  background: #1f8a4c;
+  background: var(--verde);
 }
 
 .revision-estado {
@@ -727,15 +727,15 @@
   margin-bottom: 10px;
 }
 .ficha-resumen section.revision-alerta {
-  border-color: #f0b8b3;
-  background: #fdf3f2;
+  border-color: var(--error-borde);
+  background: var(--error-suave);
 }
 
 /* Dashboard del coach */
 .acceso-dashboard {
   margin-top: 12px;
-  background: #e2f3e8;
-  border-color: #bfe3cc;
+  background: var(--verde-suave);
+  border-color: var(--verde-borde);
 }
 .dash-datos {
   display: grid;
@@ -752,7 +752,7 @@
   display: flex;
   flex-direction: column;
   padding: 12px 14px;
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: 12px;
 }
@@ -785,12 +785,12 @@
   border: 0;
 }
 .dash-alerta.critica {
-  background: #fbe0de;
-  color: #8a1c14;
+  background: var(--error-suave);
+  color: var(--error-texto);
 }
 .dash-alerta.atencion {
-  background: #fdf0dc;
-  color: #7a4106;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 /* Barras de cumplimiento */
 .dash-barras {
@@ -910,7 +910,7 @@
   border-left-color: var(--naranja);
 }
 .dash-nivel.nivel-bajo {
-  border-left-color: #b42318;
+  border-left-color: var(--error);
 }
 /* Tabla por semana */
 .dash-tabla-envoltura {
@@ -934,14 +934,14 @@
 }
 .dash-tabla td {
   padding: 8px 8px 8px 0;
-  border-bottom: 1px solid #ececea;
+  border-bottom: 1px solid var(--linea);
   white-space: nowrap;
 }
 .dash-tabla tr:last-child td {
   border-bottom: 0;
 }
 .dash-celda-alerta {
-  color: #8a1c14;
+  color: var(--error-texto);
   font-weight: 700;
 }
 .dash-nota {
@@ -954,7 +954,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #ececea;
+  border-bottom: 1px solid var(--linea);
 }
 .dash-ejercicio:last-child {
   border-bottom: 0;
@@ -1021,8 +1021,8 @@
   margin-left: 8px;
   padding: 1px 8px;
   border-radius: 999px;
-  background: #fbeedd;
-  color: #7a420b;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
   font-size: 12px;
   font-weight: 600;
   vertical-align: middle;
@@ -1048,8 +1048,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #fbeedd;
-  color: #5c3208;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 .aviso-ficha-modificada p {
   margin: 0;
@@ -1060,9 +1060,9 @@
   margin: 12px 0 4px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: #fbeedd;
-  border: 1px solid #f0cfa3;
-  color: #5c3208;
+  background: var(--aviso-suave);
+  border: 1px solid var(--aviso-borde);
+  color: var(--aviso-texto);
 }
 .alerta-fichas p {
   margin: 0;
@@ -1169,7 +1169,7 @@
   color: var(--verde-texto);
 }
 .prog-estado.atencion {
-  color: #7a4106;
+  color: var(--aviso-texto);
 }
 .prog-tira {
   display: grid;
@@ -1217,7 +1217,7 @@
 }
 .prog-dia.cumplido .prog-dia-marca {
   background: var(--verde);
-  color: #fff;
+  color: var(--sobre-verde);
 }
 .prog-dia.sin-registro .prog-dia-marca {
   background: var(--error-suave);
@@ -1290,7 +1290,7 @@
 }
 .prog-leyenda .cumplido span {
   background: var(--verde);
-  color: #fff;
+  color: var(--sobre-verde);
 }
 .prog-leyenda .sin-registro span {
   background: var(--error-suave);
@@ -1359,7 +1359,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #ececea;
+  border-bottom: 1px solid var(--linea);
 }
 .prog-semana-fila:last-child {
   border-bottom: 0;
@@ -1403,7 +1403,7 @@
   align-items: center;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #ececea;
+  border-bottom: 1px solid var(--linea);
 }
 .prog-fila:first-child {
   padding-top: 0;
@@ -1452,7 +1452,7 @@
   align-items: baseline;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #ececea;
+  border-bottom: 1px solid var(--linea);
   font-size: 14px;
 }
 .prog-wod:first-child {

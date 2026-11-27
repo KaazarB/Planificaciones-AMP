@@ -117,7 +117,7 @@ function Progreso({ ejercicio }: { ejercicio: Ejercicio }) {
           cy={y(ps[ps.length - 1].kg)}
           r="4"
           fill="var(--verde)"
-          stroke="#fff"
+          stroke="var(--superficie)"
           strokeWidth="2"
         />
       </svg>

@@ -1,11 +1,13 @@
 /* For information on how to create your own theme, please refer to:
 http://ionicframework.com/docs/theming/ */
-/* Tema AMP: negro y verde */
+/* Tema AMP: oscuro, negro y verde (el mismo de la imagen para Instagram) */
 :root,
 :root.ios,
 :root.md,
 .ios body,
 .md body {
+  color-scheme: dark;
+
   --ion-color-primary: #22c55e;
   --ion-color-primary-rgb: 34, 197, 94;
   --ion-color-primary-contrast: #000000;
@@ -20,26 +22,57 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-secondary-shade: #8fca2f;
   --ion-color-secondary-tint: #ace949;
 
-  --ion-color-tertiary: #e5e5e5;
-  --ion-color-tertiary-rgb: 229, 229, 229;
-  --ion-color-tertiary-contrast: #000000;
-  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
-  --ion-color-tertiary-shade: #cacaca;
-  --ion-color-tertiary-tint: #e8e8e8;
+  --ion-color-tertiary: #262626;
+  --ion-color-tertiary-rgb: 38, 38, 38;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #212121;
+  --ion-color-tertiary-tint: #3c3c3c;
 
-  /* Tema claro como la planilla original: fondo gris, barras negras */
-  --ion-background-color: #f1f1ef;
-  --ion-background-color-rgb: 241, 241, 239;
-  --ion-text-color: #111111;
-  --ion-text-color-rgb: 17, 17, 17;
+  --ion-background-color: #0a0a0a;
+  --ion-background-color-rgb: 10, 10, 10;
+  --ion-text-color: #f5f5f5;
+  --ion-text-color-rgb: 245, 245, 245;
 
-  --ion-toolbar-background: #ffffff;
-  --ion-toolbar-color: #111111;
-  --ion-tab-bar-background: #ffffff;
-  --ion-tab-bar-color: #8a8a8a;
-  --ion-tab-bar-color-selected: #111111;
-  --ion-card-background: #ffffff;
-  --ion-item-background: #ffffff;
-  --ion-border-color: #d9d9d6;
+  --ion-toolbar-background: #0a0a0a;
+  --ion-toolbar-color: #f5f5f5;
+  --ion-tab-bar-background: #0f0f0f;
+  --ion-tab-bar-border-color: #262626;
+  --ion-tab-bar-color: #737373;
+  --ion-tab-bar-color-selected: #22c55e;
+  --ion-card-background: #171717;
+  --ion-item-background: #171717;
+  --ion-border-color: #2e2e2e;
+
+  /* Tokens AMP: los usan todas las pantallas (plan, progreso, perfil, coach, ingreso y ficha) */
+  --fondo: #0a0a0a;
+  --superficie: #171717; /* tarjetas */
+  --superficie-2: #1f1f1f; /* filas y campos dentro de una tarjeta */
+  --superficie-3: #2a2a2a; /* chips y botones neutros */
+  --tinta: #f5f5f5;
+  --gris: #a3a3a3;
+  --gris-tenue: #737373;
+  --linea: #2e2e2e;
+  --linea-fuerte: #404040;
+  --barra: #1f1f1f; /* barras de sección y resúmenes */
+  --sobre-barra: #ffffff;
+
+  --verde: #22c55e; /* acento principal: botones, elegidos, cumplido */
+  --verde-vivo: #22c55e;
+  --sobre-verde: #04130a; /* texto sobre verde */
+  --verde-texto: #4ade80; /* texto verde sobre fondo oscuro */
+  --verde-suave: #0f2a1a; /* fondo verde tenue (avisos ok, etiquetas) */
+  --verde-borde: #1e5a36;
+  --lima: #a3e635; /* datos destacados */
+  --azul: var(--verde-texto); /* el azul anterior pasa a verde */
+  --azul-suave: var(--verde-suave);
+
+  --naranja: #f59e0b;
+  --aviso-texto: #fbbf24;
+  --aviso-suave: #2a2210;
+  --aviso-borde: #5c4614;
+  --error: #f87171;
+  --error-texto: #fca5a5;
+  --error-suave: #2b1414;
+  --error-borde: #6b2a2a;
 }
-

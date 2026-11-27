@@ -1,24 +1,6 @@
 /* Pantalla Planificación: réplica de la planilla original */
 
 .plan {
-  --fondo: #f1f1ef;
-  --tinta: #111111;
-  --gris: #6b6b6b;
-  --linea: #d9d9d6;
-  --barra: #17191c;
-  --azul: #2563c9;
-  --azul-suave: #e3ecfa;
-  --verde: #1f8a4c;
-  --naranja: #c46a12;
-  /* Sistema de diseño AMP (tokens; ver «Sistema de diseño AMP») */
-  --superficie: #ffffff;
-  --sobre-barra: #ffffff;
-  --verde-vivo: #22c55e;
-  --verde-texto: #16733e;
-  --verde-suave: #dff1e6;
-  --error: #b42318;
-  --error-texto: #8a1c14;
-  --error-suave: #fbe0de;
   --espacio-1: 4px;
   --espacio-2: 8px;
   --espacio-3: 12px;
@@ -98,7 +80,7 @@
   align-items: center;
   gap: 1px;
   padding: 8px 0 7px;
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-radius: 10px;
   color: var(--tinta);
@@ -117,12 +99,13 @@
   opacity: 0.45;
 }
 .chip-dia.activo {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
 }
 .chip-dia.activo .letra {
-  color: #bdbdbd;
+  color: var(--sobre-verde);
+  opacity: 0.7;
 }
 .chip-dia.hoy:not(.activo) {
   border-color: var(--tinta);
@@ -139,17 +122,19 @@
 .punto.clase {
   background: var(--tinta);
 }
-.chip-dia.activo .punto.clase {
-  background: #fff;
+.chip-dia.activo .punto {
+  background: var(--sobre-verde);
 }
 .punto.carrera {
-  background: var(--verde);
+  background: var(--lima);
 }
 .punto.viaje {
   background: var(--naranja);
 }
 .punto.registrado {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px currentColor;
+  box-shadow:
+    0 0 0 2px var(--superficie),
+    0 0 0 3.5px currentColor;
 }
 
 /* Avisos */
@@ -193,19 +178,19 @@
   color: var(--azul);
 }
 .etiqueta.clase {
-  background: #e4e4e2;
+  background: var(--superficie-3);
   color: var(--tinta);
 }
 .etiqueta.carrera {
-  background: #dff1e6;
+  background: var(--verde-suave);
   color: var(--verde);
 }
 .etiqueta.viaje {
-  background: #f7e8d8;
+  background: var(--aviso-suave);
   color: var(--naranja);
 }
 .etiqueta.descanso {
-  background: #ececea;
+  background: var(--superficie-3);
   color: var(--gris);
 }
 .dia-objetivo {
@@ -264,7 +249,7 @@
 }
 .seccion-conteo {
   font-size: 14px;
-  color: #bdbdbd;
+  color: var(--gris);
   font-variant-numeric: tabular-nums;
 }
 .seccion-conteo.completo {
@@ -279,7 +264,7 @@
   transform: rotate(90deg);
 }
 .seccion-cuerpo {
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--linea);
   border-top: 0;
   border-radius: 0 0 6px 6px;
@@ -298,7 +283,7 @@
   align-items: baseline;
   gap: 10px;
   padding: 11px 0;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--linea);
   font-size: 15px;
 }
 .item:last-of-type,
@@ -306,7 +291,7 @@
   border-bottom: 0;
 }
 .item-envoltura .item {
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--linea);
 }
 .item-texto {
   flex: 1;
@@ -320,7 +305,7 @@
 }
 .boton-video {
   border: 0;
-  background: #e3ecfa;
+  background: var(--verde-suave);
   color: var(--azul);
   border-radius: 999px;
   padding: 3px 9px;
@@ -329,8 +314,8 @@
   white-space: nowrap;
 }
 .boton-video.abierto {
-  background: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  color: var(--sobre-verde);
 }
 .video-marco {
   position: relative;
@@ -375,13 +360,13 @@
   flex: 0 0 auto;
   width: 20px;
   height: 20px;
-  border: 2px solid #9a9a98;
+  border: 2px solid var(--linea-fuerte);
   border-radius: 5px;
 }
 .item-check.hecho .caja {
   background: var(--verde);
   border-color: var(--verde);
-  box-shadow: inset 0 0 0 3px #fff;
+  box-shadow: inset 0 0 0 3px var(--superficie);
 }
 .item-check.hecho .item-nombre {
   color: var(--gris);
@@ -423,7 +408,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #ededeb;
+  background: var(--superficie-3);
   font-size: 12px;
   display: grid;
   place-items: center;
@@ -437,7 +422,7 @@
   border: 1px solid var(--linea);
   border-radius: 8px;
   padding: 0 8px;
-  background: #fafaf9;
+  background: var(--superficie-2);
 }
 .campo input {
   outline: none;
@@ -467,10 +452,10 @@
   height: 30px;
   padding: 0;
   border-radius: 7px;
-  background: #fff;
+  background: var(--superficie);
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--sobre-verde);
   font-size: 17px;
   font-weight: 700;
   line-height: 1;
@@ -489,11 +474,11 @@
 }
 .fila-serie.hecha .campo {
   border-color: var(--verde);
-  background: #f2f8f3;
+  background: var(--verde-suave);
 }
 .fila-serie.hecha .num-serie {
   background: var(--verde);
-  color: #fff;
+  color: var(--sobre-verde);
 }
 
 /* Registro al terminar */
@@ -516,7 +501,7 @@
   font: inherit;
   font-size: 16px;
   color: var(--tinta);
-  background: #fafaf9;
+  background: var(--superficie-2);
   resize: vertical;
 }
 .escala {
@@ -529,14 +514,14 @@
   height: 34px;
   border: 1px solid var(--linea);
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   font-size: 15px;
 }
 .escala button.elegido {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
 }
 .semaforo {
   margin: -4px 0 14px;
@@ -546,16 +531,16 @@
   line-height: 1.4;
 }
 .semaforo.verde {
-  background: #dff1e6;
-  color: #135c32;
+  background: var(--verde-suave);
+  color: var(--verde-texto);
 }
 .semaforo.amarillo {
-  background: #fbf0cc;
-  color: #6b5100;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 .semaforo.rojo {
-  background: #fbe0de;
-  color: #8a1c14;
+  background: var(--error-suave);
+  color: var(--error-texto);
 }
 
 /* Nombre del atleta en el título (se toca para cambiarlo) */
@@ -566,7 +551,7 @@
   background: none;
   border: 0;
   padding: 0;
-  border-bottom: 2px dotted #b5b5b2;
+  border-bottom: 2px dotted var(--linea-fuerte);
 }
 
 /* Mes, bloque y botón de calendario */
@@ -593,7 +578,7 @@
   height: 40px;
   border-radius: 10px;
   border: 1px solid var(--linea);
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   padding: 0;
 }
@@ -612,7 +597,7 @@
 .calendario {
   width: 100%;
   max-width: 380px;
-  background: #fff;
+  background: var(--superficie);
   border-radius: 16px;
   padding: 14px 14px 10px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
@@ -634,7 +619,7 @@
   height: 36px;
   border: 0;
   border-radius: 8px;
-  background: #f1f1ef;
+  background: var(--superficie-2);
   font-size: 22px;
   color: var(--tinta);
 }
@@ -670,7 +655,7 @@
   height: 6px;
 }
 .calendario-dia.sin-plan {
-  color: #a9a9a6;
+  color: var(--gris);
 }
 .calendario-dia.fuera {
   opacity: 0.4;
@@ -679,11 +664,11 @@
   border-color: var(--tinta);
 }
 .calendario-dia.activo {
-  background: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  color: var(--sobre-verde);
 }
 .calendario-dia.activo .punto.clase {
-  background: #fff;
+  background: var(--superficie);
 }
 .calendario-pie {
   display: flex;
@@ -701,8 +686,8 @@
 /* Cambiar ejercicio de máquina */
 .boton-cambio {
   border: 0;
-  background: #f4ead9;
-  color: #8a5a12;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
   border-radius: 999px;
   padding: 3px 9px;
   font-size: 12px;
@@ -710,20 +695,20 @@
   white-space: nowrap;
 }
 .boton-cambio.abierto {
-  background: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  color: var(--sobre-verde);
 }
 .sustituido {
   margin: -4px 0 6px;
   font-size: 12px;
-  color: #8a5a12;
+  color: var(--aviso-texto);
 }
 .panel-cambio {
   margin: 2px 0 12px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: #faf6ef;
-  border: 1px solid #eadcc4;
+  background: var(--aviso-suave);
+  border: 1px solid var(--aviso-borde);
 }
 .panel-cambio p {
   margin: 0 0 8px;
@@ -737,15 +722,15 @@
   padding: 10px 12px;
   border: 1px solid var(--linea);
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   font-size: 15px;
   text-align: left;
 }
 .opcion-cambio.elegido {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
 }
 
 fieldset.seccion-cuerpo {
@@ -759,7 +744,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   margin: 4px 0 14px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: #ececea;
+  background: var(--superficie-3);
   color: var(--gris);
   font-size: 13px;
 }
@@ -774,14 +759,14 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
 .presc-partes span {
   padding: 4px 9px;
   border-radius: 8px;
-  background: #f1f1ef;
+  background: var(--superficie-2);
   color: var(--gris);
   font-size: 13px;
   line-height: 1.3;
 }
 .presc-partes span.principal {
-  background: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  color: var(--sobre-verde);
   font-weight: 600;
 }
 
@@ -790,7 +775,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   margin: 20px 0 0;
   padding: 16px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   border: 1.5px solid var(--barra);
 }
 .revision-titulo {
@@ -809,8 +794,8 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   margin-top: 8px;
 }
 .revision-lista {
-  background: #dff1e6;
-  color: #135c32;
+  background: var(--verde-suave);
+  color: var(--verde-texto);
 }
 
 /* Botón «Registrar sesión» y confirmación */
@@ -825,8 +810,8 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   margin: 4px 0 0;
   padding: 12px 14px;
   border-radius: 10px;
-  background: #dff1e6;
-  color: #135c32;
+  background: var(--verde-suave);
+  color: var(--verde-texto);
   font-size: 14px;
   line-height: 1.4;
 }
@@ -839,8 +824,8 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   font-size: 13px;
 }
 .registrar-listo.local {
-  background: #fbf0cc;
-  color: #6b5100;
+  background: var(--aviso-suave);
+  color: var(--aviso-texto);
 }
 .registrar-check {
   flex: none;
@@ -851,7 +836,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   height: 30px;
   border-radius: 50%;
   background: var(--verde);
-  color: #fff;
+  color: var(--sobre-verde);
   font-size: 17px;
   font-weight: 700;
 }
@@ -898,7 +883,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   padding: 16px;
   border: 1px dashed var(--linea);
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   text-align: center;
 }
 .libre-invitacion p {
@@ -917,15 +902,15 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
 .libre-tipos button {
   border: 1px solid var(--linea);
   border-radius: 999px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--tinta);
   padding: 7px 12px;
   font-size: 14px;
 }
 .libre-tipos button.elegido {
-  background: var(--barra);
-  border-color: var(--barra);
-  color: #fff;
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--sobre-verde);
 }
 .libre-minutos input {
   max-width: 140px;
@@ -935,7 +920,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   flex-direction: column;
   gap: 6px;
   padding: 10px 0 6px;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--linea);
   margin-bottom: 8px;
 }
 .libre-ejercicio-cabeza {
@@ -953,7 +938,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   font-size: 16px;
   font-weight: 600;
   color: var(--tinta);
-  background: #fafaf9;
+  background: var(--superficie-2);
 }
 .libre-quitar {
   border: 0;
@@ -968,7 +953,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   height: 30px;
   border: 0;
   border-radius: 7px;
-  background: #ededeb;
+  background: var(--superficie-3);
   color: var(--gris);
   font-size: 18px;
   line-height: 1;
@@ -995,7 +980,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   padding: var(--espacio-4);
   border: 1px solid var(--linea);
   border-radius: var(--radio-l);
-  background: #fafaf9;
+  background: var(--superficie-2);
 }
 .wod-invitacion p {
   margin: 0 0 var(--espacio-3);
@@ -1151,7 +1136,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   font-size: 14px;
 }
 .wod-armado .campo:focus-within {
-  border-color: var(--barra);
+  border-color: var(--verde);
   box-shadow: var(--anillo-foco);
 }
 .wod-corto {
@@ -1203,7 +1188,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
 .wod-reps:focus,
 .wod-nombre:focus {
   outline: none;
-  border-color: var(--barra);
+  border-color: var(--verde);
   box-shadow: var(--anillo-foco);
 }
 .wod-ejercicios .boton {
@@ -1218,7 +1203,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   align-items: center;
   gap: var(--espacio-3);
   padding: var(--espacio-2) 0;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--linea);
 }
 .wod-peso:last-child {
   border-bottom: 0;
@@ -1300,7 +1285,7 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
   padding: 6px 12px;
   border-radius: var(--radio-pill);
   background: var(--verde-vivo);
-  color: #0b2a16;
+  color: var(--verde-texto);
   font-size: 15px;
   font-weight: 700;
 }
@@ -1323,7 +1308,9 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
 /* «Compartir en Instagram»: imagen tipo story del entrenamiento */
 .compartir-historia {
   margin-top: 10px;
-  background: linear-gradient(135deg, #111111, #1f3b2a);
+  background: var(--superficie-2);
+  border: 1px solid var(--verde-borde);
+  color: var(--verde-texto);
 }
 .historia-fondo {
   position: fixed;
@@ -1355,5 +1342,5 @@ fieldset.seccion-cuerpo:disabled .escala button:not(.elegido) {
 }
 .historia-ventana small {
   font-size: 13px;
-  color: #d4d4d4;
+  color: var(--gris);
 }

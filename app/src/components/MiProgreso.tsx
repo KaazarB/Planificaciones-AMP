@@ -72,12 +72,19 @@ function Tendencia({ valores }: { valores: number[] }) {
       <polyline
         points={valores.map((v, i) => `${x(i)},${y(v)}`).join(' ')}
         fill="none"
-        stroke="#a3a3a0"
+        stroke="var(--gris-tenue)"
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx={x(ultimo)} cy={y(valores[ultimo])} r="4" fill="var(--verde)" stroke="#fff" strokeWidth="2" />
+      <circle
+        cx={x(ultimo)}
+        cy={y(valores[ultimo])}
+        r="4"
+        fill="var(--verde)"
+        stroke="var(--superficie)"
+        strokeWidth="2"
+      />
     </svg>
   );
 }

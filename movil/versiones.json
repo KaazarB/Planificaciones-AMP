@@ -1,30 +1,5 @@
 [
  {
-  "fecha": "2026-11-10T15:08:38.308Z",
-  "archivos": [
-   "assets/bebas-neue-latin-400-normal-9mHNbWWO.woff2",
-   "assets/bebas-neue-latin-400-normal-Bi-ndsyu.woff",
-   "assets/bebas-neue-latin-ext-400-normal-DWiEslNC.woff2",
-   "assets/bebas-neue-latin-ext-400-normal-HFKRJXnW.woff",
-   "assets/index-B4E5rlMw.js",
-   "assets/index-DFQLAX8y.css",
-   "assets/index-legacy-rTQXDRcB.js",
-   "assets/p-BBsseItU-YtNNXK6o.js",
-   "assets/p-BBsseItU-legacy-B3pNwtfr.js",
-   "assets/p-BWbz71uB-DwzyPVBZ.js",
-   "assets/p-BWbz71uB-legacy-B8RXibgb.js",
-   "assets/p-Ct2aBEue-Gm5kNagk.js",
-   "assets/p-Ct2aBEue-legacy-CcEqkyNo.js",
-   "assets/p-DaojW_d_-0NUMxeR9.js",
-   "assets/p-DaojW_d_-legacy-DX1Aamm3.js",
-   "assets/p-Ds5vN3iu-BM_32uhd.js",
-   "assets/p-Ds5vN3iu-legacy-xL_9Acoz.js",
-   "assets/p-ZjP4CjeZ-DJ1DGIsW.js",
-   "assets/p-ZjP4CjeZ-legacy-ClCrdaHU.js",
-   "assets/polyfills-legacy-vcYt3Oo6.js"
-  ]
- },
- {
   "fecha": "2026-11-10T15:35:26.571Z",
   "archivos": [
    "assets/bebas-neue-latin-400-normal-9mHNbWWO.woff2",
@@ -119,6 +94,31 @@
    "assets/p-DaojW_d_-legacy-CseZjxjk.js",
    "assets/p-Ds5vN3iu-CoiOvdoo.js",
    "assets/p-Ds5vN3iu-legacy-DaHhymYj.js",
+   "assets/p-ZjP4CjeZ-DJ1DGIsW.js",
+   "assets/p-ZjP4CjeZ-legacy-ClCrdaHU.js",
+   "assets/polyfills-legacy-vcYt3Oo6.js"
+  ]
+ },
+ {
+  "fecha": "2026-11-27T00:05:49.387Z",
+  "archivos": [
+   "assets/bebas-neue-latin-400-normal-9mHNbWWO.woff2",
+   "assets/bebas-neue-latin-400-normal-Bi-ndsyu.woff",
+   "assets/bebas-neue-latin-ext-400-normal-DWiEslNC.woff2",
+   "assets/bebas-neue-latin-ext-400-normal-HFKRJXnW.woff",
+   "assets/index-DVa6wGhq.css",
+   "assets/index-X3pDEHRp.js",
+   "assets/index-legacy-CT_BYyCc.js",
+   "assets/p-BBsseItU-ClmuhnYa.js",
+   "assets/p-BBsseItU-legacy-B07RT6mx.js",
+   "assets/p-BWbz71uB-BQXgANal.js",
+   "assets/p-BWbz71uB-legacy-GOkcOQ36.js",
+   "assets/p-Ct2aBEue-Gm5kNagk.js",
+   "assets/p-Ct2aBEue-legacy-CcEqkyNo.js",
+   "assets/p-DaojW_d_-bVNQE5rz.js",
+   "assets/p-DaojW_d_-legacy-a72_mO4M.js",
+   "assets/p-Ds5vN3iu-CNeqISwz.js",
+   "assets/p-Ds5vN3iu-legacy-wTfnB34U.js",
    "assets/p-ZjP4CjeZ-DJ1DGIsW.js",
    "assets/p-ZjP4CjeZ-legacy-ClCrdaHU.js",
    "assets/polyfills-legacy-vcYt3Oo6.js"
